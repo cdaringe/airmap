@@ -95,7 +95,27 @@ export default function Map() {
       >
         {layer}
         {focusCircleEvt ? (
-          <Popup coordinates={focusCircleEvt.lngLat.toArray()} />
+          <Popup coordinates={focusCircleEvt.lngLat.toArray()}>
+            cool
+            <pre>
+              {JSON.stringify(
+                geojson?.features.find((f) => {
+                  const [cx, cy] = (f.geometry as any).coordinates;
+                  console.log(
+                    (f.geometry as any).coordinates,
+                    focusCircleEvt.lngLat,
+                    focusCircleEvt.point
+                  );
+                  return (
+                    cx === focusCircleEvt.lngLat.lat &&
+                    cy === focusCircleEvt.lngLat.lng
+                  );
+                }),
+                null,
+                2
+              )}
+            </pre>
+          </Popup>
         ) : null}
       </Map>
     </>
