@@ -24,9 +24,12 @@ export const useDataSource = () => React.useContext(ctx);
 export const persist = (v: DataSource) =>
   window.localStorage.setItem("datasource", JSON.stringify(v));
 export const read = (): DataSource => {
+  const defaultValue: DataSource = { url: "", datasource: "googlesheetsurl" };
   try {
-    return JSON.parse(window.localStorage.getItem("datasource")!);
+    const stored = window.localStorage.getItem("datasource");
+    if (!stored) return defaultValue;
+    return JSON.parse(stored);
   } catch (err) {
-    return { url: "", datasource: "googlesheetsurl" };
+    return defaultValue;
   }
 };

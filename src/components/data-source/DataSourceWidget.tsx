@@ -28,7 +28,7 @@ export const DataSourceWidget: React.FC<{
     value: { url, datasource },
     update,
   } = useDataSource();
-  const isValidUrl = isValidHttpUrl(url);
+  const isValidUrl = isValidHttpUrl(url) && url.match("gviz/tq");
   const router = useRouter();
   return (
     <div className="mt-2 w-4/5 p-2 text-center">
@@ -51,6 +51,7 @@ export const DataSourceWidget: React.FC<{
         }}
       />
       <Button
+        disabled={!isValidUrl}
         className="block m-auto mt-2"
         bg={isValidUrl ? styles.bg : "bg-gray-300"}
         onClick={(evt) => {

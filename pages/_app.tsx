@@ -9,8 +9,12 @@ import {
   read,
   persist,
 } from "../src/components/data-source/use-data-source";
+import { Nav } from "../src/components/nav";
+
+const IS_SERVER = typeof window === "undefined";
 
 const initialDataSource = read();
+
 function MyApp({ Component, pageProps }: AppProps) {
   const { current: queryClient } = React.useRef(new QueryClient());
   const [value, setValue] = React.useState(initialDataSource);
@@ -18,6 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     persist(ds);
     setValue(ds);
   }, []);
+  if (IS_SERVER) return null;
   return (
     <DataSourceProvider value={{ value, update }}>
       <QueryClientProvider client={queryClient}>
@@ -29,7 +34,19 @@ function MyApp({ Component, pageProps }: AppProps) {
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <Component {...pageProps} />
+        <div id="layout">
+          <Nav />
+          <Component {...pageProps} />
+          <footer className="flex-0">
+            <a
+              href="http://portlandcleanair.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              By your friends at portlandcleanair.org
+            </a>
+          </footer>
+        </div>
       </QueryClientProvider>
     </DataSourceProvider>
   );
