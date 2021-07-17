@@ -29,7 +29,7 @@ jobs:
           pnpm install
           pnpm format -- --check
           pnpm build
-          pnpm static
+          pnpm export
           touch out/.nojekyll && ls -al out/.nojekyll
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.3

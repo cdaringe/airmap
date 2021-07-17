@@ -66,7 +66,7 @@ export default function Home() {
           //   "datasource",
           //   JSON.stringify({ url, datasource })
           // );
-          router.push("map");
+          router.push("/map");
         }}
       >
         Submit

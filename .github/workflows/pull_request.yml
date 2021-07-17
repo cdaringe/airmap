@@ -22,5 +22,5 @@ jobs:
           pnpm install
           pnpm format -- --check
           pnpm build
-          pnpm static
+          pnpm export
           touch out/.nojekyll && ls -al out/.nojekyll
