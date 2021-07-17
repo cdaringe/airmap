@@ -62,10 +62,6 @@ export default function Home() {
             evt.preventDefault();
             return;
           }
-          // window.localStorage.setItem(
-          //   "datasource",
-          //   JSON.stringify({ url, datasource })
-          // );
           router.push("/map");
         }}
       >
