@@ -1,11 +1,12 @@
 import "../styles/globals.css";
-import type { AppProps } from "next/app";
-import Head from "next/head";
-import { QueryClient, QueryClientProvider } from "react-query";
-import React from "react";
-import * as ds from "../src/components/data-source/use-data-source";
 import { Nav } from "../src/components/nav";
+import { QueryClient, QueryClientProvider } from "react-query";
+import * as ds from "../src/components/data-source/use-data-source";
 import * as mapAuth from "../src/components/mapping/use-map-auth";
+import Head from "next/head";
+import React from "react";
+import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
 
 const IS_SERVER = typeof window === "undefined";
 
@@ -15,6 +16,7 @@ const initialDataSource = dsRead();
 const initialMapAuth = mapAuthRead();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   const { current: queryClient } = React.useRef(new QueryClient());
   const [dsValue, dsSetValue] = React.useState(initialDataSource);
   const [mapAuthValue, mapAuthSetValue] = React.useState(initialMapAuth);
@@ -42,11 +44,16 @@ function MyApp({ Component, pageProps }: AppProps) {
           <div id="layout">
             <Nav />
             <Component {...pageProps} />
-            <footer className="border-t border-blue-200 flex-0 text-center p-2 visited:text-purple-600 text-blue-600 hover:underline">
-              <a href="http://portlandcleanair.org/" rel="noopener noreferrer">
-                By your friends at portlandcleanair.org
-              </a>
-            </footer>
+            {router.pathname === "/" ? (
+              <footer className="border-t border-blue-200 flex-0 text-center p-2 visited:text-purple-600 text-blue-600 hover:underline">
+                <a
+                  href="http://portlandcleanair.org/"
+                  rel="noopener noreferrer"
+                >
+                  By your friends at portlandcleanair.org
+                </a>
+              </footer>
+            ) : undefined}
           </div>
         </QueryClientProvider>
       </MapAuthProvider>

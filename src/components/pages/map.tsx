@@ -126,11 +126,12 @@ export default function Map() {
         />
       </Head>
       <MapBox
+        className="content w-full"
         fitBounds={fitBounds}
         center={[-122.66155, 45.54846]}
         style="mapbox://styles/pdxcleanair/ckpx7yno443sa17p6iy65qn95"
         containerStyle={{
-          height: "100vh",
+          height: "100%",
           width: "100vw",
         }}
         onClick={() => {
