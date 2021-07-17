@@ -1,0 +1,89 @@
+/* start tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* end tailwind */
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+#layout {
+  display: grid;
+  grid-template-areas:
+    "nav nav nav"
+    ". content ."
+    "footer footer footer";
+  grid-template-columns: auto;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  width: 100vw;
+}
+
+nav {
+  grid-area: nav;
+}
+
+.content {
+  grid-area: content;
+}
+
+.content.home {
+  justify-self: center;
+  align-self: center;
+}
+
+footer {
+  grid-area: footer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* start https://bl.ocks.org/samfader/43570c37c4e5aebb8bf1d88216a663fc */
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Popup styling */
+
+.mapboxgl-popup {
+  padding-bottom: 5px;
+}
+
+.mapboxgl-popup-close-button {
+  display: none;
+}
+
+.mapboxgl-container {
+  cursor: pointer;
+}
+
+.mapboxgl-popup-content {
+  border-radius: 4px;
+  box-shadow: inset 0px 0px 4px 0px;
+  overflow: scroll !important;
+  padding: 16px;
+}
+
+.mapboxgl-popup-anchor-top > .mapboxgl-popup-content h1 {
+  font-size: large;
+}
+
+.mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
+  border-bottom-color: rgb(61, 59, 59);
+}
+/* end  https://bl.ocks.org/samfader/43570c37c4e5aebb8bf1d88216a663fc */
