@@ -1,5 +1,9 @@
 import { DataSourceWidget } from "../data-source/DataSourceWidget";
-import { isValidHttpUrl } from "../../http/validators";
+import {
+  isGoogleSheetsCompatibleUrl,
+  isValidHttpUrl,
+  toSheetsDataExportUrl,
+} from "../../http/validators";
 import { useDataSource } from "../../components/data-source/use-data-source";
 import { useRouter } from "next/router";
 import Button, { styles } from "../../components/atoms/button";
@@ -16,10 +20,11 @@ export default function Home() {
     value: { accessToken },
     update: updateMapAuth,
   } = useMapAuth();
-  const isValidUrl = isValidHttpUrl(url) && url.match("gviz/tq");
+  const isValidGvizUrl = isValidHttpUrl(url) && url.match("gviz/tq");
+  const isValidDataUrl = isValidGvizUrl || isGoogleSheetsCompatibleUrl(url);
   const router = useRouter();
-  const isRenderingUrlErrorState = !!(url && !isValidUrl);
-  const isSubmitDisabled = !isValidUrl || !accessToken;
+  const isRenderingUrlErrorState = !!(url && !isValidDataUrl);
+  const isSubmitDisabled = !isValidDataUrl || !accessToken;
   return (
     <form
       className="content home w-96 max-w-screen-md"
@@ -61,6 +66,13 @@ export default function Home() {
           if (isSubmitDisabled) {
             evt.preventDefault();
             return;
+          }
+          const isSCU = isGoogleSheetsCompatibleUrl(url);
+          if (!isValidGvizUrl && isSCU) {
+            update({
+              datasource,
+              url: toSheetsDataExportUrl(url),
+            });
           }
           router.push("/map");
         }}
