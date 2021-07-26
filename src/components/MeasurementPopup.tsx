@@ -25,7 +25,9 @@ const MeasurementPopup: React.FC<Props> = ({
             {Object.entries(feature.properties!).map(([key, value]) => (
               <tr key={key}>
                 <td>{key}</td>
-                <td>{value}</td>
+                <td>
+                  {typeof value == "number" ? value.toPrecision(2) : value}
+                </td>
               </tr>
             ))}
           </tbody>

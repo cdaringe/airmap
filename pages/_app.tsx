@@ -1,12 +1,13 @@
 import "../styles/globals.css";
+import "mapbox-gl-controls/lib/controls.css";
 import { Nav } from "../src/components/nav";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { useRouter } from "next/router";
 import * as ds from "../src/components/data-source/use-data-source";
 import * as mapAuth from "../src/components/mapping/use-map-auth";
 import Head from "next/head";
 import React from "react";
 import type { AppProps } from "next/app";
-import { useRouter } from "next/router";
 
 const IS_SERVER = typeof window === "undefined";
 

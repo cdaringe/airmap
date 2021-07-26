@@ -51,15 +51,10 @@ export const getFromCsvUrl = async (sheetsCsvUrl: string) => {
     const pm2 = parseInt(pm2Str);
     const pm1 = parseInt(pm1Str);
     const humidity = parseFloat(humidityStr);
-    properties["PM2.5"] = pm2.toPrecision(3);
-    properties["PM1"] = pm1.toPrecision(3);
-    properties["PM2.5 Corrected"] = applyEpaCorrection(
-      pm2,
-      humidity
-    ).toPrecision(3);
-    properties["PM1 Corrected"] = applyEpaCorrection(pm1, humidity).toPrecision(
-      3
-    );
+    properties["PM2.5"] = pm2;
+    properties["PM1"] = pm1;
+    properties["PM2.5 Corrected"] = applyEpaCorrection(pm2, humidity);
+    properties["PM1 Corrected"] = applyEpaCorrection(pm1, humidity);
   });
   return geojson as GeoJSON.FeatureCollection<
     GeoJSON.Geometry,

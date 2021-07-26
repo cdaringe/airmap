@@ -11,6 +11,7 @@ specifiers:
   eslint: 7.30.0
   eslint-config-next: 11.0.1
   mapbox-gl: ^2.3.1
+  mapbox-gl-controls: ^2.3.5
   next: 11.0.1
   postcss: ^8.3.5
   prettier: ^2.3.2
@@ -25,6 +26,7 @@ dependencies:
   '@turf/turf': 6.5.0
   clsx: 1.1.1
   mapbox-gl: 2.3.1
+  mapbox-gl-controls: 2.3.5_mapbox-gl@2.3.1
   next: 11.0.1_f31b35bdaa3b7c2fce82404f09d2dac4
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
@@ -609,6 +611,13 @@ packages:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
       '@turf/meta': 6.5.0
+    dev: false
+
+  /@turf/distance/6.3.0:
+    resolution: {integrity: sha512-basi24ssNFnH3iXPFjp/aNUrukjObiFWoIyDRqKyBJxVwVOwAWvfk4d38QQyBj5nDo5IahYRq/Q+T47/5hSs9w==}
+    dependencies:
+      '@turf/helpers': 6.5.0
+      '@turf/invariant': 6.5.0
     dev: false
 
   /@turf/distance/6.5.0:
@@ -3263,6 +3272,15 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       semver: 6.3.0
+    dev: false
+
+  /mapbox-gl-controls/2.3.5_mapbox-gl@2.3.1:
+    resolution: {integrity: sha512-FP4c7WhNoE+5JicMkq8TSqJwaxEpkhJlsq4Ye1lIGBy7ubS/l6EZ15ZRumrICpDZGOMMlfKKCpaCo+Kt5omkTg==}
+    peerDependencies:
+      mapbox-gl: '>=1.0.0 <3.0.0'
+    dependencies:
+      '@turf/distance': 6.3.0
+      mapbox-gl: 2.3.1
     dev: false
 
   /mapbox-gl/2.3.1:
