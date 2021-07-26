@@ -1,6 +1,6 @@
 import Head from "next/head";
 import React from "react";
-import ReactMapboxGl, { GeoJSONLayer } from "react-mapbox-gl";
+import ReactMapboxGl from "react-mapbox-gl";
 import { Props as MapProps } from "react-mapbox-gl/lib/map";
 import { useQuery } from "react-query";
 import { useDataSource } from "../data-source/use-data-source";
@@ -8,7 +8,7 @@ import { getFromCsvUrl } from "../data/air-quality";
 import dynamic from "next/dynamic";
 import AirIcon from "../icon/svg/air";
 import { PollutionLayer } from "../mapping/PollutionLayer";
-import { useBoundingBox } from "../mapping/use-bounding-box";
+import { useInitialBoundingBox } from "../mapping/use-bounding-box";
 import { useHandleNoDatasource } from "../../hooks/use-handle-no-datasource";
 
 const controls = () => import("mapbox-gl-controls");
@@ -42,7 +42,10 @@ export default function Map() {
     queryFn: () => getFromCsvUrl(url),
   });
   const [fitBounds, setFitBounds] = React.useState<MapProps["fitBounds"]>();
-  useBoundingBox(geojson, setFitBounds);
+  const [center, setCenter] = React.useState<MapProps["center"]>([
+    -122.66155, 45.54846,
+  ]);
+  useInitialBoundingBox(geojson, setFitBounds);
   const { current: Map } = React.useRef(
     ReactMapboxGl({
       accessToken,
@@ -51,8 +54,11 @@ export default function Map() {
   );
   const [selectedFeature, setFeature] =
     React.useState<GeoJSON.Feature<GeoJSON.Point> | null>(null);
-  const clearPopup = React.useCallback(() => setFeature(null), [setFeature]);
-
+  const clearPopup = React.useCallback(() => {
+    if (selectedFeature) {
+      setFeature(null);
+    }
+  }, [selectedFeature, setFeature]);
   if (error) {
     return (
       <div>
@@ -96,7 +102,7 @@ export default function Map() {
           }}
           className="content w-full"
           fitBounds={fitBounds}
-          center={[-122.66155, 45.54846]}
+          center={center}
           style="mapbox://styles/pdxcleanair/ckpx7yno443sa17p6iy65qn95"
           containerStyle={{
             height: "100%",
@@ -105,7 +111,17 @@ export default function Map() {
           onClick={clearPopup}
         >
           {geojson && (
-            <PollutionLayer {...{ geojson, onSelectFeature: setFeature }} />
+            <PollutionLayer
+              {...{
+                geojson,
+                onSelectFeature: (feature) => {
+                  if (fitBounds) setFitBounds(undefined);
+                  if (center)
+                    setCenter(feature.geometry.coordinates as [number, number]);
+                  setFeature(feature);
+                },
+              }}
+            />
           )}
           {selectedFeature ? (
             <MeasurementPopup

@@ -54,6 +54,7 @@ export const PollutionLayer: React.FC<Props> = ({
 }) => {
   const circleOnClick = React.useCallback(
     (evt: MapMouseEvent) => {
+      evt.preventDefault();
       const [feature] = evt.target.queryRenderedFeatures(evt.point);
       if (feature?.geometry.type === "Point") {
         onSelectFeature(feature as GeoPoint);

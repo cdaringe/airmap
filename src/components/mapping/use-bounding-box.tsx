@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { bbox } from "@turf/turf";
 
-export const useBoundingBox = (
+export const useInitialBoundingBox = (
   geojson: GeoJSON.GeoJSON | undefined,
   onBoundingBox: (bounds: any) => void
 ) =>
@@ -14,4 +14,5 @@ export const useBoundingBox = (
     }
     // @todo [[n,n], [n,n]] vs [n,n,n,n]
     onBoundingBox(bounds as any);
-  }, [geojson, onBoundingBox]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geojson]);
