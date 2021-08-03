@@ -4,7 +4,7 @@ import ReactMapboxGl from "react-mapbox-gl";
 import { Props as MapProps } from "react-mapbox-gl/lib/map";
 import { useQuery } from "react-query";
 import { useDataSource } from "../data-source/use-data-source";
-import { getFromCsvUrl } from "../data/air-quality";
+import { getFromCsvUrl, PM2_CORRECTED_FIELD_NAME } from "../data/air-quality";
 import dynamic from "next/dynamic";
 import AirIcon from "../icon/svg/air";
 import { PollutionLayer } from "../mapping/PollutionLayer";
@@ -54,11 +54,10 @@ export default function Map() {
   );
   const [selectedFeature, setFeature] =
     React.useState<GeoJSON.Feature<GeoJSON.Point> | null>(null);
-  const clearPopup = React.useCallback(() => {
-    if (selectedFeature) {
-      setFeature(null);
-    }
-  }, [selectedFeature, setFeature]);
+  const clearPopup = React.useCallback(
+    () => selectedFeature && setFeature(null),
+    [selectedFeature, setFeature]
+  );
   if (error) {
     return (
       <div>
@@ -114,6 +113,11 @@ export default function Map() {
             <PollutionLayer
               {...{
                 geojson,
+                type: (geojson.features[0]?.properties as any)[
+                  PM2_CORRECTED_FIELD_NAME
+                ]
+                  ? "pm2"
+                  : "voc",
                 onSelectFeature: (feature) => {
                   if (fitBounds) setFitBounds(undefined);
                   if (center)

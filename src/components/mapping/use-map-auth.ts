@@ -11,7 +11,10 @@ export type MapAuthContext = {
   update: (ds: MapAuth) => void;
 };
 
-const DEFAULT_VALUE = { accessToken: "" };
+const DEFAULT_VALUE = {
+  accessToken:
+    "pk.eyJ1IjoicGR4Y2xlYW5haXIiLCJhIjoiY2tweDFuZmxpMjFmbzJ3bXVkajd4dDQ4dSJ9.LYiRB4TgOAckcqZGi-cUXg",
+};
 export const ctx = React.createContext<MapAuthContext>({
   value: DEFAULT_VALUE,
   update: () => {},
