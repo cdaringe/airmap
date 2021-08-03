@@ -47,7 +47,8 @@ export default function Home() {
           url,
         }}
       />
-      <Input
+      {/* https://developers.google.com/chart/interactive/docs/querylanguage#limit */}
+      {/* <Input
         className="w-full mt-1"
         type="password"
         placeholder="mapbox access token"
@@ -57,7 +58,7 @@ export default function Home() {
             accessToken: evt.currentTarget.value,
           });
         }}
-      ></Input>
+      ></Input> */}
       <Button
         disabled={isSubmitDisabled}
         className="block m-auto mt-2"
