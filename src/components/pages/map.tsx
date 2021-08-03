@@ -109,24 +109,24 @@ export default function Map() {
           }}
           onClick={clearPopup}
         >
-          {geojson &&
-            (geojson.features[0]?.properties as any)[
-              PM2_CORRECTED_FIELD_NAME
-            ] && (
-              <PollutionLayer
-                {...{
-                  geojson,
-                  onSelectFeature: (feature) => {
-                    if (fitBounds) setFitBounds(undefined);
-                    if (center)
-                      setCenter(
-                        feature.geometry.coordinates as [number, number]
-                      );
-                    setFeature(feature);
-                  },
-                }}
-              />
-            )}
+          {geojson && (
+            <PollutionLayer
+              {...{
+                geojson,
+                type: (geojson.features[0]?.properties as any)[
+                  PM2_CORRECTED_FIELD_NAME
+                ]
+                  ? "pm2"
+                  : "voc",
+                onSelectFeature: (feature) => {
+                  if (fitBounds) setFitBounds(undefined);
+                  if (center)
+                    setCenter(feature.geometry.coordinates as [number, number]);
+                  setFeature(feature);
+                },
+              }}
+            />
+          )}
           {selectedFeature ? (
             <MeasurementPopup
               title="Measurements"

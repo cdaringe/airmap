@@ -36,10 +36,20 @@ type GeoPoint = GeoJSON.Feature<GeoJSON.Point>;
 export type Props = {
   geojson: GeoJSON.GeoJSON;
   onSelectFeature: (feature: GeoPoint) => void;
+  type: "pm2" | "voc";
 };
 
 const circleLayout: CircleLayout = { visibility: "visible" };
-const circlePaint: CirclePaint = {
+const circlePaintPm2: CirclePaint = {
+  "circle-color": [
+    "case",
+    ...pm2_levels.flatMap((condition, i) => [condition, colors[i]]),
+    "black",
+  ],
+  "circle-radius": 5,
+};
+
+const circlePaintVoc: CirclePaint = {
   "circle-color": [
     "case",
     ...pm2_levels.flatMap((condition, i) => [condition, colors[i]]),
@@ -51,6 +61,7 @@ const circlePaint: CirclePaint = {
 export const PollutionLayer: React.FC<Props> = ({
   geojson,
   onSelectFeature,
+  type,
 }) => {
   const circleOnClick = React.useCallback(
     (evt: MapMouseEvent) => {
@@ -73,10 +84,10 @@ export const PollutionLayer: React.FC<Props> = ({
   return (
     <GeoJSONLayer
       {...{
-        id: "pm25Corrected",
+        id: type === "pm2" ? "pm25Corrected" : type,
         data: geojson,
         circleLayout,
-        circlePaint,
+        circlePaint: type === "pm2" ? circlePaintPm2 : circlePaintVoc,
         circleOnClick,
         circleOnMouseEnter,
         circleOnMouseLeave,
