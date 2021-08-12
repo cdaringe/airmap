@@ -41,24 +41,12 @@ export default function Home() {
             });
           },
           isRenderingUrlErrorState,
-          onUrlChange: (evt) => {
-            update({ url: evt.currentTarget.value, datasource });
+          onUrlChange: (url) => {
+            update({ url, datasource });
           },
           url,
         }}
       />
-      {/* https://developers.google.com/chart/interactive/docs/querylanguage#limit */}
-      {/* <Input
-        className="w-full mt-1"
-        type="password"
-        placeholder="mapbox access token"
-        defaultValue={accessToken}
-        onChange={(evt) => {
-          updateMapAuth({
-            accessToken: evt.currentTarget.value,
-          });
-        }}
-      ></Input> */}
       <Button
         disabled={isSubmitDisabled}
         className="block m-auto mt-2"
