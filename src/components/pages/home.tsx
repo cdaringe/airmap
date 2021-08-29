@@ -6,10 +6,8 @@ import {
 } from "../../http/validators";
 import { useDataSource } from "../../components/data-source/use-data-source";
 import { useRouter } from "next/router";
-import Button, { styles } from "../../components/atoms/button";
 import React from "react";
 import { useMapAuth } from "../mapping/use-map-auth";
-import Input from "../atoms/input";
 
 export default function Home() {
   const {
@@ -33,6 +31,7 @@ export default function Home() {
       <h1 className="text-4xl text-center">airmap!</h1>
       <DataSourceWidget
         {...{
+          isSubmitDisabled,
           datasource,
           onDatasourceSourceChange: (evt) => {
             update({
@@ -45,29 +44,21 @@ export default function Home() {
             update({ url, datasource });
           },
           url,
+          onSubmit: () => {
+            if (isSubmitDisabled) {
+              return;
+            }
+            const isSCU = isGoogleSheetsCompatibleUrl(url);
+            if (!isValidGvizUrl && isSCU) {
+              update({
+                datasource,
+                url: toSheetsDataExportUrl(url),
+              });
+            }
+            router.push("/map");
+          },
         }}
       />
-      <Button
-        disabled={isSubmitDisabled}
-        className="block m-auto mt-2"
-        bg={isSubmitDisabled ? "bg-gray-300" : styles.bg}
-        onClick={(evt) => {
-          if (isSubmitDisabled) {
-            evt.preventDefault();
-            return;
-          }
-          const isSCU = isGoogleSheetsCompatibleUrl(url);
-          if (!isValidGvizUrl && isSCU) {
-            update({
-              datasource,
-              url: toSheetsDataExportUrl(url),
-            });
-          }
-          router.push("/map");
-        }}
-      >
-        Submit
-      </Button>
     </form>
   );
 }

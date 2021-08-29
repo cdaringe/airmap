@@ -7,7 +7,7 @@ export const styles = {
 
 const Button: React.FC<
   React.HTMLProps<HTMLButtonElement> & {
-    bg: string;
+    bg?: string;
   }
 > = ({ bg = styles.bg, type = "button", className, ...rest }) => {
   const clsStr = clsx(
