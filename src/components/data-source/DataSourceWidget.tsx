@@ -38,14 +38,24 @@ export const DataSourceWidget: FC<Props> = ({
       "961166063373-si47f62e9dbvbl0ahb4lrpouqf52la6j.apps.googleusercontent.com",
     developerKey: "AIzaSyAgSzVhl0agLUrEbFow82k9csWtnARfaLY",
     onPreBuild: ({ builder, view }) => {
+      const vw = Math.max(
+        document.documentElement.clientWidth || 0,
+        window.innerWidth || 0
+      );
+      const vh = Math.max(
+        document.documentElement.clientHeight || 0,
+        window.innerHeight || 0
+      );
       view
         // pdx clean air upload folder id
         .setParent("1RwxRnjTDHfYKMJA_e093jOt8OnMX4D9J")
         .setIncludeFolders(true)
         .setSelectFolderEnabled(false)
         .setMode(google.picker.DocsViewMode.LIST);
-      builder.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
-      builder.enableFeature(google.picker.Feature.SUPPORT_DRIVES);
+      builder
+        .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+        .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
+        .setSize(vw < 1051 ? vw : 1051, vh < 650 ? vh : 650);
     },
     onSelect: (res) => {
       const editUrl = res.docs[0]?.url;
