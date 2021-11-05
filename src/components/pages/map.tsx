@@ -74,6 +74,12 @@ export default function Map() {
         <AirIcon className="animate-spin w-20" />
       </div>
     );
+  const dataPoint = geojson?.features[0]?.properties as Record<string, string>;
+  const type = dataPoint[PM2_CORRECTED_FIELD_NAME]
+    ? "pm25Corrected"
+    : dataPoint["PM2.5"]
+    ? "PM2.5"
+    : "voc";
   return (
     <>
       <Head>
@@ -113,11 +119,7 @@ export default function Map() {
             <PollutionLayer
               {...{
                 geojson,
-                type: (geojson.features[0]?.properties as any)[
-                  PM2_CORRECTED_FIELD_NAME
-                ]
-                  ? "pm2"
-                  : "voc",
+                type,
                 onSelectFeature: (feature) => {
                   if (fitBounds) setFitBounds(undefined);
                   if (center)

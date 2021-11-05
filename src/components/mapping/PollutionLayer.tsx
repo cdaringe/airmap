@@ -2,7 +2,11 @@ import { GeoJSONLayer } from "react-mapbox-gl";
 import React from "react";
 import type { MapMouseEvent, CircleLayout, CirclePaint } from "mapbox-gl";
 
-const fieldpm2 = ["get", "PM2.5 Corrected"];
+let fieldpm2 = ["get", "PM2.5"];
+
+const setFieldPm2 = (v: string) => {
+  fieldpm2[1] = v;
+};
 
 const colors = [
   "#4d0173",
@@ -36,7 +40,7 @@ type GeoPoint = GeoJSON.Feature<GeoJSON.Point>;
 export type Props = {
   geojson: GeoJSON.GeoJSON;
   onSelectFeature: (feature: GeoPoint) => void;
-  type: "pm2" | "voc";
+  type: "PM2.5" | "pm25Corrected" | "voc";
 };
 
 const circleLayout: CircleLayout = { visibility: "visible" };
@@ -63,6 +67,13 @@ export const PollutionLayer: React.FC<Props> = ({
   onSelectFeature,
   type,
 }) => {
+  setFieldPm2(
+    type === "pm25Corrected"
+      ? "PM2.5 Corrected"
+      : type === "PM2.5"
+      ? "PM2.5"
+      : type
+  );
   const circleOnClick = React.useCallback(
     (evt: MapMouseEvent) => {
       evt.preventDefault();
@@ -84,10 +95,15 @@ export const PollutionLayer: React.FC<Props> = ({
   return (
     <GeoJSONLayer
       {...{
-        id: type === "pm2" ? "pm25Corrected" : type,
+        id:
+          type === "pm25Corrected"
+            ? "pm25Corrected"
+            : type === "PM2.5"
+            ? "PM2.5"
+            : type,
         data: geojson,
         circleLayout,
-        circlePaint: type === "pm2" ? circlePaintPm2 : circlePaintVoc,
+        circlePaint: type.startsWith("pm2") ? circlePaintPm2 : circlePaintVoc,
         circleOnClick,
         circleOnMouseEnter,
         circleOnMouseLeave,
