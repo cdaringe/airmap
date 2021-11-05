@@ -15,13 +15,13 @@ const applyEpaCorrection = (old: number, humidity: number) =>
   0.0534 * old - 0.0844 * humidity + 5.604;
 
 const csvToGeoJson = (csv: string) => {
-  const isPurple = csv.startsWith('"Lat"');
+  const isPocketLab = csv.startsWith('"Lat"');
   return new Promise<GeoJSON.FeatureCollection>((res, rej) =>
     csv2geojson(
       csv,
       {
-        latfield: isPurple ? "Lat" : "Latitude",
-        lonfield: isPurple ? "Lng" : "Longitude",
+        latfield: isPocketLab ? "Lat" : "Latitude",
+        lonfield: isPocketLab ? "Lng" : "Longitude",
         delimiter: ",",
       },
       function oncsv(err, geojson) {
@@ -65,8 +65,8 @@ export const getFromCsvUrl = async (sheetsCsvUrl: string) => {
     geojson.features.forEach((feature) => {
       const properties = feature.properties;
       if (!properties) throw new Error("missing properties");
-      const isPurple = "Mean PM2.5 (µg/m³)" in properties;
-      const { pm2Str, pm1Str, humidityStr } = isPurple
+      const isPocketLab = "Mean PM2.5 (µg/m³)" in properties;
+      const { pm2Str, pm1Str, humidityStr } = isPocketLab
         ? extractPropertiesLegacy(properties)
         : extractPropertiesPurple(properties);
       const pm2 = parseInt(pm2Str);
