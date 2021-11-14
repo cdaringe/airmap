@@ -32,8 +32,7 @@ export function toSheetsDataExportUrl(urlstr: string) {
   const url = new URL(urlstr);
   url.pathname = [
     ...url.pathname.substr(1).split("/").splice(0, 3),
-    "gviz",
-    "tq",
+    "export",
   ].join("/");
   return String(url);
 }

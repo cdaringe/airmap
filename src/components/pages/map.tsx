@@ -19,7 +19,7 @@ const MeasurementPopup = dynamic(() => import("../MeasurementPopup"));
 const accessToken =
   "pk.eyJ1IjoicGR4Y2xlYW5haXIiLCJhIjoiY2tweDFuZmxpMjFmbzJ3bXVkajd4dDQ4dSJ9.LYiRB4TgOAckcqZGi-cUXg";
 
-const transformRequest = (url: string, resourceType: string) => {
+const normalizeMapboxUrl = (url: string, resourceType: string) => {
   var isMapboxRequest =
     url.slice(8, 22) === "api.mapbox.com" ||
     url.slice(10, 26) === "tiles.mapbox.com";
@@ -27,6 +27,8 @@ const transformRequest = (url: string, resourceType: string) => {
     url: isMapboxRequest ? url.replace("?", "?pluginName=sheetMapper&") : url,
   };
 };
+
+const HEADER_NAMES = ["Lat", "Lng", "PM1.0 (µg/m³)", "PM2.5 (µg/m³)"];
 
 export default function Map() {
   useHandleNoDatasource();
@@ -39,7 +41,7 @@ export default function Map() {
     data: geojson,
   } = useQuery({
     queryKey: ["map-csv"],
-    queryFn: () => getFromCsvUrl(url),
+    queryFn: () => getFromCsvUrl(url, HEADER_NAMES),
   });
   const [fitBounds, setFitBounds] = React.useState<MapProps["fitBounds"]>();
   const [center, setCenter] = React.useState<MapProps["center"]>([
@@ -49,7 +51,7 @@ export default function Map() {
   const { current: Map } = React.useRef(
     ReactMapboxGl({
       accessToken,
-      transformRequest,
+      transformRequest: normalizeMapboxUrl,
     })
   );
   const [selectedFeature, setFeature] =
@@ -74,7 +76,19 @@ export default function Map() {
         <AirIcon className="animate-spin w-20" />
       </div>
     );
-  const dataPoint = geojson?.features[0]?.properties as Record<string, string>;
+  const dataPoint = geojson?.features[0]?.properties as
+    | Record<string, string>
+    | undefined;
+  if (!dataPoint) {
+    return (
+      <p style={{ padding: 10 }}>
+        The datafile provided could not be converted into geojson format.
+        Generally, this occurs because the columns in the data sheet do not
+        match the expected field names. Some rows must have headers:
+        <br /> {HEADER_NAMES.join(", ")}
+      </p>
+    );
+  }
   const type = dataPoint[PM2_CORRECTED_FIELD_NAME]
     ? "pm25Corrected"
     : dataPoint["PM2.5"]

@@ -18,8 +18,7 @@ export default function Home() {
     value: { accessToken },
     update: updateMapAuth,
   } = useMapAuth();
-  const isValidGvizUrl = isValidHttpUrl(url) && url.match("gviz/tq");
-  const isValidDataUrl = isValidGvizUrl || isGoogleSheetsCompatibleUrl(url);
+  const isValidDataUrl = isGoogleSheetsCompatibleUrl(url);
   const router = useRouter();
   const isRenderingUrlErrorState = !!(url && !isValidDataUrl);
   const isSubmitDisabled = !isValidDataUrl || !accessToken;
@@ -48,13 +47,10 @@ export default function Home() {
             if (isSubmitDisabled) {
               return;
             }
-            const isSCU = isGoogleSheetsCompatibleUrl(url);
-            if (!isValidGvizUrl && isSCU) {
-              update({
-                datasource,
-                url: toSheetsDataExportUrl(url),
-              });
-            }
+            update({
+              datasource,
+              url: toSheetsDataExportUrl(url),
+            });
             router.push("/map");
           },
         }}
