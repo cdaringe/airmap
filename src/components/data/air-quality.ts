@@ -71,7 +71,7 @@ export const getFromCsvUrl = async (
     const { pm2Str, pm1Str, humidityStr } = extractPropertiesLegacy(properties);
     const pm2 = parseInt(pm2Str);
     const pm1 = parseInt(pm1Str);
-    const humidity = humidityStr ? parseFloat(humidityStr) : null;
+    const humidity = humidityStr ? parseFloat(humidityStr as any) : 0;
     properties["PM2.5"] = pm2;
     properties["PM1"] = pm1;
     if (humidity)
