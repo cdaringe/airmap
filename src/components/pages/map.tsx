@@ -2,14 +2,14 @@ import Head from "next/head";
 import React from "react";
 import ReactMapboxGl from "react-mapbox-gl";
 import { Props as MapProps } from "react-mapbox-gl/lib/map";
-import { useQuery } from "react-query";
 import { useDataSource } from "../data-source/use-data-source";
-import { getFromCsvUrl, PM2_CORRECTED_FIELD_NAME } from "../data/air-quality";
 import dynamic from "next/dynamic";
 import AirIcon from "../icon/svg/air";
 import { PollutionLayer } from "../mapping/PollutionLayer";
 import { useInitialBoundingBox } from "../mapping/use-bounding-box";
 import { useHandleNoDatasource } from "../../hooks/use-handle-no-datasource";
+import { useSensorMappingResources } from "../../sensors/common";
+import { useQuery } from "react-query";
 
 const controls = () => import("mapbox-gl-controls");
 
@@ -28,25 +28,38 @@ const normalizeMapboxUrl = (url: string, resourceType: string) => {
   };
 };
 
-const HEADER_NAMES = ["Lat", "Lng", "PM1.0 (µg/m³)", "PM2.5 (µg/m³)"];
-
 export default function Map() {
   useHandleNoDatasource();
-  const {
-    value: { url },
-  } = useDataSource();
-  let {
-    isLoading,
-    error,
-    data: geojson,
-  } = useQuery({
-    queryKey: ["map-csv"],
-    queryFn: () => getFromCsvUrl(url, HEADER_NAMES),
-  });
   const [fitBounds, setFitBounds] = React.useState<MapProps["fitBounds"]>();
   const [center, setCenter] = React.useState<MapProps["center"]>([
     -122.66155, 45.54846,
   ]);
+  const ds = useDataSource();
+  const {
+    value: { urls, sensorType },
+  } = ds;
+  const {
+    isLoading: isSensorDownladerLoading,
+    error: sensorDownloaderError,
+    data: { download } = {},
+  } = useSensorMappingResources(sensorType);
+  const {
+    isLoading: isDataLoading,
+    error: dataDownloadError,
+    data: { geojson, circleCases } = {},
+  } = useQuery({
+    // use `typeof download` to cache bust react-query when the download
+    // function has not yet finished downloading
+    queryKey: [...urls, typeof download],
+    queryFn: () => {
+      if (download) {
+        return download(urls);
+      }
+    },
+  });
+
+  const error = sensorDownloaderError || dataDownloadError;
+  const isLoading = isSensorDownladerLoading || isDataLoading;
   useInitialBoundingBox(geojson, setFitBounds);
   const { current: Map } = React.useRef(
     ReactMapboxGl({
@@ -62,10 +75,19 @@ export default function Map() {
   );
   if (error) {
     return (
-      <div>
+      <div className="p-2">
         <h1>Error</h1>
+        <h2>Failed to load map data.</h2>
         <p>
-          {typeof error === "string" ? error : JSON.stringify(error, null, 2)}
+          {typeof error === "string" ? (
+            error
+          ) : (
+            <pre>{JSON.stringify(error, null, 2)}</pre>
+          )}
+        </p>
+        <p>
+          Are you sure your datasource is correct?
+          <pre>{JSON.stringify(ds, null, 2)}</pre>
         </p>
       </div>
     );
@@ -81,19 +103,13 @@ export default function Map() {
     | undefined;
   if (!dataPoint) {
     return (
-      <p style={{ padding: 10 }}>
+      <p className="p-2">
         The datafile provided could not be converted into geojson format.
         Generally, this occurs because the columns in the data sheet do not
-        match the expected field names. Some rows must have headers:
-        <br /> {HEADER_NAMES.join(", ")}
+        match the expected field names.
       </p>
     );
   }
-  const type = dataPoint[PM2_CORRECTED_FIELD_NAME]
-    ? "pm25Corrected"
-    : dataPoint["PM2.5"]
-    ? "PM2.5"
-    : "voc";
   return (
     <>
       <Head>
@@ -133,7 +149,7 @@ export default function Map() {
             <PollutionLayer
               {...{
                 geojson,
-                type,
+                circleCases,
                 onSelectFeature: (feature) => {
                   if (fitBounds) setFitBounds(undefined);
                   if (center)

@@ -8,20 +8,24 @@ import { useDataSource } from "../../components/data-source/use-data-source";
 import { useRouter } from "next/router";
 import React from "react";
 import { useMapAuth } from "../mapping/use-map-auth";
+import { FLOW_ID, NO_SENSOR_ID } from "../../sensors/common";
 
 export default function Home() {
   const {
-    value: { url, datasource },
+    value: { urls, datasource, sensorType },
     update,
   } = useDataSource();
   const {
     value: { accessToken },
-    update: updateMapAuth,
+    update: _updateMapAuth,
   } = useMapAuth();
-  const isValidDataUrl = isGoogleSheetsCompatibleUrl(url);
+  const isValidDataUrl =
+    urls.every((url) => isGoogleSheetsCompatibleUrl(url)) &&
+    (sensorType === FLOW_ID ? urls.length === 2 : true);
   const router = useRouter();
-  const isRenderingUrlErrorState = !!(url && !isValidDataUrl);
-  const isSubmitDisabled = !isValidDataUrl || !accessToken;
+  const isRenderingUrlErrorState = !!(urls.length && !isValidDataUrl);
+  const isSubmitDisabled =
+    !isValidDataUrl || !accessToken || sensorType === NO_SENSOR_ID;
   return (
     <form
       className="content home w-96 max-w-screen-md"
@@ -32,24 +36,30 @@ export default function Home() {
         {...{
           isSubmitDisabled,
           datasource,
+          sensorType,
           onDatasourceSourceChange: (evt) => {
             update({
-              url,
+              urls,
+              sensorType,
               datasource: evt.currentTarget.value as "googlesheetsurl",
             });
           },
           isRenderingUrlErrorState,
-          onUrlChange: (url) => {
-            update({ url, datasource });
+          onSensorTypeChange: (sensorType) => {
+            update({ urls, sensorType, datasource });
           },
-          url,
+          onUrlsChange: (urls) => {
+            update({ urls, sensorType, datasource });
+          },
+          urls,
           onSubmit: () => {
             if (isSubmitDisabled) {
               return;
             }
             update({
               datasource,
-              url: toSheetsDataExportUrl(url),
+              sensorType,
+              urls: urls.map((url) => toSheetsDataExportUrl(url)),
             });
             router.push("/map");
           },

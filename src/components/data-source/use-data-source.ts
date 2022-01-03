@@ -1,8 +1,10 @@
 import React from "react";
+import { NO_SENSOR_ID } from "../../sensors/common";
 
 export type DataSource = {
   datasource: "googlesheetsurl" | "csvurl";
-  url: string;
+  sensorType: number;
+  urls: string[];
 };
 
 export type DataSourceContext = {
@@ -12,7 +14,8 @@ export type DataSourceContext = {
 export const ctx = React.createContext<DataSourceContext>({
   value: {
     datasource: "googlesheetsurl",
-    url: "",
+    sensorType: NO_SENSOR_ID,
+    urls: [],
   },
   update: () => {},
 });
@@ -24,7 +27,11 @@ export const useDataSource = () => React.useContext(ctx);
 export const persist = (v: DataSource) =>
   window.localStorage.setItem("datasource", JSON.stringify(v));
 export const read = (): DataSource => {
-  const defaultValue: DataSource = { url: "", datasource: "googlesheetsurl" };
+  const defaultValue: DataSource = {
+    urls: [],
+    sensorType: NO_SENSOR_ID,
+    datasource: "googlesheetsurl",
+  };
   try {
     const stored = window.localStorage.getItem("datasource");
     if (!stored) return defaultValue;

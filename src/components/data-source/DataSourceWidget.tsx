@@ -1,8 +1,9 @@
-import { FC, HTMLProps, useState, useEffect } from "react";
+import { FC, HTMLProps, useState } from "react";
 import { DataSourceNames, DataSourceSelector } from "./DataSourceSelector";
 import Input from "../atoms/input";
 import Button from "../atoms/button";
-// import useDrivePicker from "../google-drive-picker/picker";
+import Select from "../atoms/select";
+import { NO_SENSOR_ID, FLOW_ID, PL_ID } from "../../sensors/common";
 
 export type DataSource = {
   url: string;
@@ -15,8 +16,10 @@ type Props = {
   isSubmitDisabled?: boolean;
   onDatasourceSourceChange: HTMLProps<HTMLSelectElement>["onChange"];
   onSubmit: () => void;
-  onUrlChange: (url: string) => void;
-  url: string;
+  onUrlsChange: (urls: string[]) => void;
+  onSensorTypeChange: (sensorType: number) => void;
+  urls: string[];
+  sensorType: number;
 };
 
 export const DataSourceWidget: FC<Props> = ({
@@ -25,77 +28,67 @@ export const DataSourceWidget: FC<Props> = ({
   isSubmitDisabled,
   onDatasourceSourceChange,
   onSubmit,
-  onUrlChange,
-  url,
+  onUrlsChange,
+  onSensorTypeChange,
+  sensorType,
+  urls,
 }) => {
-  const [isAutosubmitting, setIsAutosubmitting] = useState(false);
-  // const {
-  //   open,
-  //   isLoaded: isGoogleDrivePickerLoaded,
-  //   error: googleDrivePickerError,
-  // } = useDrivePicker({
-  //   clientId:
-  //     "961166063373-si47f62e9dbvbl0ahb4lrpouqf52la6j.apps.googleusercontent.com",
-  //   developerKey: "AIzaSyAgSzVhl0agLUrEbFow82k9csWtnARfaLY",
-  //   onPreBuild: ({ builder, view }) => {
-  //     const vw = Math.max(
-  //       document.documentElement.clientWidth || 0,
-  //       window.innerWidth || 0
-  //     );
-  //     const vh = Math.max(
-  //       document.documentElement.clientHeight || 0,
-  //       window.innerHeight || 0
-  //     );
-  //     view
-  //       // pdx clean air upload folder id
-  //       .setParent("1RwxRnjTDHfYKMJA_e093jOt8OnMX4D9J")
-  //       .setIncludeFolders(true)
-  //       .setSelectFolderEnabled(false)
-  //       .setMode(google.picker.DocsViewMode.LIST);
-  //     builder
-  //       .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
-  //       .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
-  //       .setSize(vw < 1051 ? vw : 1051, vh < 650 ? vh : 650);
-  //   },
-  //   onSelect: (res) => {
-  //     const editUrl = res.docs[0]?.url;
-  //     const url = editUrl?.replace(/\/edit?.*/, "");
-  //     if (url) onUrlChange(url);
-  //     setIsAutosubmitting(true);
-  //   },
-  // });
-  useEffect(() => {
-    isAutosubmitting && onSubmit();
-  }, [isAutosubmitting, onSubmit]);
-  const isGoogleDrive = datasource === DataSourceNames.googleDrive;
   return (
     <>
       <p className="gray-200 text-gray-600 text-center">
         Enter your datasource
       </p>
+      <Select
+        defaultValue={sensorType}
+        placeholder="Select sensor type"
+        className="w-full mt-1"
+        onMouseOver={() => {
+          if (sensorType === NO_SENSOR_ID) onSensorTypeChange(-1);
+        }}
+        onMouseOut={() => {
+          if (sensorType < NO_SENSOR_ID) onSensorTypeChange(0);
+        }}
+        onChange={(evt) => {
+          const nextId = evt.currentTarget.value;
+          onSensorTypeChange(parseInt(nextId, 10));
+        }}
+      >
+        <option disabled value={NO_SENSOR_ID}>
+          Select sensor type...
+        </option>
+        <option value={FLOW_ID}>Flow</option>
+        <option value={PL_ID}>PL</option>
+      </Select>
       <DataSourceSelector
+        required
         className="w-full mt-1"
         value={datasource}
         onChange={onDatasourceSourceChange}
       />
-      {isGoogleDrive ? null : (
-        // (
-        //   <Button
-        //     className="block m-auto mt-2 w-full"
-        //     onClick={open}
-        //     disabled={!isGoogleDrivePickerLoaded || !!googleDrivePickerError}
-        //   >
-        //     Click to select from Google Drive
-        //   </Button>
-        // )
+      <Input
+        required
+        error={isRenderingUrlErrorState}
+        className={`w-full mt-1 w-full`}
+        placeholder={
+          sensorType === FLOW_ID
+            ? "User Measures: https://url/to/data"
+            : "https://url/to/data"
+        }
+        defaultValue={urls[0]}
+        onChange={(evt) =>
+          onUrlsChange([evt.currentTarget.value, urls[1]].filter(Boolean))
+        }
+      />
+      {sensorType === FLOW_ID ? (
         <Input
+          required
           error={isRenderingUrlErrorState}
           className={`w-full mt-1 w-full`}
-          placeholder="https://url/to/data"
-          defaultValue={url}
-          onChange={(evt) => onUrlChange(evt.currentTarget.value)}
+          placeholder="User Positions: https://url/to/data"
+          defaultValue={urls[1]}
+          onChange={(evt) => onUrlsChange([urls[0], evt.currentTarget.value])}
         />
-      )}
+      ) : null}
       {isRenderingUrlErrorState ? (
         <p className="text-red-600 text-left text-sm">
           Sheets URL must have the form:
@@ -103,17 +96,14 @@ export const DataSourceWidget: FC<Props> = ({
           https://docs.google.com/spreadsheets/d/:id/gviz/tq
         </p>
       ) : null}
-
-      {isGoogleDrive ? null : (
-        <Button
-          disabled={isSubmitDisabled}
-          className="block m-auto mt-2"
-          bg={isSubmitDisabled ? "bg-gray-300" : undefined}
-          onClick={onSubmit}
-        >
-          Submit
-        </Button>
-      )}
+      <Button
+        disabled={isSubmitDisabled}
+        className="block m-auto mt-2"
+        bg={isSubmitDisabled ? "bg-gray-300" : undefined}
+        onClick={onSubmit}
+      >
+        Submit
+      </Button>
     </>
   );
 };
