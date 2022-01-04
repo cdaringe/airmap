@@ -1,12 +1,17 @@
 import { csv2geojson } from "csv2geojson";
 import { asCsv, normalizeMultiTableCsv } from "./normalize-multi-table-csv";
 
-const fetchGoogleSheetsCsv = (url: string) =>
-  fetch(url, {
+export const fetchGoogleSheetsCsv = (sheetsCsvUrl: string) => {
+  const url = new URL(sheetsCsvUrl);
+  const params = new URLSearchParams(url.search);
+  if (!params.has("format")) params.set("format", "csv");
+  url.search = params.toString();
+  return fetch(url.toString(), {
     mode: "cors",
     redirect: "follow",
     headers: { accept: "text" },
   }).then((r) => r.text());
+};
 
 const csvToGeoJson = (csv: string) => {
   return new Promise<GeoJSON.FeatureCollection>((res, rej) =>
@@ -25,16 +30,18 @@ const csvToGeoJson = (csv: string) => {
   );
 };
 
+export const matrixToGeoJson = (v: string[][]) => {
+  const ncsv = asCsv(v);
+  return csvToGeoJson(ncsv);
+};
+
 export const ofCsvUrl = async <GeoJsonProps = unknown>(
   sheetsCsvUrl: string,
   headerNames: string[]
 ) => {
-  const url = new URL(sheetsCsvUrl);
-  const params = new URLSearchParams(url.search);
-  if (!params.has("format")) params.set("format", "csv");
-  url.search = params.toString();
-  const csv = await fetchGoogleSheetsCsv(url.toString());
-  const ncsv = asCsv(normalizeMultiTableCsv(csv, headerNames));
-  const geojson = await csvToGeoJson(ncsv);
+  const csv = await fetchGoogleSheetsCsv(sheetsCsvUrl);
+  const geojson = await matrixToGeoJson(
+    normalizeMultiTableCsv(csv, headerNames)
+  );
   return geojson as GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoJsonProps>;
 };

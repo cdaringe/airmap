@@ -152,8 +152,9 @@ export default function Map() {
                 circleCases,
                 onSelectFeature: (feature) => {
                   if (fitBounds) setFitBounds(undefined);
-                  if (center)
+                  if (center) {
                     setCenter(feature.geometry.coordinates as [number, number]);
+                  }
                   setFeature(feature);
                 },
               }}
