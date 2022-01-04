@@ -82,12 +82,22 @@ const useFlow1: SensorDownloadHook = async (urls) => {
       const coord = coords.find((c) => c.timestamp === coordTsMatch.getTime())!;
       return {
         ...voc,
+        date: new Date(coord.timestamp).toUTCString(),
         latitude: coord.latitude,
         longitude: coord.longitude,
         skip: Math.abs(coord.timestamp - voc.timestamp) > 60_000,
+      } as Omit<typeof voc, "timestamp"> & {
+        timestamp?: number;
+        latitude: number;
+        longitude: number;
+        skip?: boolean;
       };
     })
-    .filter((v) => !v.skip);
+    .filter((v) => {
+      delete v.skip;
+      delete v.timestamp;
+      return !v.skip;
+    });
   const loss = vocsWithoutCoords.length - vocs.length;
   if (loss > 0) {
     console.warn(`lossy data: ${(loss / vocsWithoutCoords.length).toFixed(1)}`);
@@ -103,6 +113,8 @@ const useFlow1: SensorDownloadHook = async (urls) => {
         },
         properties,
       };
+      delete (properties as any).longitude;
+      delete (properties as any).latitude;
       return f;
     }),
   };
