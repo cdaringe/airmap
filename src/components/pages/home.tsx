@@ -1,7 +1,6 @@
 import { DataSourceWidget } from "../data-source/DataSourceWidget";
 import {
   isGoogleSheetsCompatibleUrl,
-  isValidHttpUrl,
   toSheetsDataExportUrl,
 } from "../../http/validators";
 import { useDataSource } from "../../components/data-source/use-data-source";

@@ -8,6 +8,7 @@ import * as mapAuth from "../src/components/mapping/use-map-auth";
 import Head from "next/head";
 import React from "react";
 import type { AppProps } from "next/app";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 const IS_SERVER = typeof window === "undefined";
 
@@ -18,7 +19,15 @@ const initialMapAuth = mapAuthRead();
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const { current: queryClient } = React.useRef(new QueryClient());
+  const { current: queryClient } = React.useRef(
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchOnWindowFocus: false,
+        },
+      },
+    })
+  );
   const [dsValue, dsSetValue] = React.useState(initialDataSource);
   const [mapAuthValue, mapAuthSetValue] = React.useState(initialMapAuth);
   const updateDataSource = React.useCallback((ds: ds.DataSource) => {
@@ -120,6 +129,9 @@ function MyApp({ Component, pageProps }: AppProps) {
               </footer>
             ) : undefined}
           </div>
+          {process.env.NODE_ENV !== "production" && (
+            <ReactQueryDevtools initialIsOpen={false} />
+          )}
         </QueryClientProvider>
       </MapAuthProvider>
     </DataSourceProvider>

@@ -3,7 +3,7 @@ import { DataSourceNames, DataSourceSelector } from "./DataSourceSelector";
 import Input from "../atoms/input";
 import Button from "../atoms/button";
 import Select from "../atoms/select";
-import { NO_SENSOR_ID, FLOW_ID, PL_ID } from "../../sensors/common";
+import { NO_SENSOR_ID, FLOW_ID, POCKET_LABS_ID } from "../../sensors/common";
 
 export type DataSource = {
   url: string;
@@ -50,6 +50,7 @@ export const DataSourceWidget: FC<Props> = ({
         }}
         onChange={(evt) => {
           const nextId = evt.currentTarget.value;
+          onUrlsChange([]);
           onSensorTypeChange(parseInt(nextId, 10));
         }}
       >
@@ -57,7 +58,7 @@ export const DataSourceWidget: FC<Props> = ({
           Select sensor type...
         </option>
         <option value={FLOW_ID}>Flow</option>
-        <option value={PL_ID}>PL</option>
+        <option value={POCKET_LABS_ID}>PocketLabs</option>
       </Select>
       <DataSourceSelector
         required
@@ -66,6 +67,7 @@ export const DataSourceWidget: FC<Props> = ({
         onChange={onDatasourceSourceChange}
       />
       <Input
+        key={`${sensorType}-url-1`}
         required
         error={isRenderingUrlErrorState}
         className={`w-full mt-1 w-full`}
@@ -82,6 +84,7 @@ export const DataSourceWidget: FC<Props> = ({
       {sensorType === FLOW_ID ? (
         <Input
           required
+          key={`${sensorType}-url-2`}
           error={isRenderingUrlErrorState}
           className={`w-full mt-1 w-full`}
           placeholder="User Positions: https://url/to/data"

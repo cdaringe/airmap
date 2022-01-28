@@ -1,38 +1,28 @@
 import { fetchGoogleSheetsCsv } from "../../components/data/geojson";
 import { SensorDownloadHook } from "../inferaces";
 import { closestTo } from "date-fns";
+import { tupleAsMapboxRange } from "../common";
 
-let fieldpm2 = ["get", "VOC (ppb)"];
-
-const colors = [
-  "#4d0173",
-  "#991113",
-  "#ff5600",
-  "#ffaa00",
-  "#feff00",
+const COLORS = [
   "#6fc400",
-].reverse();
-const range = (aInc: number, bNoninc: number) => [
-  "all",
-  [">=", fieldpm2, aInc],
-  ["<", fieldpm2, bNoninc],
+  "#feff00",
+  "#ffaa00",
+  "#ff5600",
+  "#991113",
+  "#4d0173",
 ];
 
-const lvl_pm2_1 = range(0, 2_000);
-const lvl_pm2_2 = range(2_000, 4_000);
-const lvl_pm2_3 = range(4_000, 6_000);
-const lvl_pm2_4 = range(6_000, 8_000);
-const lvl_pm2_5 = range(8_000, 10_000);
-const lvl_pm2_6 = range(12_000, 1e9);
-
-const pm2_levels = [
-  lvl_pm2_1,
-  lvl_pm2_2,
-  lvl_pm2_3,
-  lvl_pm2_4,
-  lvl_pm2_5,
-  lvl_pm2_6,
+const PM2_FIELD_NAME = "VOC (ppb)" as const;
+const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
+  [0, 2_000],
+  [2_000, 4_000],
+  [4_000, 6_000],
+  [6_000, 8_000],
+  [8_000, 10_000],
+  [12_000, 1e9],
 ];
+
+let mapBoxGetPM2Field: ["get", string] = ["get" as const, PM2_FIELD_NAME];
 
 const asRecords = <H extends Record<string, (v: string) => number>>(
   [header, ...rest]: string[][],
@@ -102,6 +92,8 @@ const useFlow1: SensorDownloadHook = async (urls) => {
   if (loss > 0) {
     console.warn(`lossy data: ${(loss / vocsWithoutCoords.length).toFixed(1)}`);
   }
+  let min = Infinity;
+  let max = -Infinity;
   const geojson: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",
     features: vocs.map((properties) => {
@@ -115,12 +107,33 @@ const useFlow1: SensorDownloadHook = async (urls) => {
       };
       delete (properties as any).longitude;
       delete (properties as any).latitude;
+      const currentPm2 = properties[PM2_FIELD_NAME];
+      if (currentPm2 > max) max = currentPm2;
+      if (currentPm2 < min) min = currentPm2;
       return f;
     }),
   };
+
   return {
     geojson,
-    circleCases: pm2_levels.flatMap((condition, i) => [condition, colors[i]]),
+    getLevels: (isMinMaxDynamicRange: boolean) => {
+      const numColors = COLORS.length;
+      const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
+      const pm2Ranges = isMinMaxDynamicRange
+        ? [...new Array(numColors)].map((_, i) => {
+            const base = min + i * levelSpan;
+            return [base, base + levelSpan] as [number, number];
+          })
+        : FIXED_PM2_LEVEL_RANGES;
+      return {
+        fieldName: PM2_FIELD_NAME,
+        colors: COLORS,
+        pm2Ranges,
+        circleCases: pm2Ranges
+          .map(tupleAsMapboxRange(mapBoxGetPM2Field))
+          .flatMap((condition, i) => [condition, COLORS[i]]),
+      };
+    },
   };
 };
 

@@ -1,20 +1,21 @@
-import Head from "next/head";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import ReactMapboxGl from "react-mapbox-gl";
 import { Props as MapProps } from "react-mapbox-gl/lib/map";
-import { useDataSource } from "../data-source/use-data-source";
+import { useDataSource } from "../../data-source/use-data-source";
 import dynamic from "next/dynamic";
-import AirIcon from "../icon/svg/air";
-import { PollutionLayer } from "../mapping/PollutionLayer";
-import { useInitialBoundingBox } from "../mapping/use-bounding-box";
-import { useHandleNoDatasource } from "../../hooks/use-handle-no-datasource";
-import { useSensorMappingResources } from "../../sensors/common";
+import Loading from "../../atoms/loading";
+import { PollutionLayer } from "../../mapping/PollutionLayer";
+import { useInitialBoundingBox } from "../../mapping/use-bounding-box";
+import { useHandleNoDatasource } from "../../../hooks/use-handle-no-datasource";
+import { useSensorMappingResources } from "../../../sensors/common";
 import { useQuery } from "react-query";
-
-const controls = () => import("mapbox-gl-controls");
+import MapError from "./map.error";
+import NoDatapoint from "./map.nodatapoint";
+import MapCssLink from "./map.csslink";
+import setupControls from "./map.setup-controls";
 
 // map.addControl(new RulerControl(), 'top-right');
-const MeasurementPopup = dynamic(() => import("../MeasurementPopup"));
+const MeasurementPopup = dynamic(() => import("../../MeasurementPopup"));
 
 const accessToken =
   "pk.eyJ1IjoicGR4Y2xlYW5haXIiLCJhIjoiY2tweDFuZmxpMjFmbzJ3bXVkajd4dDQ4dSJ9.LYiRB4TgOAckcqZGi-cUXg";
@@ -29,6 +30,7 @@ const normalizeMapboxUrl = (url: string, resourceType: string) => {
 };
 
 export default function Map() {
+  const [isMinMaxDynamicRange, setIsMinMaxDynamicRange] = useState(true);
   useHandleNoDatasource();
   const [fitBounds, setFitBounds] = React.useState<MapProps["fitBounds"]>();
   const [center, setCenter] = React.useState<MapProps["center"]>([
@@ -46,17 +48,18 @@ export default function Map() {
   const {
     isLoading: isDataLoading,
     error: dataDownloadError,
-    data: { geojson, circleCases } = {},
+    data: { geojson, getLevels } = {},
   } = useQuery({
     // use `typeof download` to cache bust react-query when the download
     // function has not yet finished downloading
     queryKey: [...urls, typeof download],
-    queryFn: () => {
-      if (download) {
-        return download(urls);
-      }
-    },
+    queryFn: () => download?.(urls),
+    cacheTime: 1e9,
   });
+  const pollutionLevels = useMemo(() => {
+    if (!getLevels) return null;
+    return getLevels(isMinMaxDynamicRange);
+  }, [getLevels, isMinMaxDynamicRange]);
 
   const error = sensorDownloaderError || dataDownloadError;
   const isLoading = isSensorDownladerLoading || isDataLoading;
@@ -73,51 +76,15 @@ export default function Map() {
     () => selectedFeature && setFeature(null),
     [selectedFeature, setFeature]
   );
-  if (error) {
-    return (
-      <div className="p-2">
-        <h1>Error</h1>
-        <h2>Failed to load map data.</h2>
-        <p>
-          {typeof error === "string" ? (
-            error
-          ) : (
-            <pre>{JSON.stringify(error, null, 2)}</pre>
-          )}
-        </p>
-        <p>
-          Are you sure your datasource is correct?
-          <pre>{JSON.stringify(ds, null, 2)}</pre>
-        </p>
-      </div>
-    );
-  }
-  if (isLoading)
-    return (
-      <div className="flex flex-column w-full content justify-center">
-        <AirIcon className="animate-spin w-20" />
-      </div>
-    );
+  if (error) return <MapError error={error} datasource={ds} />;
+  if (isLoading) return <Loading />;
   const dataPoint = geojson?.features[0]?.properties as
     | Record<string, string>
     | undefined;
-  if (!dataPoint) {
-    return (
-      <p className="p-2">
-        The datafile provided could not be converted into geojson format.
-        Generally, this occurs because the columns in the data sheet do not
-        match the expected field names.
-      </p>
-    );
-  }
+  if (!dataPoint) return <NoDatapoint />;
   return (
     <>
-      <Head>
-        <link
-          href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css"
-          rel="stylesheet"
-        />
-      </Head>
+      <MapCssLink />
       {geojson?.features.length === 0 ? (
         <div className="p-4">
           <h1 className="text-xl">Missing data</h1>
@@ -125,16 +92,7 @@ export default function Map() {
         </div>
       ) : (
         <Map
-          onStyleLoad={async (map) => {
-            const { RulerControl, ZoomControl, InspectControl, StylesControl } =
-              await controls();
-            if (process.env.NODE_ENV !== "production") {
-              map.addControl(new InspectControl(), "top-right");
-            }
-            map.addControl(new StylesControl(), "bottom-right");
-            map.addControl(new ZoomControl(), "bottom-right");
-            map.addControl(new RulerControl(), "bottom-right");
-          }}
+          onStyleLoad={setupControls}
           className="content w-full"
           fitBounds={fitBounds}
           center={center}
@@ -149,7 +107,7 @@ export default function Map() {
             <PollutionLayer
               {...{
                 geojson,
-                circleCases,
+                circleCases: pollutionLevels?.circleCases,
                 onSelectFeature: (feature) => {
                   if (fitBounds) setFitBounds(undefined);
                   if (center) {
@@ -170,6 +128,34 @@ export default function Map() {
               }}
             />
           ) : undefined}
+          <div className="map-overlay">
+            <div className="map-overlay-control map-legend">
+              <div style={{ fontWeight: "bold" }}>
+                {pollutionLevels?.fieldName}
+              </div>
+              {pollutionLevels?.pm2Ranges.map(([lower, upper], i) => {
+                return (
+                  <div key={`${isMinMaxDynamicRange}-${i}`}>
+                    <span
+                      style={{ backgroundColor: pollutionLevels.colors[i] }}
+                      className="map-legend-key"
+                    />
+                    <span>
+                      [{lower.toFixed(1)}, {upper.toFixed(1)})
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="map-overlay-control map-pollution-range-mode">
+              <input
+                type="checkbox"
+                checked={isMinMaxDynamicRange}
+                onChange={() => setIsMinMaxDynamicRange(!isMinMaxDynamicRange)}
+              />{" "}
+              Dynamic Levels
+            </div>
+          </div>
         </Map>
       )}
     </>

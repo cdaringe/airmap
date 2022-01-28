@@ -87,3 +87,29 @@ a {
   border-bottom-color: rgb(61, 59, 59);
 }
 /* end  https://bl.ocks.org/samfader/43570c37c4e5aebb8bf1d88216a663fc */
+.map-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-right: 10px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+}
+
+.map-overlay-control {
+  background: #fff;
+  border-radius: 3px;
+
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+  width: 125px;
+}
+
+.map-legend-key {
+  display: inline-block;
+  border-radius: 20%;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+}

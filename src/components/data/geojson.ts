@@ -13,26 +13,27 @@ export const fetchGoogleSheetsCsv = (sheetsCsvUrl: string) => {
   }).then((r) => r.text());
 };
 
-const csvToGeoJson = (csv: string) => {
-  return new Promise<GeoJSON.FeatureCollection>((res, rej) =>
-    csv2geojson(
-      csv,
-      {
-        latfield: "Lat",
-        lonfield: "Lng",
-        delimiter: ",",
-      },
-      function oncsv(err, geojson) {
-        if (err) return rej(err);
-        return res(geojson);
-      }
-    )
+const csvToGeoJson = <Properties = GeoJSON.GeoJsonProperties>(csv: string) => {
+  return new Promise<GeoJSON.FeatureCollection<GeoJSON.Geometry, Properties>>(
+    (res, rej) =>
+      csv2geojson<Properties>(
+        csv,
+        {
+          latfield: "Lat",
+          lonfield: "Lng",
+          delimiter: ",",
+        },
+        function oncsv(err, geojson) {
+          if (err) return rej(err);
+          return res(geojson);
+        }
+      )
   );
 };
 
-export const matrixToGeoJson = (v: string[][]) => {
+export const matrixToGeoJson = <Properties = unknown>(v: string[][]) => {
   const ncsv = asCsv(v);
-  return csvToGeoJson(ncsv);
+  return csvToGeoJson<Properties>(ncsv);
 };
 
 export const ofCsvUrl = async <GeoJsonProps = unknown>(

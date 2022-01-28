@@ -18,44 +18,15 @@ Do great work.
 - https://docs.google.com/spreadsheets/d/1IzYBZ7SjdQ7ODHxYBauEPcy2sxq5Il3UM9NSDoJYI_g/gviz/tq?tq=select%20B%2C%20G%2C%20H%0Alimit%2020
 - https://docs.google.com/spreadsheets/d/1N6Fnoju2QqgpLTRHarGUbg21erRTaKH3V7wG3hhIEew
 
-## Device Specifications
+# sensors
 
-### PocketLabs
+## pocketlabs
 
-example: https://docs.google.com/spreadsheets/d/1ugwfzbs-lEfgvVOqYY848W3w-XuEWiuUTHHlkI_ur9Q/edit#gid=1896735924
+https://docs.google.com/spreadsheets/d/1HZjTtvqMGZ7iNtVYW6vrzeSOHeHE144-B_6CH4REIC8/edit#gid=1094314331
 
-- input
+## flow
 
-  - rows: only rows associated with `Mean PM1.0 (µg/m³)` & `Mean PM2.5 (µg/m³)`
-    - other rows shall be discarded
-  - columns: `Lat`, `Lng`, `Mean PM{1.0|2.5} (µg/m³)`
+example sheets:
 
-- output
-  - single points per `Mean PM1.0 (µg/m³)` at `(Lng, Lat)` (x,y) coordinates
-  - onClick of data point: ???
-
-### AtmoTube
-
-example: ...
-
-- input
-
-  - rows: ...
-    - all rows shall be considered
-  - columns: ...
-
-- transformation:
-
-  - EPA correction
-
-- output
-  - single points per `Mean PM2.5 (µg/m³)` at `(Lng, Lat)` (x,y) coordinates
-
-### Flow2 - PlumeLabs
-
-TBD
-
-## ACTIONS ITEMS
-
-- OK to select device ID specifically pre-load
-- Add toggle PM1/PM2 rendering
+- measures: https://docs.google.com/spreadsheets/d/1x59PQjrKqN3NSORDaTAs557v0mloOosNTnqKhfrE3VU/edit#gid=585713925
+- positions: https://docs.google.com/spreadsheets/d/15QJWTrn2RVG8C2q0SF7qjXDIMabg-OXDTYkjBRLWHrw/edit#gid=2147112514
