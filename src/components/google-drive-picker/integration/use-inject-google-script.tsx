@@ -74,7 +74,7 @@ export default function useInjectScript(): [boolean, boolean] {
       script.removeEventListener("load", onScriptEvent);
       script.removeEventListener("error", onScriptEvent);
     };
-  }, [url]);
+  }, []);
 
   return [state.loaded, state.error];
 }

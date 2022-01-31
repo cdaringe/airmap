@@ -38,6 +38,7 @@ export default function useDrivePicker({
       })
       .build()
       .setVisible(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config, onSelect, isPickerApiLoaded]);
 
   // use effect to open picker after authentcation

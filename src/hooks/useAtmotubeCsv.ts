@@ -1,5 +1,6 @@
 import { useQuery } from "react-query";
 import { parse } from "papaparse";
+import { getDMY } from "../util/date";
 
 export type RowData = [
   /* date */ Date,
@@ -77,11 +78,6 @@ export const useAtmosTubeCsv = (
         },
       });
       await new Response(stream).blob();
-      const getDMY = (d: Date): [number, number, number] => [
-        d.getDate(),
-        d.getMonth(),
-        d.getFullYear(),
-      ];
       const rows = [
         ...rowsOfInterest
           .reduce<Map<string, RowData[]>>((acc, row) => {

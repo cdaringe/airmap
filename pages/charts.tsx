@@ -1,4 +1,9 @@
-import { useState, PureComponent, useLayoutEffect } from "react";
+import React, {
+  useState,
+  PureComponent,
+  useLayoutEffect,
+  ChangeEventHandler,
+} from "react";
 import { useAtmosTubeCsv, RowData } from "../src/hooks/useAtmotubeCsv";
 import {
   AreaChart,
@@ -8,6 +13,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
+import { getDMY } from "../src/util/date";
 
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
@@ -38,9 +44,34 @@ class CustomizedAxisTick extends PureComponent<any> {
 }
 const getWidth = () => window.document.body.getBoundingClientRect().width;
 
+type DatePickerProps = Omit<React.HTMLProps<HTMLInputElement>, "value"> & {
+  value: Date;
+};
+const DatePicker = ({ onChange, value }: DatePickerProps) => {
+  const [d, m, y] = getDMY(value);
+  const dayStr = [y, m, d]
+    .map((v, i) => {
+      const s = String(v);
+      if (i === 0) return s;
+      if (s.length === 1) return `0${s}`;
+      return s;
+    })
+    .join("-");
+  return (
+    <input
+      type="date"
+      pattern="\d{4}-\d{2}-\d{2}"
+      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      placeholder="Select date"
+      onChange={onChange}
+      value={dayStr}
+    />
+  );
+};
+
 function ChartPages() {
-  const [date1] = useState(DUMMY_DATES[0]);
-  const [date2] = useState(DUMMY_DATES[1]);
+  const [date1, setDate1] = useState(DUMMY_DATES[0]);
+  const [date2, setDate2] = useState(DUMMY_DATES[1]);
   const [width, setWidth] = useState(getWidth());
   useLayoutEffect(() => {
     const onResize = () => {
@@ -65,9 +96,28 @@ function ChartPages() {
   } else {
     const data = atmosTable?.rows;
     if (!data) throw new Error("missing data");
-    // console.log(data);
     return (
       <div>
+        <label htmlFor="start-date">Start Date</label>
+        <DatePicker
+          name="start-date"
+          value={date1}
+          onChange={(evt) => {
+            const d1 = new Date(evt.currentTarget.value);
+            if (d1 > date2) return;
+            setDate1(d1);
+          }}
+        />
+        <label htmlFor="end-date">End Date</label>
+        <DatePicker
+          name="end-date"
+          value={date2}
+          onChange={(evt) => {
+            const d2 = new Date(evt.currentTarget.value);
+            if (d2 < date1) return;
+            setDate2(d2);
+          }}
+        />
         <h1 className="text-xl block text-center">VOC, ppm</h1>
         <br />
         <AreaChart
@@ -102,7 +152,7 @@ function ChartPages() {
             dataKey="prettyDate"
             tick={<CustomizedAxisTick />}
           />
-          <YAxis />
+          <YAxis label="VOC, ppm" />
         </AreaChart>
       </div>
     );
