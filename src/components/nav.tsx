@@ -30,6 +30,11 @@ export function Nav({ className, ...rest }: React.HTMLProps<HTMLDivElement>) {
                     Map
                   </a>
                 </Link>
+                <Link href="/charts">
+                  <a className="text-gray-800 dark:text-white hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    Charts
+                  </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -45,6 +50,11 @@ export function Nav({ className, ...rest }: React.HTMLProps<HTMLDivElement>) {
           <Link href="/map">
             <a className="text-gray-800 dark:text-white block px-3 py-2 rounded-md text-base font-medium">
               Map
+            </a>
+          </Link>
+          <Link href="/charts">
+            <a className="text-gray-800 dark:text-white block px-3 py-2 rounded-md text-base font-medium">
+              Charts
             </a>
           </Link>
         </div>
