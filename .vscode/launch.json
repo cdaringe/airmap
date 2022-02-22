@@ -20,6 +20,23 @@
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/src/components/pages/__tests__/home.test.tsx",
       "outFiles": ["${workspaceFolder}/**/*.js"]
+    },
+    {
+      "name": "ts-node file",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--nolazy",
+        "--loader",
+        "ts-node/esm",
+        "-r",
+        "dotenv/config"
+      ],
+      "args": ["${file}"],
+      "cwd": "${workspaceRoot}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"]
     }
   ]
 }
