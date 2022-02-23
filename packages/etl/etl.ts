@@ -7,7 +7,7 @@ import {
 } from "./purpleair/source/thingspeak.js";
 import * as sink from "./purpleair/sink/queries.js";
 import assert from "assert";
-import { asQueryParamDate } from "./purpleair/source/url-formatting.js";
+import { partition } from "./collections/partition.js";
 
 const OLDEST_ALLOWED_DATA_DATE = new Date("2020-01-01");
 
@@ -45,10 +45,10 @@ async function etl(sensorAccess: SensorAccess) {
       // data exists, so get new datas AND ensure that we
       // slurp up old datas _before_ our earliest known point
       searchBounds = [
-        // {
-        //   earliest: OLDEST_ALLOWED_DATA_DATE,
-        //   latest: new Date(new Date(first).getTime() - 1_000),
-        // },
+        {
+          earliest: OLDEST_ALLOWED_DATA_DATE,
+          latest: new Date(new Date(first).getTime() - 1_000),
+        },
         {
           earliest: new Date(new Date(last).getTime() + 1_000),
           latest: new Date(),
@@ -124,15 +124,9 @@ async function etl(sensorAccess: SensorAccess) {
           sensor_id: channelId,
           created_at: it.created_at,
         }));
-      if (feeds.length) {
-        if (feeds.length > 4000) {
-          const halfWayIndex = Math.ceil(records.length / 2);
-          const p1 = records.slice(0, halfWayIndex);
-          const p2 = records.slice(halfWayIndex);
-          await sink.postRecords(p1);
-          await sink.postRecords(p2);
-        } else {
-          await sink.postRecords(records);
+      if (records.length) {
+        for (const chunkRecords of partition(records, 2000)) {
+          await sink.postRecords(chunkRecords);
         }
       }
       const earliestFoundDate = feeds.reduce<null | Date>((earliest, curr) => {
@@ -152,12 +146,20 @@ async function etl(sensorAccess: SensorAccess) {
   console.log(`finished ${prettySensor}`);
 }
 
-const etlAll = (sensors: SensorAccess[]) =>
-  pAll(
-    sensors.map((s) => () => etl(s)),
+const etlAll = async (sensors: SensorAccess[]) => {
+  let count = 0;
+  await pAll(
+    sensors.map(
+      (s) => () =>
+        etl(s).then(() => {
+          ++count;
+          console.log(`${count} completed`);
+        })
+    ),
     {
-      concurrency: 9,
+      concurrency: 10,
     }
   );
+};
 
 etlAll(sensors);

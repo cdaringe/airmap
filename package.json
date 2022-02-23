@@ -1,77 +1,8 @@
 {
   "name": "airmap",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "exports": "./index.js",
   "engines": {
     "node": ">=16"
-  },
-  "scripts": {
-    "dev": "next dev",
-    "export": "next export",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "format": "prettier --write 'src/**' 'pages/**' './*.{js,json,md}' './.github/**' '.vscode/**'",
-    "test": "ava"
-  },
-  "dependencies": {
-    "@turf/turf": "^6.5.0",
-    "clsx": "^1.1.1",
-    "dotenv": "^16.0.0",
-    "mapbox-gl": "^2.6.1",
-    "mapbox-gl-controls": "^2.3.5",
-    "next": "12.0.7",
-    "p-all": "4.0.0",
-    "papaparse": "^5.3.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-mapbox-gl": "^5.1.1",
-    "react-query": "^3.34.7",
-    "react-spring": "^9.4.2",
-    "recharts": "^2.1.8"
-  },
-  "devDependencies": {
-    "@babel/core": ">=7.0.0 <8.0.0",
-    "@testing-library/dom": "8.11.1",
-    "@testing-library/react": "12.0.0",
-    "@testing-library/user-event": "13.5.0",
-    "@types/gapi": "0.0.41",
-    "@types/geojson": "^7946.0.8",
-    "@types/google.picker": "0.0.39",
-    "@types/mapbox-gl": "^2.6.0",
-    "@types/node": "*",
-    "@types/papaparse": "^5.3.2",
-    "@types/react": "17.0.38",
-    "autoprefixer": "^10.4.1",
-    "ava": "4.0.0",
-    "browser-env": "3.3.0",
-    "browserslist": "4.19.1",
-    "csv2geojson": "^5.1.1",
-    "date-fns": "2.28.0",
-    "eslint": "8.6.0",
-    "eslint-config-next": "12.0.7",
-    "got": "12.0.1",
-    "postcss": "^8.4.5",
-    "prettier": "^2.5.1",
-    "raf": "3.4.1",
-    "tailwindcss": "^3.0.9",
-    "ts-node": "10.4.0",
-    "typescript": "4.5.4"
-  },
-  "ava": {
-    "verbose": true,
-    "files": [
-      "**/*.test.ts",
-      "**/*.test.tsx"
-    ],
-    "extensions": [
-      "ts",
-      "tsx"
-    ],
-    "require": [
-      "./test.tsnode.js"
-    ]
   }
 }
