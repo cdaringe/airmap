@@ -8,6 +8,9 @@ import {
 import * as sink from "./purpleair/sink/queries.js";
 import assert from "assert";
 import { partition } from "./collections/partition.js";
+import pino from "pino";
+
+const logger = pino({ level: "info" });
 
 const OLDEST_ALLOWED_DATA_DATE = new Date("2020-01-01");
 
@@ -31,7 +34,7 @@ async function etl(sensorAccess: SensorAccess) {
   const numMatchingSensors = sinkSensor.data?.sensor.length;
   assert(typeof numMatchingSensors === "number");
   const prettySensor = `${Label} ${THINGSPEAK_PRIMARY_ID}`;
-  console.log(`processing sensor: ${prettySensor}`);
+  logger.info(`processing sensor: ${prettySensor}`);
   if (numMatchingSensors === 0) {
     await sink.createSinkSensor({
       id: channelId,
@@ -72,15 +75,11 @@ async function etl(sensorAccess: SensorAccess) {
   for (const bounds of searchBounds.filter(
     ({ earliest, latest }) => latest > earliest
   )) {
-    console.log(`  searching bounds: ${prettyRange(bounds)}`);
+    logger.info(`searching: ${prettyRange(bounds)}`);
     let isFetchingMore = true;
     let isFatalData = false;
     while (isFetchingMore) {
-      console.log(
-        `    fetching backwards from ${bounds.latest
-          .toISOString()
-          .replace(/T.*/, "")}`
-      );
+      logger.info(`fetching ${bounds.latest.toISOString().replace(/T.*/, "")}`);
       const { feeds } = await getSourceObservations({
         channelId,
         start: bounds.earliest,
@@ -143,7 +142,7 @@ async function etl(sensorAccess: SensorAccess) {
       }
     }
   }
-  console.log(`finished ${prettySensor}`);
+  logger.info(`finished ${prettySensor}`);
 }
 
 const etlAll = async (sensors: SensorAccess[]) => {
@@ -153,11 +152,13 @@ const etlAll = async (sensors: SensorAccess[]) => {
       (s) => () =>
         etl(s).then(() => {
           ++count;
-          console.log(`${count} completed`);
+          logger.info(`${count} sensors transferred`);
         })
     ),
     {
-      concurrency: 10,
+      concurrency: process.env.SOURCE_CONCURRENCY
+        ? parseInt(process.env.SOURCE_CONCURRENCY, 10)
+        : 1,
     }
   );
 };

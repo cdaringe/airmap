@@ -4,5 +4,11 @@
   "private": true,
   "engines": {
     "node": ">=16"
+  },
+  "scripts": {
+    "format": "prettier --write './*.{js,json,md}' './.github/**' '.vscode/**'"
+  },
+  "devDependencies": {
+    "prettier": "^2.5.1"
   }
 }

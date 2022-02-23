@@ -22,7 +22,7 @@
       "outFiles": ["${workspaceFolder}/**/*.js"]
     },
     {
-      "name": "ts-node file",
+      "name": "etl - ts-node file",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "node",
@@ -34,7 +34,7 @@
         "dotenv/config"
       ],
       "args": ["${file}"],
-      "cwd": "${workspaceRoot}",
+      "cwd": "${workspaceRoot}/packages/etl",
       "internalConsoleOptions": "openOnSessionStart",
       "skipFiles": ["<node_internals>/**", "node_modules/**"]
     }

@@ -12,7 +12,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write 'src/**' 'pages/**' './*.{js,json,md}' './.github/**' '.vscode/**'",
+    "format": "prettier --write 'src/**' 'pages/**' './*.{js,json,md}'",
     "test": "ava"
   },
   "dependencies": {

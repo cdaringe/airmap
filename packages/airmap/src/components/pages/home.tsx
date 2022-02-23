@@ -3,7 +3,7 @@ import {
   isGoogleSheetsCompatibleUrl,
   toSheetsDataExportUrl,
 } from "../../http/validators";
-import { useDataSource } from "../../components/data-source/use-data-source";
+import { useDataSource } from "../data-source/use-data-source";
 import { useRouter } from "next/router";
 import React from "react";
 import { useMapAuth } from "../mapping/use-map-auth";

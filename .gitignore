@@ -36,3 +36,5 @@ yarn-error.log*
 static
 *.tsbuildinfo
 .env
+.next
+node_modules

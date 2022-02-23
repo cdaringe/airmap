@@ -1,9 +1,0 @@
-FROM node:alpine as deps
-RUN npm i -g pnpm@6
-COPY package.json .npmrc
-WORKDIR /app
-RUN pnpm install
-COPY src/etl/ /app
-RUN pnpm exec tsc
-RUN ls -al
-
