@@ -1,6 +1,8 @@
 # airmap
 
-an application to download and visualize air quality data
+packages & applications to download and visualize air quality data
+
+[![main](https://github.com/cdaringe/airmap/actions/workflows/main.yml/badge.svg)](https://github.com/cdaringe/airmap/actions/workflows/main.yml)
 
 ## usage
 
@@ -14,6 +16,8 @@ visit [https://cdaringe.github.io/airmap](https://cdaringe.github.io/airmap)!
 - `pnpm dev`
 
 Do great work.
+
+<details>
 
 - https://docs.google.com/spreadsheets/d/1IzYBZ7SjdQ7ODHxYBauEPcy2sxq5Il3UM9NSDoJYI_g/gviz/tq?tq=select%20B%2C%20G%2C%20H%0Alimit%2020
 - https://docs.google.com/spreadsheets/d/1N6Fnoju2QqgpLTRHarGUbg21erRTaKH3V7wG3hhIEew
@@ -30,3 +34,5 @@ example sheets:
 
 - measures: https://docs.google.com/spreadsheets/d/1x59PQjrKqN3NSORDaTAs557v0mloOosNTnqKhfrE3VU/edit#gid=585713925
 - positions: https://docs.google.com/spreadsheets/d/15QJWTrn2RVG8C2q0SF7qjXDIMabg-OXDTYkjBRLWHrw/edit#gid=2147112514
+
+</details>
