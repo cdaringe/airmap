@@ -1,3 +1,11 @@
 table:
   name: sensor_type
   schema: public
+select_permissions:
+- permission:
+    columns:
+    - name
+    - id
+    - description
+    filter: {}
+  role: readonly

@@ -49,11 +49,11 @@ export const getSourceObservations = ({
   start: Date;
   end: Date;
 }) =>
-  got(
-    getThingspeakUrl({ channel: channelId, apiKey, start, end })
-  ).json<ThingSpeakResponse>();
+  got(getThingspeakUrl({ channel: channelId, apiKey, start, end }), {
+    retry: { limit: 3 },
+  }).json<ThingSpeakResponse>();
 
 export const getSourceSensor = (sensorAccess: SensorAccess) =>
-  got(getPurpleUrl(sensorAccess))
+  got(getPurpleUrl(sensorAccess), { retry: { limit: 3 } })
     .json<PurpleResponse>()
     .then((r) => r.results);

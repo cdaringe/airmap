@@ -1,7 +1,6 @@
 import { sensors } from "./sensors.js";
 import { SensorAccess } from "./interfaces.js";
 import pAll from "p-all";
-import { sleep } from "./util.js";
 import {
   getSourceSensor,
   getSourceObservations,
@@ -26,8 +25,10 @@ async function etl(sensorAccess: SensorAccess) {
   } = sourceSensor;
   const channelId = sourceSensor.THINGSPEAK_PRIMARY_ID;
   const sinkSensor = await sink.getSensor(channelId);
-  if (sinkSensor.errors?.length) throw new Error(sinkSensor.errors[0]);
-  const numMatchingSensors = sinkSensor.data?.sensors.length;
+  if (sinkSensor.errors?.length) {
+    throw new Error(JSON.stringify(sinkSensor.errors));
+  }
+  const numMatchingSensors = sinkSensor.data?.sensor.length;
   assert(typeof numMatchingSensors === "number");
   const prettySensor = `${Label} ${THINGSPEAK_PRIMARY_ID}`;
   console.log(`processing sensor: ${prettySensor}`);
@@ -44,10 +45,10 @@ async function etl(sensorAccess: SensorAccess) {
       // data exists, so get new datas AND ensure that we
       // slurp up old datas _before_ our earliest known point
       searchBounds = [
-        {
-          earliest: OLDEST_ALLOWED_DATA_DATE,
-          latest: new Date(new Date(first).getTime() - 1_000),
-        },
+        // {
+        //   earliest: OLDEST_ALLOWED_DATA_DATE,
+        //   latest: new Date(new Date(first).getTime() - 1_000),
+        // },
         {
           earliest: new Date(new Date(last).getTime() + 1_000),
           latest: new Date(),
@@ -73,13 +74,13 @@ async function etl(sensorAccess: SensorAccess) {
   )) {
     console.log(`  searching bounds: ${prettyRange(bounds)}`);
     let isFetchingMore = true;
+    let isFatalData = false;
     while (isFetchingMore) {
       console.log(
         `    fetching backwards from ${bounds.latest
           .toISOString()
           .replace(/T.*/, "")}`
       );
-      await sleep(1_000);
       const { feeds } = await getSourceObservations({
         channelId,
         start: bounds.earliest,
@@ -89,22 +90,50 @@ async function etl(sensorAccess: SensorAccess) {
       const pm1_atm = "field1";
       const pm2_atm = "field2";
       const pm2_cf1 = "field8";
-      const pm3_atm = "field3";
+      // const pm3_atm = "field3";
       const temperature = "field6";
       const humidity = "field7";
-      const records = feeds.map((it) => ({
-        pm1_atm: parseInt(it[pm1_atm], 10),
-        pm2_atm: parseInt(it[pm2_atm], 10),
-        pm2_cf1: parseInt(it[pm2_cf1], 10),
-        pm3_atm: parseInt(it[pm3_atm], 10),
-        temperature: parseFloat(it[temperature]),
-        humidity: parseFloat(it[humidity]),
-        sensor_id: channelId,
-        created_at: it.created_at,
-      }));
+      const records = feeds
+        .filter((it) => {
+          const isFieldMissing = [
+            pm1_atm,
+            pm2_atm,
+            pm2_cf1,
+            temperature,
+            humidity,
+          ].some((f) => typeof it[f as keyof typeof it] !== "string");
+          if (isFieldMissing) {
+            // only log warning once, using isFatalData as the stateful indicator
+            if (!isFatalData) {
+              console.error(
+                `        dropping data--missing fields: ${JSON.stringify(it)}`
+              );
+            }
+            isFatalData = true;
+            return false;
+          }
+          return true;
+        })
+        .map((it) => ({
+          pm_1_atm: parseInt(it[pm1_atm], 10),
+          pm_2_5_atm: parseInt(it[pm2_atm], 10),
+          pm_2_5_cf: parseInt(it[pm2_cf1], 10),
+          // pm3_atm: parseInt(it[pm3_atm], 10),
+          temperature_f: parseFloat(it[temperature]),
+          humidity: parseFloat(it[humidity]),
+          sensor_id: channelId,
+          created_at: it.created_at,
+        }));
       if (feeds.length) {
-        await sink.postRecords(records);
-        await sleep(1_000);
+        if (feeds.length > 4000) {
+          const halfWayIndex = Math.ceil(records.length / 2);
+          const p1 = records.slice(0, halfWayIndex);
+          const p2 = records.slice(halfWayIndex);
+          await sink.postRecords(p1);
+          await sink.postRecords(p2);
+        } else {
+          await sink.postRecords(records);
+        }
       }
       const earliestFoundDate = feeds.reduce<null | Date>((earliest, curr) => {
         const currDate = new Date(curr.created_at);
@@ -112,21 +141,22 @@ async function etl(sensorAccess: SensorAccess) {
         return currDate < earliest ? currDate : earliest;
       }, null);
       isFetchingMore =
-        !!earliestFoundDate && earliestFoundDate > bounds.earliest;
+        !isFatalData &&
+        !!earliestFoundDate &&
+        earliestFoundDate > bounds.earliest;
       if (isFetchingMore && earliestFoundDate) {
         bounds.latest = new Date(earliestFoundDate?.getTime() - 1_000);
       }
     }
   }
-  await sleep(1_000);
-  console.log(`\tfinished ${prettySensor}`);
+  console.log(`finished ${prettySensor}`);
 }
 
 const etlAll = (sensors: SensorAccess[]) =>
   pAll(
     sensors.map((s) => () => etl(s)),
     {
-      concurrency: 1,
+      concurrency: 9,
     }
   );
 

@@ -87,13 +87,12 @@ export interface ThingSpeakFeed {
 
 export type Observation = {
   created_at: string;
-  sensor_id: string;
   humidity: number;
-  pm1_atm: number;
-  pm2_atm: number;
-  pm2_cf1: number;
-  pm3_atm: number;
-  temperature: number;
+  pm_1_atm: number;
+  pm_2_5_atm: number;
+  pm_2_5_cf: number;
+  sensor_id: string;
+  temperature_f: number;
 };
 
 export type SensorAccess = { key: string; show: number };

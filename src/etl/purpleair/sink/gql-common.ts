@@ -25,6 +25,9 @@ export const graphQL = <T = unknown>(
         "content-type": "application/json",
         [API_SECRET_HEADER_KEY!]: HASURA_GRAPHQL_ADMIN_SECRET!,
       },
+      retry: {
+        limit: 5,
+      },
     })
     .json<{
       data: T | null;
