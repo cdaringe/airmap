@@ -1,15 +1,18 @@
 FROM node:alpine as build
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
-USER node
-RUN npm add --global pnpm@6
+WORKDIR /etl/
+RUN chown -R node .
+RUN chmod 1766 .
 WORKDIR /etl/app
+RUN chown -R node .
+RUN chmod 1766 .
+RUN npm add --global pnpm@6
+USER node
 COPY package.json .
 RUN NODE_ENV=development pnpm install --dir /etl/app
-# RUN NODE_ENV=development npm i
 RUN mv node_modules node_modules_dev
 RUN NODE_ENV=production pnpm install --prod --dir /etl/app
-# RUN NODE_ENV=production npm i --prod
 RUN mv node_modules /etl/node_modules_prod
 RUN mv node_modules_dev node_modules
 COPY ./* /etl/app/
