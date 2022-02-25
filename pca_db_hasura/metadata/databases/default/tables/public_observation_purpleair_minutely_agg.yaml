@@ -1,0 +1,3 @@
+table:
+  name: observation_purpleair_minutely_agg
+  schema: public

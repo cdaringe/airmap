@@ -1,3 +1,6 @@
 - "!include public_observation_purpleair.yaml"
+- "!include public_observation_purpleair_daily_agg.yaml"
+- "!include public_observation_purpleair_hourly_agg.yaml"
+- "!include public_observation_purpleair_minutely_agg.yaml"
 - "!include public_sensor.yaml"
 - "!include public_sensor_type.yaml"
