@@ -1,0 +1,9 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE ROLE pca_read_only_role;
+-- GRANT CONNECT ON DATABASE pca TO pca_read_only_role;
+-- GRANT USAGE ON SCHEMA public TO pca_read_only_role;
+-- GRANT SELECT ON ALL TABLES IN SCHEMA public TO pca_read_only_role;
+-- ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO pca_read_only_role;
+-- CREATE USER pca_reader WITH PASSWORD 'rrD2y1tf9rlpAv4z82GWIZR2g3GyBM';
+-- GRANT pca_read_only_role to pca_reader;
