@@ -3,7 +3,7 @@ import {
   matrixToGeoJson,
 } from "../../components/data/geojson";
 import { normalizeMultiTableCsv } from "../../components/data/normalize-multi-table-csv";
-import { SensorDownloadHook } from "../inferaces";
+import { SensorDownloadHook } from "../interfaces";
 import { tupleAsMapboxRange } from "../common";
 
 const RAW_PM1_HEADER = "PM1.0 (µg/m³)" as const;
@@ -125,3 +125,4 @@ const getPocketlabs: SensorDownloadHook = async (urls) => {
 };
 
 export const download = getPocketlabs;
+export const dateField = "Date";

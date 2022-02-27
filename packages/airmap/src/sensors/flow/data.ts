@@ -1,5 +1,5 @@
 import { fetchGoogleSheetsCsv } from "../../components/data/geojson";
-import { SensorDownloadHook } from "../inferaces";
+import { SensorDownloadHook } from "../interfaces";
 import { closestTo } from "date-fns";
 import { tupleAsMapboxRange } from "../common";
 
@@ -138,3 +138,5 @@ const useFlow1: SensorDownloadHook = async (urls) => {
 };
 
 export const download = useFlow1;
+export const dateField =
+  /* transformed from "date (UTC)"" on download */ "date";

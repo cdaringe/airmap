@@ -14,6 +14,8 @@ import NoDatapoint from "./map.nodatapoint";
 import MapCssLink from "./map.csslink";
 import setupControls from "./map.setup-controls";
 
+const isValidDate = (d: Date) => !d.toString().match(/Invalid/);
+
 // map.addControl(new RulerControl(), 'top-right');
 const MeasurementPopup = dynamic(() => import("../../MeasurementPopup"));
 
@@ -29,8 +31,15 @@ const normalizeMapboxUrl = (url: string, resourceType: string) => {
   };
 };
 
+const DEFAULT_START_DATE = new Date("2020-01-01");
+const DEFAULT_END_DATE = new Date(`${new Date().getFullYear()}-12-31`);
+
 export default function Map() {
   const [isMinMaxDynamicRange, setIsMinMaxDynamicRange] = useState(true);
+  const [isFilterAfterStart, setIsFilteringAfterStart] = useState(false);
+  const [startDate, setStartDate] = useState<Date>(DEFAULT_START_DATE);
+  const [isFilterBeforeEnd, setFilterBeforeEnd] = useState(false);
+  const [endDate, setEndDate] = useState<Date>(DEFAULT_END_DATE);
   useHandleNoDatasource();
   const [fitBounds, setFitBounds] = React.useState<MapProps["fitBounds"]>();
   const [center, setCenter] = React.useState<MapProps["center"]>([
@@ -43,12 +52,12 @@ export default function Map() {
   const {
     isLoading: isSensorDownladerLoading,
     error: sensorDownloaderError,
-    data: { download } = {},
+    data: { download, dateField } = {},
   } = useSensorMappingResources(sensorType);
   const {
     isLoading: isDataLoading,
     error: dataDownloadError,
-    data: { geojson, getLevels } = {},
+    data: { geojson: unfilteredGeojson, getLevels } = {},
   } = useQuery({
     // use `typeof download` to cache bust react-query when the download
     // function has not yet finished downloading
@@ -63,6 +72,34 @@ export default function Map() {
 
   const error = sensorDownloaderError || dataDownloadError;
   const isLoading = isSensorDownladerLoading || isDataLoading;
+  const geojson = React.useMemo(() => {
+    if (!isFilterAfterStart && !isFilterBeforeEnd) return unfilteredGeojson;
+    if (!dateField) {
+      throw new Error(`sensor type missing dateField column name`);
+    }
+    const features = unfilteredGeojson?.features;
+    if (!features) return unfilteredGeojson;
+    return {
+      ...unfilteredGeojson,
+      features: features.filter((feature) => {
+        const featureDate = new Date(feature.properties[dateField]);
+        if (isFilterAfterStart && featureDate <= startDate) {
+          return false;
+        }
+        if (isFilterBeforeEnd && featureDate >= endDate) {
+          return false;
+        }
+        return true;
+      }),
+    };
+  }, [
+    unfilteredGeojson,
+    startDate,
+    isFilterAfterStart,
+    isFilterBeforeEnd,
+    endDate,
+    dateField,
+  ]);
   useInitialBoundingBox(geojson, setFitBounds);
   const { current: Map } = React.useRef(
     ReactMapboxGl({
@@ -81,83 +118,114 @@ export default function Map() {
   const dataPoint = geojson?.features[0]?.properties as
     | Record<string, string>
     | undefined;
-  if (!dataPoint) return <NoDatapoint />;
+
   return (
     <>
       <MapCssLink />
-      {geojson?.features.length === 0 ? (
-        <div className="p-4">
-          <h1 className="text-xl">Missing data</h1>
-          <p>The data has been downloaded, but is empty :/</p>
-        </div>
-      ) : (
-        <Map
-          onStyleLoad={setupControls}
-          className="content w-full"
-          fitBounds={fitBounds}
-          center={center}
-          style="mapbox://styles/pdxcleanair/ckpx7yno443sa17p6iy65qn95"
-          containerStyle={{
-            height: "100%",
-            width: "100vw",
-          }}
-          onClick={clearPopup}
-        >
-          {geojson && (
-            <PollutionLayer
-              {...{
-                geojson,
-                circleCases: pollutionLevels?.circleCases,
-                onSelectFeature: (feature) => {
-                  if (fitBounds) setFitBounds(undefined);
-                  if (center) {
-                    setCenter(feature.geometry.coordinates as [number, number]);
-                  }
-                  setFeature(feature);
-                },
-              }}
-            />
-          )}
-          {selectedFeature ? (
-            <MeasurementPopup
-              title="Measurements"
-              className="h-96 overflow-auto"
-              feature={selectedFeature}
-              onClick={(evt) => {
-                evt.preventDefault();
-              }}
-            />
-          ) : undefined}
-          <div className="map-overlay">
-            <div className="map-overlay-control map-legend">
-              <div style={{ fontWeight: "bold" }}>
-                {pollutionLevels?.fieldName}
-              </div>
-              {pollutionLevels?.pm2Ranges.map(([lower, upper], i) => {
-                return (
-                  <div key={`${isMinMaxDynamicRange}-${i}`}>
-                    <span
-                      style={{ backgroundColor: pollutionLevels.colors[i] }}
-                      className="map-legend-key"
-                    />
-                    <span>
-                      [{lower.toFixed(1)}, {upper.toFixed(1)})
-                    </span>
-                  </div>
-                );
-              })}
+      <Map
+        onStyleLoad={setupControls}
+        className="content w-full"
+        fitBounds={fitBounds}
+        center={center}
+        style="mapbox://styles/pdxcleanair/ckpx7yno443sa17p6iy65qn95"
+        containerStyle={{
+          height: "100%",
+          width: "100vw",
+        }}
+        onClick={clearPopup}
+      >
+        {dataPoint ? undefined : <NoDatapoint />}
+
+        {geojson && (
+          <PollutionLayer
+            {...{
+              geojson,
+              circleCases: pollutionLevels?.circleCases,
+              onSelectFeature: (feature) => {
+                if (fitBounds) setFitBounds(undefined);
+                if (center) {
+                  setCenter(feature.geometry.coordinates as [number, number]);
+                }
+                setFeature(feature);
+              },
+            }}
+          />
+        )}
+        {selectedFeature ? (
+          <MeasurementPopup
+            title="Measurements"
+            className="h-96 overflow-auto"
+            feature={selectedFeature}
+            onClick={(evt) => {
+              evt.preventDefault();
+            }}
+          />
+        ) : undefined}
+        <div className="map-overlay">
+          <div className="map-overlay-control map-legend">
+            <div style={{ fontWeight: "bold" }}>
+              {pollutionLevels?.fieldName}
             </div>
-            <div className="map-overlay-control map-pollution-range-mode">
-              <input
-                type="checkbox"
-                checked={isMinMaxDynamicRange}
-                onChange={() => setIsMinMaxDynamicRange(!isMinMaxDynamicRange)}
-              />{" "}
-              Dynamic Levels
-            </div>
+            {pollutionLevels?.pm2Ranges.map(([lower, upper], i) => {
+              return (
+                <div key={`${isMinMaxDynamicRange}-${i}`}>
+                  <span
+                    style={{ backgroundColor: pollutionLevels.colors[i] }}
+                    className="map-legend-key"
+                  />
+                  <span>
+                    [{lower.toFixed(1)}, {upper.toFixed(1)})
+                  </span>
+                </div>
+              );
+            })}
           </div>
-        </Map>
-      )}
+          <div className="map-overlay-control map-pollution-range-mode">
+            <input
+              type="checkbox"
+              checked={isMinMaxDynamicRange}
+              onChange={() => setIsMinMaxDynamicRange(!isMinMaxDynamicRange)}
+            />{" "}
+            Dynamic Levels
+          </div>
+          <div className="map-overlay-control map-pollution-range-mode">
+            <input
+              type="checkbox"
+              checked={isFilterAfterStart}
+              onChange={() => setIsFilteringAfterStart(!isFilterAfterStart)}
+            />{" "}
+            After Date
+            <br />
+            <input
+              type="datetime-local"
+              disabled={!isFilterAfterStart}
+              value={startDate.toISOString().substring(0, 16)}
+              onChange={(evt) => {
+                const next = new Date(evt.currentTarget.value + ":00.000Z");
+                if (isValidDate(next)) setStartDate(next);
+              }}
+            />
+          </div>
+          <div className="map-overlay-control map-pollution-range-mode">
+            <input
+              type="checkbox"
+              checked={isFilterBeforeEnd}
+              onChange={() => setFilterBeforeEnd(!isFilterBeforeEnd)}
+            />{" "}
+            End Date
+            <br />
+            <input
+              type="datetime-local"
+              disabled={!isFilterBeforeEnd}
+              value={endDate.toISOString().substring(0, 16)}
+              onChange={(evt) => {
+                const next = new Date(evt.currentTarget.value + ":00.000Z");
+                if (isValidDate(next)) setEndDate(next);
+              }}
+            />
+          </div>
+        </div>
+      </Map>
     </>
   );
 }
