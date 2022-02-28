@@ -59,8 +59,6 @@ const getPocketlabs: SensorDownloadHook = async (urls) => {
   const geojsonHumidity = await matrixToGeoJson<HumidityFields>(
     normalizeMultiTableCsv(csv, HEADER_NAMES_HUMIDITY)
   );
-  let min = Infinity;
-  let max = -Infinity;
   const combinedFeatures = geojsonParticulate.features
     .map((feature, i) => {
       const featureHumidity = geojsonHumidity.features[i];
@@ -73,8 +71,6 @@ const getPocketlabs: SensorDownloadHook = async (urls) => {
         parseFloat(humidityProperties["Relative Humidity (%)"]) / 100;
       const pm2 = parseInt(feature.properties[RAW_PM2_HEADER]);
       const pm2Corrected = applyEpaCorrection(pm2, humidity);
-      if (pm2Corrected > max) max = pm2Corrected;
-      if (pm2Corrected < min) min = pm2Corrected;
       return {
         ...feature,
         properties: {
@@ -103,7 +99,15 @@ const getPocketlabs: SensorDownloadHook = async (urls) => {
   >;
   return {
     geojson,
-    getLevels: (isMinMaxDynamicRange) => {
+    getLevels: ({ isMinMaxDynamicRange, geojson }) => {
+      let currentPm2 = 0;
+      let min = Infinity;
+      let max = -Infinity;
+      for (const feature of geojson.features) {
+        currentPm2 = feature.properties?.[PM2_CORRECTED_FIELD_NAME];
+        if (currentPm2 > max) max = currentPm2;
+        if (currentPm2 < min) min = currentPm2;
+      }
       const numColors = COLORS.length;
       const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
       const pm2Ranges = isMinMaxDynamicRange

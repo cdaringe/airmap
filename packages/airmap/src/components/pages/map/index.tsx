@@ -65,11 +65,6 @@ export default function Map() {
     queryFn: () => download?.(urls),
     cacheTime: 1e9,
   });
-  const pollutionLevels = useMemo(() => {
-    if (!getLevels) return null;
-    return getLevels(isMinMaxDynamicRange);
-  }, [getLevels, isMinMaxDynamicRange]);
-
   const error = sensorDownloaderError || dataDownloadError;
   const isLoading = isSensorDownladerLoading || isDataLoading;
   const geojson = React.useMemo(() => {
@@ -100,6 +95,10 @@ export default function Map() {
     endDate,
     dateField,
   ]);
+  const pollutionLevels = useMemo(() => {
+    if (!getLevels || !geojson) return null;
+    return getLevels({ isMinMaxDynamicRange, geojson });
+  }, [getLevels, isMinMaxDynamicRange, geojson]);
   useInitialBoundingBox(geojson, setFitBounds);
   const { current: Map } = React.useRef(
     ReactMapboxGl({

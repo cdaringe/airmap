@@ -45,7 +45,7 @@ const asRecords = <H extends Record<string, (v: string) => number>>(
   );
 };
 
-const useFlow1: SensorDownloadHook = async (urls) => {
+const downloadFlow: SensorDownloadHook = async (urls) => {
   const toCsv = (csv: string) =>
     [...csv.match(/[^\r\n]+/g)!].map((v) => v.split(","));
   const [g1, g2] = await Promise.all([
@@ -92,8 +92,6 @@ const useFlow1: SensorDownloadHook = async (urls) => {
   if (loss > 0) {
     console.warn(`lossy data: ${(loss / vocsWithoutCoords.length).toFixed(1)}`);
   }
-  let min = Infinity;
-  let max = -Infinity;
   const geojson: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",
     features: vocs.map((properties) => {
@@ -107,16 +105,21 @@ const useFlow1: SensorDownloadHook = async (urls) => {
       };
       delete (properties as any).longitude;
       delete (properties as any).latitude;
-      const currentPm2 = properties[PM2_FIELD_NAME];
-      if (currentPm2 > max) max = currentPm2;
-      if (currentPm2 < min) min = currentPm2;
       return f;
     }),
   };
 
   return {
     geojson,
-    getLevels: (isMinMaxDynamicRange: boolean) => {
+    getLevels: ({ isMinMaxDynamicRange, geojson }) => {
+      let currentPm2 = 0;
+      let min = Infinity;
+      let max = -Infinity;
+      for (const feature of geojson.features) {
+        currentPm2 = feature.properties?.[PM2_FIELD_NAME];
+        if (currentPm2 > max) max = currentPm2;
+        if (currentPm2 < min) min = currentPm2;
+      }
       const numColors = COLORS.length;
       const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
       const pm2Ranges = isMinMaxDynamicRange
@@ -137,6 +140,6 @@ const useFlow1: SensorDownloadHook = async (urls) => {
   };
 };
 
-export const download = useFlow1;
+export const download = downloadFlow;
 export const dateField =
   /* transformed from "date (UTC)"" on download */ "date";
