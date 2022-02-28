@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactMapboxGl from "react-mapbox-gl";
 import { Props as MapProps } from "react-mapbox-gl/lib/map";
 import { useDataSource } from "../../data-source/use-data-source";
@@ -13,6 +13,7 @@ import MapError from "./map.error";
 import NoDatapoint from "./map.nodatapoint";
 import MapCssLink from "./map.csslink";
 import setupControls from "./map.setup-controls";
+import { format } from "date-fns";
 
 const isValidDate = (d: Date) => !d.toString().match(/Invalid/);
 
@@ -108,16 +109,30 @@ export default function Map() {
   );
   const [selectedFeature, setFeature] =
     React.useState<GeoJSON.Feature<GeoJSON.Point> | null>(null);
-  const clearPopup = React.useCallback(
-    () => selectedFeature && setFeature(null),
-    [selectedFeature, setFeature]
+  const clearPopup = () => setFeature(null);
+  useEffect(
+    function tearDownPopup() {
+      const onKeyup = (evt: WindowEventMap["keyup"]) => {
+        if (evt.key.match(/esc/i)) {
+          clearPopup();
+        }
+      };
+      const onCanvasClick = (evt: WindowEventMap["click"]) => clearPopup();
+      const [canvas] = document.getElementsByTagName("canvas") || [];
+      canvas?.addEventListener("click", onCanvasClick);
+      window.addEventListener("keyup", onKeyup);
+      return () => {
+        window.removeEventListener("keyup", onKeyup);
+        canvas?.removeEventListener("click", onCanvasClick);
+      };
+    },
+    [selectedFeature]
   );
   if (error) return <MapError error={error} datasource={ds} />;
   if (isLoading) return <Loading />;
   const dataPoint = geojson?.features[0]?.properties as
     | Record<string, string>
     | undefined;
-
   return (
     <>
       <MapCssLink />
@@ -131,10 +146,8 @@ export default function Map() {
           height: "100%",
           width: "100vw",
         }}
-        onClick={clearPopup}
       >
         {dataPoint ? undefined : <NoDatapoint />}
-
         {geojson && (
           <PollutionLayer
             {...{
@@ -198,9 +211,9 @@ export default function Map() {
             <input
               type="datetime-local"
               disabled={!isFilterAfterStart}
-              value={startDate.toISOString().substring(0, 16)}
+              value={format(startDate, "yyyy-MM-dd'T'HH:mm")}
               onChange={(evt) => {
-                const next = new Date(evt.currentTarget.value + ":00.000Z");
+                const next = new Date(evt.currentTarget.value);
                 if (isValidDate(next)) setStartDate(next);
               }}
             />
@@ -216,9 +229,9 @@ export default function Map() {
             <input
               type="datetime-local"
               disabled={!isFilterBeforeEnd}
-              value={endDate.toISOString().substring(0, 16)}
+              value={format(endDate, "yyyy-MM-dd'T'HH:mm")}
               onChange={(evt) => {
-                const next = new Date(evt.currentTarget.value + ":00.000Z");
+                const next = new Date(evt.currentTarget.value);
                 if (isValidDate(next)) setEndDate(next);
               }}
             />

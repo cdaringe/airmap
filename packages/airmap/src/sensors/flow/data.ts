@@ -70,13 +70,16 @@ const downloadFlow: SensorDownloadHook = async (urls) => {
     .map((voc) => {
       const coordTsMatch = closestTo(voc.timestamp, coordStamps)!;
       const coord = coords.find((c) => c.timestamp === coordTsMatch.getTime())!;
+      const date = new Date(coord.timestamp);
       return {
         ...voc,
-        date: new Date(coord.timestamp).toUTCString(),
+        date: date.toUTCString(),
+        dateLocale: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`,
         latitude: coord.latitude,
         longitude: coord.longitude,
         skip: Math.abs(coord.timestamp - voc.timestamp) > 60_000,
       } as Omit<typeof voc, "timestamp"> & {
+        dateLocale: string;
         timestamp?: number;
         latitude: number;
         longitude: number;
