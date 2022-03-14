@@ -13,8 +13,8 @@ export const fetchGoogleSheetsCsv = (sheetsCsvUrl: string) => {
   }).then((r) => r.text());
 };
 
-const csvToGeoJson = <Properties = GeoJSON.GeoJsonProperties>(csv: string) => {
-  return new Promise<GeoJSON.FeatureCollection<GeoJSON.Geometry, Properties>>(
+const csvToGeoJson = <Properties = GeoJSON.GeoJsonProperties>(csv: string) =>
+  new Promise<GeoJSON.FeatureCollection<GeoJSON.Geometry, Properties>>(
     (res, rej) =>
       csv2geojson<Properties>(
         csv,
@@ -29,7 +29,6 @@ const csvToGeoJson = <Properties = GeoJSON.GeoJsonProperties>(csv: string) => {
         }
       )
   );
-};
 
 export const matrixToGeoJson = <Properties = unknown>(v: string[][]) => {
   const ncsv = asCsv(v);

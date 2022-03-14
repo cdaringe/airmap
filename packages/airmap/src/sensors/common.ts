@@ -4,6 +4,9 @@ export const NO_SENSOR_ID = 0;
 export const POCKET_LABS_ID = 1;
 export const FLOW_ID = 2;
 
+/**
+ * @deprecated - use sensor-common
+ */
 export const tupleAsMapboxRange =
   (getField: ["get", string]) =>
   ([aGTE, bLT]: [number, number]) =>

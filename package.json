@@ -9,6 +9,7 @@
     "format": "prettier --write './*.{js,json,md}' './.github/**' '.vscode/**'"
   },
   "devDependencies": {
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "turbo": "^1.1.6"
   }
 }

@@ -5,6 +5,7 @@ import {
 import { normalizeMultiTableCsv } from "../../components/data/normalize-multi-table-csv";
 import { SensorDownloadHook } from "../interfaces";
 import { tupleAsMapboxRange } from "../common";
+import zip from "lodash/zip";
 
 const RAW_PM1_HEADER = "PM1.0 (µg/m³)" as const;
 const RAW_PM2_HEADER = "PM2.5 (µg/m³)" as const;
@@ -59,14 +60,19 @@ const getPocketlabs: SensorDownloadHook = async (urls) => {
   const geojsonHumidity = await matrixToGeoJson<HumidityFields>(
     normalizeMultiTableCsv(csv, HEADER_NAMES_HUMIDITY)
   );
-  const combinedFeatures = geojsonParticulate.features
-    .map((feature, i) => {
-      const featureHumidity = geojsonHumidity.features[i];
+  const combinedFeatures = zip(
+    geojsonParticulate.features,
+    geojsonHumidity.features
+  )
+    .map(([feature, featureHumidity], i) => {
+      if (!feature) throw new Error("missing particulate row - invalid csv");
+      if (!featureHumidity)
+        throw new Error("missing humidity row - invalid csv");
       const tempProperties: ParticulateFields & HumidityFields = {
-        ...featureHumidity?.properties,
+        ...featureHumidity.properties,
         ...feature.properties,
       };
-      const humidityProperties = featureHumidity?.properties;
+      const humidityProperties = featureHumidity.properties;
       const humidity =
         parseFloat(humidityProperties["Relative Humidity (%)"]) / 100;
       const pm2 = parseInt(feature.properties[RAW_PM2_HEADER]);
