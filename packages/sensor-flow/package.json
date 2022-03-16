@@ -1,0 +1,7 @@
+{
+  "name": "cleanair-sensor-flow",
+  "description": "flow sensor utilities",
+  "dependencies": {
+    "cleanair-sensor-common": "workspace:^0"
+  }
+}

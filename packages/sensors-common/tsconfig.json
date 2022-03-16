@@ -1,0 +1,6 @@
+{
+  "extends": "cleanair-tsconfig/tsconfig.browser.json",
+  "compilerOptions": {
+    "outDir": "./build"
+  }
+}

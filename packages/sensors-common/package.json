@@ -1,4 +1,11 @@
 {
-  "name": "@cleanair/sensor-common",
-  "version": "0.1.0"
+  "name": "cleanair-sensor-common",
+  "version": "0.1.0",
+  "description": "Clean air sensor utils",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "cleanair-tsconfig": "workspace:^0"
+  }
 }

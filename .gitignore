@@ -39,6 +39,6 @@ static
 .next
 node_modules
 .turbo
-build/**
+build
 dist/**
 .next/**

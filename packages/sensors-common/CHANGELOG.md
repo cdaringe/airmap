@@ -1,4 +1,4 @@
-# @cleanair/sensor-common
+# cleanair-sensor-common
 
 ## 0.1.0
 
