@@ -1,0 +1,17 @@
+{
+  "name": "cleanair-sensor-hooks",
+  "version": "0.0.0",
+  "description": "cleanair sensor hooks",
+  "module": "build/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "cleanair-sensor-flow": "workspace:^0",
+    "cleanair-sensor-pocketlabs": "workspace:^0",
+    "react-query": "^3"
+  },
+  "devDependencies": {
+    "cleanair-tsconfig": "workspace:^0"
+  }
+}

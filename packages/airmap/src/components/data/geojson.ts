@@ -1,18 +1,6 @@
 import { csv2geojson } from "csv2geojson";
 import { asCsv, normalizeMultiTableCsv } from "./normalize-multi-table-csv";
 
-export const fetchGoogleSheetsCsv = (sheetsCsvUrl: string) => {
-  const url = new URL(sheetsCsvUrl);
-  const params = new URLSearchParams(url.search);
-  if (!params.has("format")) params.set("format", "csv");
-  url.search = params.toString();
-  return fetch(url.toString(), {
-    mode: "cors",
-    redirect: "follow",
-    headers: { accept: "text" },
-  }).then((r) => r.text());
-};
-
 const csvToGeoJson = <Properties = GeoJSON.GeoJsonProperties>(csv: string) =>
   new Promise<GeoJSON.FeatureCollection<GeoJSON.Geometry, Properties>>(
     (res, rej) =>

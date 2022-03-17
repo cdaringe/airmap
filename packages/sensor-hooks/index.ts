@@ -4,9 +4,6 @@ export const NO_SENSOR_ID = 0;
 export const POCKET_LABS_ID = 1;
 export const FLOW_ID = 2;
 
-/**
- * @deprecated - use sensor-common
- */
 export const tupleAsMapboxRange =
   (getField: ["get", string]) =>
   ([aGTE, bLT]: [number, number]) =>
@@ -17,9 +14,9 @@ export const useSensorMappingResources = (sensorType: number) => {
     queryKey: `get-mapping-${sensorType}`,
     queryFn: async () => {
       const useSensor = await (sensorType === POCKET_LABS_ID
-        ? import("./pocketlabs/data")
+        ? import("cleanair-sensor-pocketlabs")
         : sensorType === FLOW_ID
-        ? import("./flow/data")
+        ? import("cleanair-sensor-flow")
         : (() => {
             throw new Error(`unsupported sensor type ${sensorType}`);
           })());

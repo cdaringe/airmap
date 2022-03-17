@@ -1,0 +1,7 @@
+{
+  "extends": "cleanair-tsconfig/tsconfig.browser.json",
+  "compilerOptions": {
+    "outDir": "./build"
+  },
+  "references": [{ "path": "../sensor-common" }]
+}

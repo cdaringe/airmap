@@ -3,7 +3,7 @@ import {
   matrixToGeoJson,
 } from "../../components/data/geojson";
 import { normalizeMultiTableCsv } from "../../components/data/normalize-multi-table-csv";
-import { SensorDownloadHook } from "../interfaces";
+import { SensorDataHook } from "../interfaces";
 import { tupleAsMapboxRange } from "../common";
 import zip from "lodash/zip";
 
@@ -52,7 +52,7 @@ type ParticulateFields = {
  * > PurpleAir, DEQ's "SensOR" monitors, and our bike mounted GPS-equipped
  * > PocketLab monitors all use Plantower sensors
  */
-const getPocketlabs: SensorDownloadHook = async (urls) => {
+const getPocketlabs: SensorDataHook = async (urls) => {
   const csv = await fetchGoogleSheetsCsv(urls[0]);
   const geojsonParticulate = await matrixToGeoJson<ParticulateFields>(
     normalizeMultiTableCsv(csv, HEADER_NAMES)
