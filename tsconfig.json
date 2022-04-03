@@ -16,5 +16,8 @@
     "target": "ESNext",
     "tsBuildInfoFile": "./"
   },
-  "files": []
+  "exclude": [
+    "packages/cleanair-sensor-flow/src/__test__/parsers/parse-measure-stream.deno.test.ts",
+    "packages/cleanair-sensor-pocketlabs/src/streams/__test__/parser-pocketlabs.deno.test.ts"
+  ]
 }
