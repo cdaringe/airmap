@@ -13,11 +13,11 @@ type State = {
 
 export const parse = async (
   stream: ReadableStreamDefaultReader<Uint8Array>,
-  state: State = { records: [], partial: "" },
+  state: State = { records: [], partial: "" }
 ): Promise<State> => {
   const { done, value } = await stream.read();
   if (value || done) {
-    state.partial += value || "";
+    state.partial += value ? new TextDecoder().decode(value) : "";
     const rows = state.partial.split(/\n/g);
     const lastRowIdx = rows.length - 1;
     rows.forEach((row, i) => {
@@ -30,9 +30,12 @@ export const parse = async (
       } else {
         const cells = row.split(",");
         if (!state.headerIndiciesByName) {
+          if (!cells[0].startsWith("device")) {
+            return;
+          }
           state.headerIndiciesByName = cells.reduce(
             (acc, curr, i) => ({ ...acc, [curr]: i }),
-            {},
+            {}
           );
         } else {
           const device = cells[state.headerIndiciesByName["device"]!];
@@ -40,7 +43,7 @@ export const parse = async (
           const url2 = cells[state.headerIndiciesByName["url2"]!];
           invariant(device, "device missing");
           invariant(url1, "url1 missing");
-          state.records.push({ device, urls: [url1, url2] });
+          state.records.push({ device, urls: [url1, url2].filter(Boolean) });
           if (done) {
             state.partial = "";
           }
@@ -51,9 +54,20 @@ export const parse = async (
   return done ? state : parse(stream, state);
 };
 
+export function toSheetsDataExportUrl(urlstr: string) {
+  const url = new URL(urlstr);
+  url.pathname = [
+    ...url.pathname.substr(1).split("/").splice(0, 3),
+    "export",
+  ].join("/");
+  return String(url);
+}
+
 export async function fetchObservations(
-  url =
-    "https://docs.google.com/spreadsheets/d/1_j058uBscRIwCTTIWcUkFQjl-QODwcb-yQvrNy1QP30/edit#gid=0",
+  url = "https://docs.google.com/spreadsheets/d/1_j058uBscRIwCTTIWcUkFQjl-QODwcb-yQvrNy1QP30/gviz/tq"
 ) {
-  return streamGoogleSheetsCsv(url).then(parse);
+  const nextUrl = toSheetsDataExportUrl(url);
+  return streamGoogleSheetsCsv(nextUrl)
+    .then(parse)
+    .then((v) => v.records);
 }
