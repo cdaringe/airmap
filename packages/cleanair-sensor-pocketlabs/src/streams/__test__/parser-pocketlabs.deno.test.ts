@@ -23,7 +23,7 @@ Deno.test({
       assertEquals(
         record.counter_t,
         parseInt(i),
-        `counter & index mismatch ${record.counter_t}, ${i}`
+        `counter & index mismatch ${record.counter_t}, ${i}`,
       );
     }
     const knownRecord = parsed.records[4110];

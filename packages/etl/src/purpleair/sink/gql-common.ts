@@ -11,7 +11,7 @@ assert(API_ENDPOINT, "API_ENDPOINT");
 export const graphQL = <T = unknown>(
   operationsDoc: string,
   operationName: string,
-  variables: Record<string, unknown>
+  variables: Record<string, unknown>,
 ) =>
   got
     .post(API_ENDPOINT!, {

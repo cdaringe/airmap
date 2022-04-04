@@ -2,8 +2,8 @@ import { sensors } from "./sensors.js";
 import { SensorAccess } from "./interfaces.js";
 import pAll from "p-all";
 import {
-  getSourceSensor,
   getSourceObservations,
+  getSourceSensor,
 } from "./purpleair/source/thingspeak.js";
 import * as sink from "./purpleair/sink/queries.js";
 import assert from "assert";
@@ -72,9 +72,11 @@ async function etl(sensorAccess: SensorAccess) {
    * always. You cannot request data in ascending order :|. So,
    * we must search backwards.
    */
-  for (const bounds of searchBounds.filter(
-    ({ earliest, latest }) => latest > earliest
-  )) {
+  for (
+    const bounds of searchBounds.filter(
+      ({ earliest, latest }) => latest > earliest,
+    )
+  ) {
     logger.info(`searching: ${prettyRange(bounds)}`);
     let isFetchingMore = true;
     let isFatalData = false;
@@ -105,7 +107,7 @@ async function etl(sensorAccess: SensorAccess) {
             // only log warning once, using isFatalData as the stateful indicator
             if (!isFatalData) {
               console.error(
-                `        dropping data--missing fields: ${JSON.stringify(it)}`
+                `        dropping data--missing fields: ${JSON.stringify(it)}`,
               );
             }
             isFatalData = true;
@@ -133,8 +135,7 @@ async function etl(sensorAccess: SensorAccess) {
         if (!earliest) return currDate;
         return currDate < earliest ? currDate : earliest;
       }, null);
-      isFetchingMore =
-        !isFatalData &&
+      isFetchingMore = !isFatalData &&
         !!earliestFoundDate &&
         earliestFoundDate > bounds.earliest;
       if (isFetchingMore && earliestFoundDate) {
@@ -149,17 +150,18 @@ const etlAll = async (sensors: SensorAccess[]) => {
   let count = 0;
   await pAll(
     sensors.map(
-      (s) => () =>
-        etl(s).then(() => {
-          ++count;
-          logger.info(`${count} sensors transferred`);
-        })
+      (s) =>
+        () =>
+          etl(s).then(() => {
+            ++count;
+            logger.info(`${count} sensors transferred`);
+          }),
     ),
     {
       concurrency: process.env.SOURCE_CONCURRENCY
         ? parseInt(process.env.SOURCE_CONCURRENCY, 10)
         : 1,
-    }
+    },
   );
 };
 

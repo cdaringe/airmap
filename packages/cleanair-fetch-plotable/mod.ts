@@ -1,16 +1,14 @@
-import { invariant } from "../../../invariant/mod.ts";
+import { streamGoogleSheetsCsv } from "../google-sheets/mod.ts";
+import { invariant } from "../invariant/mod.ts";
 
-type Entry = { timestamp: number; voc_ppb: number; pm_2_5: number };
+type Entry = {
+  device: string;
+  urls: string[];
+};
 type State = {
   partial: string;
   headerIndiciesByName?: Record<string, number>;
   records: Entry[];
-};
-
-const fieldParsersByName = {
-  voc_ppb: (v: string) => parseInt(v),
-  timestamp: (v: string) => parseInt(v) * 1_000,
-  pm_2_5: (v: string) => parseFloat(v),
 };
 
 export const parse = async (
@@ -37,17 +35,12 @@ export const parse = async (
             {},
           );
         } else {
-          const voc_raw = cells[state.headerIndiciesByName["VOC (ppb)"]!];
-          const timestamp_raw = cells[state.headerIndiciesByName["timestamp"]!];
-          const pm_2_5 = cells[state.headerIndiciesByName["pm 2.5 (ug/m3)"]!];
-          invariant(voc_raw, "voc missing");
-          invariant(timestamp_raw, "timestamp missing");
-          invariant(pm_2_5, "pm25 missing");
-          state.records.push({
-            voc_ppb: fieldParsersByName.voc_ppb(voc_raw),
-            timestamp: fieldParsersByName.timestamp(timestamp_raw),
-            pm_2_5: fieldParsersByName.pm_2_5(pm_2_5),
-          });
+          const device = cells[state.headerIndiciesByName["device"]!];
+          const url1 = cells[state.headerIndiciesByName["url1"]!];
+          const url2 = cells[state.headerIndiciesByName["url2"]!];
+          invariant(device, "device missing");
+          invariant(url1, "url1 missing");
+          state.records.push({ device, urls: [url1, url2] });
           if (done) {
             state.partial = "";
           }
@@ -57,3 +50,10 @@ export const parse = async (
   }
   return done ? state : parse(stream, state);
 };
+
+export async function fetchObservations(
+  url =
+    "https://docs.google.com/spreadsheets/d/1_j058uBscRIwCTTIWcUkFQjl-QODwcb-yQvrNy1QP30/edit#gid=0",
+) {
+  return streamGoogleSheetsCsv(url).then(parse);
+}

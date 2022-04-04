@@ -1,9 +1,9 @@
 // https://www.mathworks.com/help/thingspeak/readdata.html
 import got from "got";
 import {
+  PurpleResponse,
   SensorAccess,
   ThingSpeakResponse,
-  PurpleResponse,
 } from "../../interfaces.js";
 import { asQueryParamDate } from "./url-formatting.js";
 

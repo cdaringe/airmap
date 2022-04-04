@@ -16,7 +16,7 @@ const fieldParsersByName = {
 };
 export const parse = async (
   stream: ReadableStreamDefaultReader<Uint8Array>,
-  state: State = { records: [], partial: "" }
+  state: State = { records: [], partial: "" },
 ): Promise<State> => {
   const { done, value } = await stream.read();
   if (value || done) {
@@ -35,18 +35,18 @@ export const parse = async (
         if (!state.headerIndiciesByName) {
           state.headerIndiciesByName = cells.reduce(
             (acc, curr, i) => ({ ...acc, [curr]: i }),
-            {}
+            {},
           );
         } else {
           state.records.push({
             timestamp: fieldParsersByName.timestamp(
-              cells[state.headerIndiciesByName["timestamp"]!]
+              cells[state.headerIndiciesByName["timestamp"]!],
             ),
             latitude: fieldParsersByName.latitude(
-              cells[state.headerIndiciesByName["latitude"]!]
+              cells[state.headerIndiciesByName["latitude"]!],
             ),
             longitude: fieldParsersByName.longitude(
-              cells[state.headerIndiciesByName["longitude"]!]
+              cells[state.headerIndiciesByName["longitude"]!],
             ),
           });
           if (done) {

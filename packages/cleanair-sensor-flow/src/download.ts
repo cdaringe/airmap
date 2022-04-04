@@ -10,7 +10,7 @@ import { parse as parsePositions } from "./streams/parse-positions-stream.ts";
 import { FlowEntry } from "./interfaces.ts";
 import closestTo from "https://deno.land/x/date_fns@v2.22.1/closestTo/index.js";
 import { invariant } from "../../invariant/mod.ts";
-import {} from "";
+
 export const download = async (urls: string[]) => {
   const [measurementsUrl, positionsUrl] = urls;
   invariant(measurementsUrl, "");
@@ -21,14 +21,14 @@ export const download = async (urls: string[]) => {
   ]);
   if (measures.length !== positions.length) {
     console.warn(
-      `lossy data - measures ${measures.length}, positions ${positions.length}`
+      `lossy data - measures ${measures.length}, positions ${positions.length}`,
     );
   }
   const coordStamps = positions.map((p) => p.timestamp);
   return measures.reduce<FlowEntry[]>((acc, voc) => {
     const coordTsMatch = closestTo(voc.timestamp, coordStamps)!;
     const coord = positions.find(
-      (c) => c.timestamp === coordTsMatch.getTime()
+      (c) => c.timestamp === coordTsMatch.getTime(),
     )!;
     const date = new Date(coord.timestamp);
     const entry = {
@@ -47,19 +47,18 @@ export const download = async (urls: string[]) => {
 };
 
 export const toGeojson = (
-  flowDatas: FlowEntry[]
+  flowDatas: FlowEntry[],
 ): GeoJSON.FeatureCollection => ({
   type: "FeatureCollection",
   features: flowDatas.map(
-    (properties) =>
-      ({
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [properties.longitude, properties.latitude],
-        },
-        properties: { ...properties },
-      } as GeoJSON.Feature)
+    (properties) => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [properties.longitude, properties.latitude],
+      },
+      properties: { ...properties },
+    } as GeoJSON.Feature),
   ),
 });
 
