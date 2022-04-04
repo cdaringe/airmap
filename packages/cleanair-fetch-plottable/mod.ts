@@ -36,7 +36,7 @@ export const parse = async (
             return;
           }
           state.headerIndiciesByName = cells.reduce(
-            (acc, curr, i) => ({ ...acc, [curr]: i }),
+            (acc, curr, i) => ({ ...acc, [curr.trim()]: i }),
             {}
           );
         } else {

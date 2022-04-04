@@ -14,7 +14,7 @@ Deno.test({
         "https://docs.google.com/spreadsheets/d/15QJWTrn2RVG8C2q0SF7qjXDIMabg-OXDTYkjBRLWHrw/edit#gid=2147112514",
       ],
       date: new Date("2021-10-10T07:00:00.000Z"),
-      description: undefined,
+      description: "some great measurment\r",
     });
   },
 });

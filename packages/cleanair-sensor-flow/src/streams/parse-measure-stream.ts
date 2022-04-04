@@ -15,7 +15,7 @@ const fieldParsersByName = {
 
 export const parse = async (
   stream: ReadableStreamDefaultReader<Uint8Array>,
-  state: State = { records: [], partial: "" },
+  state: State = { records: [], partial: "" }
 ): Promise<State> => {
   const { done, value } = await stream.read();
   if (value || done) {
@@ -33,8 +33,8 @@ export const parse = async (
         const cells = row.split(",");
         if (!state.headerIndiciesByName) {
           state.headerIndiciesByName = cells.reduce(
-            (acc, curr, i) => ({ ...acc, [curr]: i }),
-            {},
+            (acc, curr, i) => ({ ...acc, [curr.trim()]: i }),
+            {}
           );
         } else {
           const voc_raw = cells[state.headerIndiciesByName["VOC (ppb)"]!];
