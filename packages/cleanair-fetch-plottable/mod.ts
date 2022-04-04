@@ -4,6 +4,8 @@ import { invariant } from "../invariant/mod.ts";
 type Entry = {
   device: string;
   urls: string[];
+  date: Date;
+  description?: string;
 };
 type State = {
   partial: string;
@@ -41,9 +43,16 @@ export const parse = async (
           const device = cells[state.headerIndiciesByName["device"]!];
           const url1 = cells[state.headerIndiciesByName["url1"]!];
           const url2 = cells[state.headerIndiciesByName["url2"]!];
+          const date = new Date(cells[state.headerIndiciesByName["date"]!]);
+          const description = cells[state.headerIndiciesByName["description"]!];
           invariant(device, "device missing");
           invariant(url1, "url1 missing");
-          state.records.push({ device, urls: [url1, url2].filter(Boolean) });
+          state.records.push({
+            device,
+            urls: [url1, url2].filter(Boolean),
+            date,
+            description,
+          });
           if (done) {
             state.partial = "";
           }
