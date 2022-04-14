@@ -1,5 +1,4 @@
 export type FlowEntry = {
-  dateLocale: string;
   timestamp: number;
   latitude: number;
   longitude: number;

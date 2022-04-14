@@ -33,8 +33,7 @@ export const download = async (urls: string[]) => {
     const date = new Date(coord.timestamp);
     const entry = {
       ...voc,
-      date: date.toUTCString(),
-      dateLocale: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`,
+      date,
       latitude: coord.latitude,
       longitude: coord.longitude,
       skip: Math.abs(coord.timestamp - voc.timestamp) > 60_000,

@@ -19,13 +19,13 @@ Deno.test({
   fn: () => {
     assertEquals(
       isGoogleSheetsCompatibleUrl(undefined as unknown as string),
-      false
+      false,
     );
     assertEquals(isGoogleSheetsCompatibleUrl("https://wat"), false);
     assertEquals(isGoogleSheetsCompatibleUrl("https://google.com/"), false);
     assertEquals(
       isGoogleSheetsCompatibleUrl("https://google.com/spreadsheets/d"),
-      false
+      false,
     );
     assertEquals(isGoogleSheetsCompatibleUrl(sheetUrl), true);
   },
