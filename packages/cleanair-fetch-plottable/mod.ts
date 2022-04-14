@@ -68,20 +68,10 @@ export const parse = async (
   return done ? state : parse(stream, state);
 };
 
-export function toSheetsDataExportUrl(urlstr: string) {
-  const url = new URL(urlstr);
-  url.pathname = [
-    ...url.pathname.substr(1).split("/").splice(0, 3),
-    "export",
-  ].join("/");
-  return String(url);
-}
-
 export async function fetchObservations(
   url = "https://docs.google.com/spreadsheets/d/1_j058uBscRIwCTTIWcUkFQjl-QODwcb-yQvrNy1QP30/gviz/tq"
 ) {
-  const nextUrl = toSheetsDataExportUrl(url);
-  return streamGoogleSheetsCsv(nextUrl)
+  return streamGoogleSheetsCsv(url)
     .then(parse)
     .then((v) => v.records);
 }

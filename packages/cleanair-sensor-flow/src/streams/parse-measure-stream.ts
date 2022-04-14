@@ -42,10 +42,14 @@ export const parse = async (
             {}
           );
         } else {
-          const voc_raw = cells[state.headerIndiciesByName["VOC (ppb)"]!];
+          const vocFieldName = "VOC (ppb)" as const;
+          const voc_raw = cells[state.headerIndiciesByName[vocFieldName]!];
           const timestamp_raw = cells[state.headerIndiciesByName["timestamp"]!];
           const pm_2_5 = cells[state.headerIndiciesByName["pm 2.5 (ug/m3)"]!];
-          invariant(voc_raw, "voc missing");
+          invariant(
+            voc_raw,
+            `voc missing (${vocFieldName}, value: ${voc_raw})`
+          );
           invariant(timestamp_raw, "timestamp missing");
           invariant(pm_2_5, "pm25 missing");
           state.records.push({
