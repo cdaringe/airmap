@@ -2,7 +2,7 @@ import { Entry } from "../interfaces.ts";
 
 function invariant<TValue>(
   value: TValue,
-  message: string,
+  message: string
 ): asserts value is NonNullable<TValue> {
   if (value === null || value === undefined) {
     throw Error(message);
@@ -89,10 +89,15 @@ export const parse = async (
     headerIndiciesByName: {},
     partial: "",
     records: [],
-  },
+  }
 ): Promise<State> => {
   const { done, value } = await stream.read();
-  state.partial += value || "";
+  state.partial +=
+    typeof value === "string"
+      ? value
+      : value
+      ? new TextDecoder().decode(value)
+      : "";
   const rows = state.partial.split(/\n/g);
   const lastRowIdx = rows.length - 1;
   rows.forEach((row, i) => {
@@ -109,7 +114,7 @@ export const parse = async (
         state.headerIndiciesByName = cells.reduce(
           (acc, c, i) =>
             SUM_ALLOWED_HEADERS.has(c as AllKeys) ? { ...acc, [c]: i } : acc,
-          {},
+          {}
         );
       } else if (cells[0] === "") {
         // pass - empty row
@@ -121,7 +126,7 @@ export const parse = async (
               header as AllKeys
             ](cells[idx]!),
           }),
-          {} as Entry,
+          {} as Entry
         );
         invariant(!Number.isNaN(entry.counter_t), "NaN");
         invariant(Number.isFinite(entry.counter_t), "t (s) not ok");

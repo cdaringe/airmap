@@ -19,7 +19,12 @@ export const parse = async (
 ): Promise<State> => {
   const { done, value } = await stream.read();
   if (value || done) {
-    state.partial += value ? new TextDecoder().decode(value) : "";
+    state.partial +=
+      typeof value === "string"
+        ? value
+        : value
+        ? new TextDecoder().decode(value)
+        : "";
     const rows = state.partial.split(/\n/g);
     const lastRowIdx = rows.length - 1;
     rows.forEach((row, i) => {
