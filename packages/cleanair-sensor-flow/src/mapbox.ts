@@ -13,7 +13,7 @@ const COLORS = [
   "#4d0173",
 ];
 
-const PM2_FIELD_NAME = "VOC (ppb)" as const;
+const PM2_FIELD_NAME = "voc_ppb" as const;
 const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
   [0, 2_000],
   [2_000, 4_000],
@@ -41,9 +41,9 @@ export const getLevels: MapGetLevels<FlowEntry> = ({
   const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
   const pm2Ranges = isMinMaxDynamicRange
     ? [...new Array(numColors)].map((_, i) => {
-      const base = min + i * levelSpan;
-      return [base, base + levelSpan] as [number, number];
-    })
+        const base = min + i * levelSpan;
+        return [base, base + levelSpan] as [number, number];
+      })
     : FIXED_PM2_LEVEL_RANGES;
   return {
     circleCases: pm2Ranges
