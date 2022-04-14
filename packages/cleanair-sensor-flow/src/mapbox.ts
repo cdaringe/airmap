@@ -1,5 +1,8 @@
-import { MapGetLevels, tupleAsMapboxRange } from "cleanair-sensor-common";
-import { FlowEntry } from "./interfaces";
+import {
+  MapGetLevels,
+  tupleAsMapboxRange,
+} from "../../cleanair-sensor-common/mod.ts";
+import { FlowEntry } from "./interfaces.ts";
 
 const COLORS = [
   "#6fc400",
@@ -38,9 +41,9 @@ export const getLevels: MapGetLevels<FlowEntry> = ({
   const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
   const pm2Ranges = isMinMaxDynamicRange
     ? [...new Array(numColors)].map((_, i) => {
-      const base = min + i * levelSpan;
-      return [base, base + levelSpan] as [number, number];
-    })
+        const base = min + i * levelSpan;
+        return [base, base + levelSpan] as [number, number];
+      })
     : FIXED_PM2_LEVEL_RANGES;
   return {
     circleCases: pm2Ranges
