@@ -21,14 +21,14 @@ export const download = async (urls: string[]) => {
   ]);
   if (measures.length !== positions.length) {
     console.warn(
-      `lossy data - measures ${measures.length}, positions ${positions.length}`,
+      `lossy data - measures ${measures.length}, positions ${positions.length}`
     );
   }
   const coordStamps = positions.map((p) => p.timestamp);
   return measures.reduce<FlowEntry[]>((acc, voc) => {
     const coordTsMatch = closestTo(voc.timestamp, coordStamps)!;
     const coord = positions.find(
-      (c) => c.timestamp === coordTsMatch.getTime(),
+      (c) => c.timestamp === coordTsMatch.getTime()
     )!;
     const date = new Date(coord.timestamp);
     const entry = {
@@ -45,19 +45,20 @@ export const download = async (urls: string[]) => {
   }, []);
 };
 
-export const toGeojson = (
-  flowDatas: FlowEntry[],
+export const toGeoJSON = (
+  flowDatas: FlowEntry[]
 ): GeoJSON.FeatureCollection => ({
   type: "FeatureCollection",
   features: flowDatas.map(
-    (properties) => ({
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [properties.longitude, properties.latitude],
-      },
-      properties: { ...properties },
-    } as GeoJSON.Feature),
+    (properties) =>
+      ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [properties.longitude, properties.latitude],
+        },
+        properties: { ...properties },
+      } as GeoJSON.Feature)
   ),
 });
 
