@@ -1,16 +1,16 @@
 table:
-  name: observation_purpleair
   schema: public
+  name: observation_purpleair
 select_permissions:
-- permission:
-    columns:
-    - sensor_id
-    - id
-    - humidity
-    - pm_1_atm
-    - pm_2_5_atm
-    - pm_2_5_cf
-    - temperature_f
-    - timestamp
-    filter: {}
-  role: readonly
+  - role: readonly
+    permission:
+      columns:
+        - sensor_id
+        - id
+        - humidity
+        - pm_1_atm
+        - pm_2_5_atm
+        - pm_2_5_cf
+        - temperature_f
+        - timestamp
+      filter: {}
