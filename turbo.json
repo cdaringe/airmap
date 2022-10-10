@@ -1,0 +1,25 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**"]
+    },
+    "export": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**"]
+    },
+    "test": {
+      "dependsOn": [],
+      "outputs": [],
+      "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts", "test/**/*.tsx"]
+    }
+    // "deploy": {
+    //   // A package's `deploy` script depends on the `build`,
+    //   // `test`, and `lint` scripts of the same package
+    //   // being completed. It also has no filesystem outputs.
+    //   "dependsOn": ["build", "test", "lint"],
+    //   "outputs": []
+    // }
+  }
+}

@@ -11,7 +11,7 @@ visit [https://cdaringe.github.io/airmap](https://cdaringe.github.io/airmap)!
 ## contributing
 
 - install `fnm` or `nvm`
-- `npm install -g pnpm@6`
+- `npm install -g pnpm@7`
 - `pnpm install`
 - `pnpm dev`
 
@@ -36,3 +36,7 @@ example sheets:
 - positions: https://docs.google.com/spreadsheets/d/15QJWTrn2RVG8C2q0SF7qjXDIMabg-OXDTYkjBRLWHrw/edit#gid=2147112514
 
 </details>
+
+## todo
+
+- make sure CI WORKS

@@ -38,3 +38,9 @@ static
 .env
 .next
 node_modules
+.turbo
+build
+dist/**
+.next/**
+
+apps/airmap/out/

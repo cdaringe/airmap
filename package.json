@@ -1,14 +1,39 @@
 {
   "name": "airmap",
-  "version": "0.0.0",
+  "version": "0.0.5",
   "private": true,
   "engines": {
     "node": ">=16"
   },
   "scripts": {
+    "dev": "turbo run dev",
+    "export": "turbo run export",
+    "test": "turbo run test",
+    "build": "turbo run build",
     "format": "prettier --write './*.{js,json,md}' './.github/**' '.vscode/**'"
   },
   "devDependencies": {
-    "prettier": "^2.5.1"
-  }
+    "ava": "4.1.0",
+    "browser-env": "3.3.0",
+    "prettier": "^2.5.1",
+    "ts-node": "10.4.0",
+    "turbo": "1.5.5"
+  },
+  "packageManager": "pnpm@7.13.3",
+  "ava": {
+    "require": [
+      "./test/_setup-browser-env.js"
+    ],
+    "extensions": {
+      "ts": "module"
+    },
+    "nodeArguments": [
+      "--loader=ts-node/esm",
+      "--experimental-specifier-resolution=node"
+    ]
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
 }
