@@ -4,7 +4,9 @@ import { assert, assertEquals } from "std/testing/asserts.ts";
 Deno.test({
   name: "fetch observations",
   async fn() {
-    const observations = await fetchObservations();
+    const observations = await fetchObservations(
+      "https://docs.google.com/spreadsheets/d/1_j058uBscRIwCTTIWcUkFQjl-QODwcb-yQvrNy1QP30/gviz/tq"
+    );
     assert(observations.length > 0);
     const obs0 = observations[0];
     assertEquals(obs0, {

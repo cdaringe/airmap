@@ -1,5 +1,5 @@
 import React from "react";
-import { NO_SENSOR_ID } from "../../../../../packages/cleanair-sensor-common/mod";
+import { NO_SENSOR_ID } from "../../../../../packages/cleanair-sensor-common/mod.ts";
 
 export type DataSource = {
   datasource: "googlesheetsurl" | "csvurl";

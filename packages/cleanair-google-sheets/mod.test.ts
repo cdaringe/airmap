@@ -1,7 +1,4 @@
-import {
-  assertEquals,
-  assertThrows,
-} from "https://deno.land/std@0.129.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.129.0/testing/asserts.ts";
 import { isGoogleSheetsCompatibleUrl, toSheetsDataExportUrl } from "./mod.ts";
 
 const sheetUrl = "https://google.com/spreadsheets/d/123";
@@ -19,13 +16,13 @@ Deno.test({
   fn: () => {
     assertEquals(
       isGoogleSheetsCompatibleUrl(undefined as unknown as string),
-      false,
+      false
     );
     assertEquals(isGoogleSheetsCompatibleUrl("https://wat"), false);
     assertEquals(isGoogleSheetsCompatibleUrl("https://google.com/"), false);
     assertEquals(
       isGoogleSheetsCompatibleUrl("https://google.com/spreadsheets/d"),
-      false,
+      false
     );
     assertEquals(isGoogleSheetsCompatibleUrl(sheetUrl), true);
   },

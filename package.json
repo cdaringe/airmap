@@ -17,8 +17,7 @@
     "ava": "4.1.0",
     "browser-env": "3.3.0",
     "prettier": "^2.5.1",
-    "ts-node": "10.4.0",
-    "turbo": "^1.1.6"
+    "ts-node": "10.4.0"
   },
   "packageManager": "pnpm@6.25.0",
   "ava": {

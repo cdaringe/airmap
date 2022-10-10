@@ -1,6 +1,6 @@
 /// <reference types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/geojson/index.d.ts" />
 import { parse } from "./streams/parse-pocketlabs-stream.ts";
-import { streamGoogleSheetsCsv } from "../../google-sheets/mod.ts";
+import { streamGoogleSheetsCsv } from "../../cleanair-google-sheets/mod.ts";
 import { Entry } from "./interfaces.ts";
 
 const applyEpaCorrection = (old: number, humidity: number) =>

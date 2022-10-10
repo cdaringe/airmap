@@ -7,7 +7,7 @@ import {
   NO_SENSOR_ID,
   FLOW_ID,
   POCKET_LABS_ID,
-} from "../../../../../packages/cleanair-sensor-common/mod";
+} from "../../../../../packages/cleanair-sensor-common/mod.ts";
 
 export type DataSource = {
   url: string;
@@ -39,7 +39,7 @@ export const DataSourceWidget: FC<Props> = ({
 }) => {
   return (
     <>
-      <p className="gray-200 text-gray-600 text-center">
+      <p className="text-center text-gray-600 gray-200">
         Enter your datasource
       </p>
       <Select
@@ -97,7 +97,7 @@ export const DataSourceWidget: FC<Props> = ({
         />
       ) : null}
       {isRenderingUrlErrorState ? (
-        <p className="text-red-600 text-left text-sm">
+        <p className="text-sm text-left text-red-600">
           Sheets URL must have the form:
           <br />
           https://docs.google.com/spreadsheets/d/:id/gviz/tq

@@ -7,7 +7,7 @@ import Loading from "../../atoms/loading";
 import { PollutionLayer } from "../../mapping/PollutionLayer";
 import { useInitialBoundingBox } from "../../mapping/use-bounding-box";
 import { useHandleNoDatasource } from "../../../hooks/use-handle-no-datasource";
-import { useSensorMappingResources } from "cleanair-sensor-hooks";
+import { useSensorMappingResources } from "./hooks/use-sensor-mapping-resources";
 import { useQuery } from "react-query";
 import MapError from "./map.error";
 import NoDatapoint from "./map.nodatapoint";
@@ -24,8 +24,8 @@ const MeasurementPopup = dynamic(() => import("../../MeasurementPopup"));
 const accessToken =
   "pk.eyJ1IjoicGR4Y2xlYW5haXIiLCJhIjoiY2tweDFuZmxpMjFmbzJ3bXVkajd4dDQ4dSJ9.LYiRB4TgOAckcqZGi-cUXg";
 
-const normalizeMapboxUrl = (url: string, resourceType: string) => {
-  var isMapboxRequest =
+const normalizeMapboxUrl = (url: string, _resourceType: string) => {
+  const isMapboxRequest =
     url.slice(8, 22) === "api.mapbox.com" ||
     url.slice(10, 26) === "tiles.mapbox.com";
   return {
@@ -36,7 +36,13 @@ const normalizeMapboxUrl = (url: string, resourceType: string) => {
 const DEFAULT_START_DATE = new Date("2020-01-01");
 const DEFAULT_END_DATE = new Date(`${new Date().getFullYear()}-12-31`);
 
+let activePWHYIsMapUnmountingUghGetDataOnce: any = null;
+
 export default function Map() {
+  useEffect(() => {
+    console.log("MAP MOUNTING");
+    return () => console.log("MAP UNMOUNTING");
+  });
   const [isMinMaxDynamicRange, setIsMinMaxDynamicRange] = useState(true);
   const [isFilterAfterStart, setIsFilteringAfterStart] = useState(false);
   const [startDate, setStartDate] = useState<Date>(DEFAULT_START_DATE);
@@ -54,12 +60,10 @@ export default function Map() {
   const {
     isLoading: isSensorDownladerLoading,
     error: sensorDownloaderError,
-    data: { useSensor, dateField } = {},
+    data: { download, mapbox } = { mapbox: {}, download: {} },
   } = useSensorMappingResources(sensorType);
-  const {
-    downloadGeoJSON,
-    map: { getLevels },
-  } = useSensor?.(urls) || { map: {} };
+  const { getLevels, dateField } = mapbox;
+  const { downloadGeoJSON } = download;
   const {
     isLoading: isDataLoading,
     error: dataDownloadError,
@@ -67,8 +71,8 @@ export default function Map() {
   } = useQuery({
     // use `typeof download` to cache bust react-query when the download
     // function has not yet finished downloading
-    queryKey: [...urls, typeof downloadGeoJSON],
-    queryFn: () => downloadGeoJSON?.(),
+    queryKey: ["map", `sensor-${sensorType}`, ...urls, typeof downloadGeoJSON],
+    queryFn: () => downloadGeoJSON?.(urls),
     cacheTime: 1e9,
   });
   const error = sensorDownloaderError || dataDownloadError;
@@ -118,12 +122,13 @@ export default function Map() {
   const dataPoint = geojson?.features[0]?.properties as
     | Record<string, string>
     | undefined;
+  console.log("render-proper-content");
   return (
     <>
       <MapCssLink />
       <Map
         onStyleLoad={setupControls}
-        className="content w-full"
+        className="w-full content"
         fitBounds={fitBounds}
         center={center}
         style="mapbox://styles/pdxcleanair/ckpx7yno443sa17p6iy65qn95"
@@ -151,7 +156,7 @@ export default function Map() {
         {selectedFeature ? (
           <MeasurementPopup
             title="Measurements"
-            className="h-96 overflow-auto"
+            className="overflow-auto h-96"
             feature={selectedFeature}
             onClick={(evt) => {
               evt.preventDefault();

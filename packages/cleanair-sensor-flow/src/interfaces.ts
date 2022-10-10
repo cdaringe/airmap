@@ -6,3 +6,7 @@ export type FlowEntry = {
   skip?: boolean;
   pm_2_5: number;
 };
+
+export type ModResources = {
+  closestTo: (a: unknown, ...b: unknown[]) => Date;
+};

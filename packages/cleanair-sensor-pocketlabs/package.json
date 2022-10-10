@@ -1,7 +1,0 @@
-{
-  "name": "cleanair-sensor-pocketlabs",
-  "description": "sensor utilities",
-  "scripts": {
-    "test": "deno test -A $(fd deno)"
-  }
-}

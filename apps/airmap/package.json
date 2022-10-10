@@ -17,8 +17,6 @@
     "test_": "ava"
   },
   "dependencies": {
-    "cleanair-sensor-common": "workspace:^0",
-    "cleanair-sensor-hooks": "workspace:^0",
     "@turf/turf": "^6.5.0",
     "clsx": "^1.1.1",
     "dotenv": "^16.0.0",
@@ -31,7 +29,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-mapbox-gl": "^5.1.1",
-    "react-query": "^3.34.7",
+    "react-query": "3.39.2",
     "react-spring": "^9.4.2",
     "recharts": "^2.1.8"
   },

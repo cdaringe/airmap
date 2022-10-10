@@ -36,3 +36,7 @@ example sheets:
 - positions: https://docs.google.com/spreadsheets/d/15QJWTrn2RVG8C2q0SF7qjXDIMabg-OXDTYkjBRLWHrw/edit#gid=2147112514
 
 </details>
+
+## todo
+
+- make sure CI WORKS

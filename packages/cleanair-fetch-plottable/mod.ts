@@ -1,4 +1,4 @@
-import { streamGoogleSheetsCsv } from "../google-sheets/mod.ts";
+import { streamGoogleSheetsCsv } from "../cleanair-google-sheets/mod.ts";
 import { invariant } from "../invariant/mod.ts";
 
 type Entry = {
@@ -15,15 +15,16 @@ type State = {
 
 export const parse = async (
   stream: ReadableStreamDefaultReader<Uint8Array>,
-  state: State = { records: [], partial: "" },
+  state: State = { records: [], partial: "" }
 ): Promise<State> => {
   const { done, value } = await stream.read();
   if (value || done) {
-    state.partial += typeof value === "string"
-      ? value
-      : value
-      ? new TextDecoder().decode(value)
-      : "";
+    state.partial +=
+      typeof value === "string"
+        ? value
+        : value
+        ? new TextDecoder().decode(value)
+        : "";
     const rows = state.partial.split(/\n/g);
     const lastRowIdx = rows.length - 1;
     rows.forEach((row, i) => {
@@ -41,7 +42,7 @@ export const parse = async (
           }
           state.headerIndiciesByName = cells.reduce(
             (acc, curr, i) => ({ ...acc, [curr.trim()]: i }),
-            {},
+            {}
           );
         } else {
           const device = cells[state.headerIndiciesByName["device"]!];
@@ -67,10 +68,7 @@ export const parse = async (
   return done ? state : parse(stream, state);
 };
 
-export async function fetchObservations(
-  url =
-    "https://docs.google.com/spreadsheets/d/1_j058uBscRIwCTTIWcUkFQjl-QODwcb-yQvrNy1QP30/gviz/tq",
-) {
+export function fetchObservations(url: string) {
   return streamGoogleSheetsCsv(url)
     .then(parse)
     .then((v) => v.records);

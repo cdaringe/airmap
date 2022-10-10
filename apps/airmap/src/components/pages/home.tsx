@@ -2,16 +2,20 @@ import { DataSourceWidget } from "../data-source/DataSourceWidget";
 import {
   isGoogleSheetsCompatibleUrl,
   toSheetsDataExportUrl,
-} from "../../http/validators";
+} from "../../../../../packages/cleanair-google-sheets/mod.ts";
 import { useDataSource } from "../data-source/use-data-source";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { useMapAuth } from "../mapping/use-map-auth";
 
 const FLOW_ID = 1;
 const NO_SENSOR_ID = 0;
 
 export default function Home() {
+  useEffect(() => {
+    console.warn("home-mount");
+    return () => console.warn("home-unmount");
+  });
   const {
     value: { urls, datasource, sensorType },
     update,
@@ -29,7 +33,7 @@ export default function Home() {
     !isValidDataUrl || !accessToken || sensorType === NO_SENSOR_ID;
   return (
     <form
-      className="content home w-96 max-w-screen-md"
+      className="max-w-screen-md content home w-96"
       onSubmit={(evt) => evt.preventDefault()}
     >
       <h1 className="text-4xl text-center">airmap!</h1>
