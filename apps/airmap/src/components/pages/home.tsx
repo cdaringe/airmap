@@ -12,10 +12,6 @@ const FLOW_ID = 1;
 const NO_SENSOR_ID = 0;
 
 export default function Home() {
-  useEffect(() => {
-    console.warn("home-mount");
-    return () => console.warn("home-unmount");
-  });
   const {
     value: { urls, datasource, sensorType },
     update,

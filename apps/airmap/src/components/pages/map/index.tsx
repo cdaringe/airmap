@@ -36,13 +36,7 @@ const normalizeMapboxUrl = (url: string, _resourceType: string) => {
 const DEFAULT_START_DATE = new Date("2020-01-01");
 const DEFAULT_END_DATE = new Date(`${new Date().getFullYear()}-12-31`);
 
-let activePWHYIsMapUnmountingUghGetDataOnce: any = null;
-
 export default function Map() {
-  useEffect(() => {
-    console.log("MAP MOUNTING");
-    return () => console.log("MAP UNMOUNTING");
-  });
   const [isMinMaxDynamicRange, setIsMinMaxDynamicRange] = useState(true);
   const [isFilterAfterStart, setIsFilteringAfterStart] = useState(false);
   const [startDate, setStartDate] = useState<Date>(DEFAULT_START_DATE);
@@ -122,7 +116,6 @@ export default function Map() {
   const dataPoint = geojson?.features[0]?.properties as
     | Record<string, string>
     | undefined;
-  console.log("render-proper-content");
   return (
     <>
       <MapCssLink />
