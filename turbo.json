@@ -5,6 +5,10 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**"]
     },
+    "export": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**"]
+    },
     "test": {
       "dependsOn": [],
       "outputs": [],
