@@ -7,7 +7,7 @@ RUN chmod 1766 .
 WORKDIR /etl/app
 RUN chown -R node .
 RUN chmod 1766 .
-RUN npm add --global pnpm@6
+RUN npm add --global pnpm@7
 USER node
 COPY package.json .
 RUN NODE_ENV=development pnpm install --dir /etl/app

@@ -12,13 +12,12 @@
     "format": "prettier --write './*.{js,json,md}' './.github/**' '.vscode/**'"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.21.1",
     "ava": "4.1.0",
     "browser-env": "3.3.0",
     "prettier": "^2.5.1",
     "ts-node": "10.4.0"
   },
-  "packageManager": "pnpm@6.25.0",
+  "packageManager": "pnpm@7.13.3",
   "ava": {
     "require": [
       "./test/_setup-browser-env.js"
