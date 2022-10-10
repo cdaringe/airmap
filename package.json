@@ -9,7 +9,6 @@
     "dev": "turbo run dev",
     "test": "turbo run test",
     "build": "turbo run build",
-    "publish:ci": "changeset publish",
     "format": "prettier --write './*.{js,json,md}' './.github/**' '.vscode/**'"
   },
   "devDependencies": {
