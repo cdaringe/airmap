@@ -31,6 +31,7 @@ jobs:
           pnpm -r test
           pnpm -r build
       - name: Prepare site
+        run: |
           pnpm -r export
           echo "inspecting exported out dir"
           ls -al ./apps/airmap/out
