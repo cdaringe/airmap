@@ -31,7 +31,7 @@ jobs:
           pnpm -r test
           pnpm -r build
           pnpm -r export
-          mv packages/airmap/out ./out && touch out/.nojekyll && ls -al out/.nojekyll
+          mv apps/airmap/out ./out && touch out/.nojekyll && ls -al out/.nojekyll
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.3
         with:
