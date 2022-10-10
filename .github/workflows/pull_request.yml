@@ -20,7 +20,7 @@ jobs:
       - name: Install and Test
         run: |
           pnpm install
-          pnpm format -- --check
+          pnpm format --check
           pnpm test
           pnpm build
           pnpm export
