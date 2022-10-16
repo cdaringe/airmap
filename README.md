@@ -35,4 +35,9 @@ example sheets:
 - measures: https://docs.google.com/spreadsheets/d/1x59PQjrKqN3NSORDaTAs557v0mloOosNTnqKhfrE3VU/edit#gid=585713925
 - positions: https://docs.google.com/spreadsheets/d/15QJWTrn2RVG8C2q0SF7qjXDIMabg-OXDTYkjBRLWHrw/edit#gid=2147112514
 
+## miniwras
+
+- measures: https://docs.google.com/spreadsheets/d/1XqB95gipLDOOsCfYFMV1RXREYUp14POM0fnV1hNRekA/edit#gid=802667302
+- positions: https://docs.google.com/spreadsheets/d/1l87PtfEy9vWAq4D0iDDh2dIYGZ8y6regd0Wk33kUH0c/edit#gid=2147112514
+
 </details>

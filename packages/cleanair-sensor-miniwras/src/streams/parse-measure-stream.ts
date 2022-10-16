@@ -1,6 +1,6 @@
 import { invariant } from "../../../invariant/mod.ts";
 
-type Entry = { date: Date; pm_2_7: number };
+type Entry = { date: Date; pm_2_3: number; pm_2_7: number };
 type State = {
   partial: string;
   headerIndiciesByName?: Record<string, number>;
@@ -23,9 +23,11 @@ const usLocalDateTimetoDate = (v: string) =>
       .join("")
   );
 
+const float = (v: string) => parseFloat(v);
 const fieldParsersByName = {
   date: usLocalDateTimetoDate,
-  pm_2_7: (v: string) => parseFloat(v),
+  pm_2_3: float,
+  pm_2_7: float,
 };
 
 export const parse = async (
@@ -59,12 +61,14 @@ export const parse = async (
           );
         } else {
           const date_raw = cells[state.headerIndiciesByName["Time"]!];
+          const pm_2_3 = cells[state.headerIndiciesByName["2332.27 nm"]!];
           const pm_2_7 = cells[state.headerIndiciesByName["2745.80 nm"]!];
           invariant(date_raw, "date missing");
           invariant(pm_2_7, "2745.80 nm missing");
           state.records.push({
             date: fieldParsersByName.date(date_raw),
             pm_2_7: fieldParsersByName.pm_2_7(pm_2_7),
+            pm_2_3: fieldParsersByName.pm_2_3(pm_2_3),
           });
           if (done) {
             state.partial = "";

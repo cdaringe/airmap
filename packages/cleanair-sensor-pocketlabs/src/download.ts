@@ -2,6 +2,7 @@
 import { parse } from "./streams/parse-pocketlabs-stream.ts";
 import { streamGoogleSheetsCsv } from "../../cleanair-google-sheets/mod.ts";
 import { Entry } from "./interfaces.ts";
+import { type GeoJSON } from "../../cleanair-sensor-common/mod.ts";
 
 const applyEpaCorrection = (old: number, humidity: number) =>
   0.0534 * old - 0.0844 * humidity + 5.604;

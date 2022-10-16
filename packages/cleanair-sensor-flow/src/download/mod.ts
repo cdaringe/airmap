@@ -1,3 +1,5 @@
+import { type GeoJSON } from "../../../cleanair-sensor-common/mod.ts";
+
 /**
  * Download Flow sensor datas.
  * Flow sensor CSVs take both a measurements and positions CSV.
