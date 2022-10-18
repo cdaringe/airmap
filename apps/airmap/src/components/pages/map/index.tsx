@@ -56,8 +56,8 @@ export default function Map() {
     error: sensorDownloaderError,
     data: { download, mapbox } = { mapbox: {}, download: {} },
   } = useSensorMappingResources(sensorType);
-  const { getLevels, dateField } = mapbox;
-  const { downloadGeoJSON } = download;
+  const { getLevels } = mapbox;
+  const { downloadGeoJSON, dateField } = download;
   const {
     isLoading: isDataLoading,
     error: dataDownloadError,
