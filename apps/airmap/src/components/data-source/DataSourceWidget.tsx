@@ -4,8 +4,9 @@ import Input from "../atoms/input";
 import Button from "../atoms/button";
 import Select from "../atoms/select";
 import {
-  NO_SENSOR_ID,
   FLOW_ID,
+  MINIWRAS_ID,
+  NO_SENSOR_ID,
   POCKET_LABS_ID,
 } from "../../../../../packages/cleanair-sensor-common/mod.ts";
 
@@ -63,6 +64,7 @@ export const DataSourceWidget: FC<Props> = ({
         </option>
         <option value={FLOW_ID}>Flow</option>
         <option value={POCKET_LABS_ID}>PocketLabs</option>
+        <option value={MINIWRAS_ID}>MiniWRAS</option>
       </Select>
       <DataSourceSelector
         required
@@ -85,7 +87,7 @@ export const DataSourceWidget: FC<Props> = ({
           onUrlsChange([evt.currentTarget.value, urls[1]].filter(Boolean))
         }
       />
-      {sensorType === FLOW_ID ? (
+      {sensorType === FLOW_ID || sensorType === MINIWRAS_ID ? (
         <Input
           required
           key={`${sensorType}-url-2`}

@@ -2,6 +2,7 @@ import { useQuery } from "react-query";
 import {
   POCKET_LABS_ID,
   FLOW_ID,
+  MINIWRAS_ID,
 } from "../../../../../../../packages/cleanair-sensor-common/mod.ts";
 export const useSensorMappingResources = (sensorType: number) => {
   return useQuery({
@@ -14,6 +15,13 @@ export const useSensorMappingResources = (sensorType: number) => {
         : sensorType === FLOW_ID
         ? import(
             "../../../../../../../packages/cleanair-sensor-flow/src/resources.ts"
+          ).then(async (m) => {
+            const { closestTo } = await import("date-fns");
+            return m.getResources({ closestTo });
+          })
+        : sensorType === MINIWRAS_ID
+        ? import(
+            "../../../../../../../packages/cleanair-sensor-miniwras/src/resources.ts"
           ).then(async (m) => {
             const { closestTo } = await import("date-fns");
             return m.getResources({ closestTo });
