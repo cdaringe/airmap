@@ -14,7 +14,7 @@ const COLORS = [
   "black",
 ];
 
-const PM2_FIELD_NAME = "pm_2_7" as const;
+const PM2_FIELD_NAME = "pm_2_3" as const;
 const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
   0, 0.25, 0.5, 1, 2.5, 5, 20,
 ].map((lower, i, arr) => {

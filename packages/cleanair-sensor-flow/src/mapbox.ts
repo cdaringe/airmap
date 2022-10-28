@@ -23,7 +23,7 @@ const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
   [12_000, 1e9],
 ];
 
-let mapBoxGetPM2Field: ["get", string] = ["get" as const, PM2_FIELD_NAME];
+const mapBoxGetPM2Field: ["get", string] = ["get" as const, PM2_FIELD_NAME];
 
 export const getLevels: MapGetLevels<FlowEntry> = ({
   isMinMaxDynamicRange,

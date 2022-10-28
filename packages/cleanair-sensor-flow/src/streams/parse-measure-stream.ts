@@ -1,10 +1,14 @@
 import { invariant } from "../../../invariant/mod.ts";
 
-type Entry = { timestamp: number; voc_ppb: number; pm_2_5: number };
+export type MeasureEntry = {
+  timestamp: number;
+  voc_ppb: number;
+  pm_2_5: number;
+};
 type State = {
   partial: string;
   headerIndiciesByName?: Record<string, number>;
-  records: Entry[];
+  records: MeasureEntry[];
 };
 
 const fieldParsersByName = {
@@ -15,15 +19,16 @@ const fieldParsersByName = {
 
 export const parse = async (
   stream: ReadableStreamDefaultReader<Uint8Array>,
-  state: State = { records: [], partial: "" },
+  state: State = { records: [], partial: "" }
 ): Promise<State> => {
   const { done, value } = await stream.read();
   if (value || done) {
-    state.partial += typeof value === "string"
-      ? value
-      : value
-      ? new TextDecoder().decode(value)
-      : "";
+    state.partial +=
+      typeof value === "string"
+        ? value
+        : value
+        ? new TextDecoder().decode(value)
+        : "";
     const rows = state.partial.split(/\n/g);
     const lastRowIdx = rows.length - 1;
     rows.forEach((row, i) => {
@@ -38,7 +43,7 @@ export const parse = async (
         if (!state.headerIndiciesByName) {
           state.headerIndiciesByName = cells.reduce(
             (acc, curr, i) => ({ ...acc, [curr.trim()]: i }),
-            {},
+            {}
           );
         } else {
           const vocFieldName = "VOC (ppb)" as const;
@@ -47,7 +52,7 @@ export const parse = async (
           const pm_2_5 = cells[state.headerIndiciesByName["pm 2.5 (ug/m3)"]!];
           invariant(
             voc_raw,
-            `voc missing (${vocFieldName}, value: ${voc_raw})`,
+            `voc missing (${vocFieldName}, value: ${voc_raw})`
           );
           invariant(timestamp_raw, "timestamp missing");
           invariant(pm_2_5, "pm25 missing");
