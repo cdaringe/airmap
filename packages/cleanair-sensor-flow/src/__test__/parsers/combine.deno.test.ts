@@ -3,8 +3,8 @@ import { assertEquals } from "https://deno.land/std@0.129.0/testing/asserts.ts";
 
 Deno.test({
   name: "combine",
-  fn: () => {
-    const result = mod.combine({
+  fn: async () => {
+    const result = await mod.combine({
       measures: [
         {
           timestamp: 10,

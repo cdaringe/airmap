@@ -18,8 +18,17 @@ import {
 import { FlowEntry, ModResources } from "../interfaces.ts";
 import { invariant } from "../../../invariant/mod.ts";
 
+const take = <T>(n: number, ts: T[]): T[] => {
+  const res: T[] = [];
+  let count = 0;
+  while (count < n) {
+    res.push(ts[count]);
+    ++count;
+  }
+  return res;
+};
 export const createModule = (r: ModResources) => {
-  const combine = ({
+  const combine = async ({
     measures,
     positions,
     r,
@@ -35,31 +44,51 @@ export const createModule = (r: ModResources) => {
     }
     const coordStamps = positions.map((p) => p.timestamp);
     const dropUntilEq = (d: Date) => {
-      for (const stamp of coordStamps) {
-        if (stamp === d.getTime()) {
-          return;
-        }
+      const t = d.getTime();
+      while (coordStamps[0] !== t) {
         coordStamps.shift();
       }
     };
-    return measures.reduce<FlowEntry[]>((acc, voc) => {
-      const coordTsMatch = r.closestTo(voc.timestamp, coordStamps)!;
-      dropUntilEq(coordTsMatch);
-      const coord = positions.find(
-        (c) => c.timestamp === coordTsMatch.getTime()
-      )!;
-      const entry = {
-        ...voc,
-        date: new Date(voc.timestamp),
-        latitude: coord.latitude,
-        longitude: coord.longitude,
-        skip: Math.abs(coord.timestamp - voc.timestamp) > 60_000,
-      };
-      if (!entry.skip) {
-        acc.push(entry);
-      }
-      return acc;
-    }, []);
+    const takeValuesLessThanAndOneBeyond = (
+      target: number,
+      values: number[]
+    ) => {
+      const justOverIndex = values.findIndex((v) => v >= target);
+      if (justOverIndex === -1) return values;
+      const numOfItems = justOverIndex + 1;
+      return take(numOfItems, values);
+    };
+    const combined: FlowEntry[] = [];
+    for (const voc of measures) {
+      await new Promise<void>((resolve, reject) => {
+        queueMicrotask(() => {
+          try {
+            const coordTsMatch = r.closestTo(
+              voc.timestamp,
+              takeValuesLessThanAndOneBeyond(voc.timestamp, coordStamps)
+            )!;
+            dropUntilEq(coordTsMatch);
+            const coord = positions.find(
+              (c) => c.timestamp === coordTsMatch.getTime()
+            )!;
+            const entry = {
+              ...voc,
+              date: new Date(voc.timestamp),
+              latitude: coord.latitude,
+              longitude: coord.longitude,
+              skip: Math.abs(coord.timestamp - voc.timestamp) > 60_000,
+            };
+            if (!entry.skip) {
+              combined.push(entry);
+            }
+            return resolve();
+          } catch (err) {
+            return reject(err);
+          }
+        });
+      });
+    }
+    return combined;
   };
 
   const download = async (urls: string[]) => {
