@@ -9,7 +9,7 @@ type State = {
 
 const fieldParsersByName = {
   voc_ppb: (v: string) => parseInt(v),
-  timestamp: (v: string) => parseInt(v) * 1_000,
+  date: (v: string) => new Date(parseInt(v) * 1_000),
   pm_2_5: (v: string) => parseFloat(v),
 };
 
@@ -54,7 +54,7 @@ export const parse = async (
           invariant(pm_2_5, "pm25 missing");
           state.records.push({
             voc_ppb: fieldParsersByName.voc_ppb(voc_raw),
-            timestamp: fieldParsersByName.timestamp(timestamp_raw),
+            date: fieldParsersByName.date(timestamp_raw),
             pm_2_5: fieldParsersByName.pm_2_5(pm_2_5),
           });
           if (done) {

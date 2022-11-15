@@ -56,8 +56,8 @@ export const createModule = (r: ModResources) => {
         queueMicrotask(() => {
           try {
             const coordTsMatch = r.closestTo(
-              voc.timestamp,
-              takeValuesLessThanAndOneBeyond(voc.timestamp, coordStamps)
+              voc.date,
+              takeValuesLessThanAndOneBeyond(voc.date.getTime(), coordStamps)
             )!;
             dropUntilEq(coordTsMatch);
             const coord = positions.find(
@@ -65,10 +65,10 @@ export const createModule = (r: ModResources) => {
             )!;
             const entry = {
               ...voc,
-              date: new Date(voc.timestamp),
+              date: new Date(voc.date),
               latitude: coord.latitude,
               longitude: coord.longitude,
-              skip: Math.abs(coord.timestamp - voc.timestamp) > 60_000,
+              skip: Math.abs(coord.timestamp - voc.date.getTime()) > 60_000,
             };
             if (!entry.skip) {
               combined.push(entry);

@@ -29,7 +29,8 @@ const bundleModules: Task = {
 
 const deploy: Task = {
   dependsOn: [bundleModules],
-  fn: async ({ sh }) => {
+  fn: async ({ sh, logger }) => {
+    logger.info(`rsync'ing ESM`);
     await sh(
       `rsync -r build/ $HTTP_SERVER_ADMIN@$HTTP_SERVER_IP:/www/static/airmap`
     );

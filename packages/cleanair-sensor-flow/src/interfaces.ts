@@ -1,5 +1,5 @@
 export type MeasureEntry = {
-  timestamp: number;
+  date: Date;
   voc_ppb: number;
   pm_2_5: number;
 };
