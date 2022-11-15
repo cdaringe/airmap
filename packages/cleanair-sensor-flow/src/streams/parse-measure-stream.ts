@@ -1,10 +1,6 @@
 import { invariant } from "../../../invariant/mod.ts";
-
-export type MeasureEntry = {
-  timestamp: number;
-  voc_ppb: number;
-  pm_2_5: number;
-};
+import type { MeasureEntry } from "../interfaces.ts";
+export type { MeasureEntry } from "../interfaces.ts";
 type State = {
   partial: string;
   headerIndiciesByName?: Record<string, number>;

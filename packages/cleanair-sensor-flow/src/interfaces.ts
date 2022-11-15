@@ -1,11 +1,14 @@
-export type FlowEntry = {
+export type MeasureEntry = {
   timestamp: number;
-  latitude: number;
-  longitude: number;
   voc_ppb: number;
-  skip?: boolean;
   pm_2_5: number;
 };
+
+export type FlowEntry = {
+  latitude?: number;
+  longitude?: number;
+  skip?: boolean;
+} & MeasureEntry;
 
 export type ModResources = {
   closestTo: (a: unknown, ...b: unknown[]) => Date;

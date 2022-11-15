@@ -17,16 +17,8 @@ import {
 } from "../streams/parse-positions-stream.ts";
 import { FlowEntry, ModResources } from "../interfaces.ts";
 import { invariant } from "../../../invariant/mod.ts";
+import { take } from "./iter.ts";
 
-const take = <T>(n: number, ts: T[]): T[] => {
-  const res: T[] = [];
-  let count = 0;
-  while (count < n) {
-    res.push(ts[count]);
-    ++count;
-  }
-  return res;
-};
 export const createModule = (r: ModResources) => {
   const combine = async ({
     measures,
@@ -91,15 +83,20 @@ export const createModule = (r: ModResources) => {
     return combined;
   };
 
-  const download = async (urls: string[]) => {
+  const download = async (
+    urls: string[],
+    { omitPositions }: { omitPositions?: boolean } = {}
+  ) => {
     const [measurementsUrl, positionsUrl] = urls;
     invariant(measurementsUrl, "");
     invariant(positionsUrl, "");
     const [{ records: measures }, { records: positions }] = await Promise.all([
       streamGoogleSheetsCsv(measurementsUrl).then(parseMeasure),
-      streamGoogleSheetsCsv(positionsUrl).then(parsePositions),
+      omitPositions
+        ? ({ records: [] } as { records: PositionsEntry[] })
+        : streamGoogleSheetsCsv(positionsUrl).then(parsePositions),
     ]);
-    return combine({ measures, positions, r });
+    return omitPositions ? measures : combine({ measures, positions, r });
   };
 
   const toGeoJSON = (flowDatas: FlowEntry[]): GeoJSON.FeatureCollection => ({

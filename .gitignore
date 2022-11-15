@@ -44,3 +44,4 @@ dist/**
 .next/**
 
 apps/airmap/out/
+node_modules

@@ -1,13 +1,16 @@
 // https://www.mathworks.com/help/thingspeak/readdata.html
 import got from "got";
+import { isProd } from "../../env";
 import {
   PurpleResponse,
   SensorAccess,
   ThingSpeakResponse,
-} from "../../interfaces.js";
-import { asQueryParamDate } from "./url-formatting.js";
+} from "../../interfaces";
+import { asQueryParamDate } from "./url-formatting";
 
 const DAYS_MS = 1000 * 60 * 60 * 24;
+
+const retry = { limit: isProd ? 3 : 0 };
 
 const getPurpleUrl = ({ key, show }: SensorAccess) =>
   `https://www.purpleair.com/json?key=${key}&show=${show}`;
@@ -48,12 +51,21 @@ export const getSourceObservations = ({
   apiKey: string;
   start: Date;
   end: Date;
-}) =>
-  got(getThingspeakUrl({ channel: channelId, apiKey, start, end }), {
-    retry: { limit: 3 },
-  }).json<ThingSpeakResponse>();
+}) => {
+  const url = getThingspeakUrl({ channel: channelId, apiKey, start, end });
+  return got(url, {
+    retry,
+  })
+    .json<ThingSpeakResponse>()
+    .catch((err) => {
+      debugger;
+      throw err;
+    });
+};
 
-export const getSourceSensor = (sensorAccess: SensorAccess) =>
-  got(getPurpleUrl(sensorAccess), { retry: { limit: 3 } })
+export const getSourceSensor = (sensorAccess: SensorAccess) => {
+  const url = getPurpleUrl(sensorAccess);
+  return got(url, { retry })
     .json<PurpleResponse>()
     .then((r) => r.results);
+};

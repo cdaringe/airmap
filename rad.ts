@@ -4,7 +4,7 @@ const format: Task = `deno fmt packages`;
 const test: Task = `deno test --import-map import_map.json --unstable -A $(fd .test.ts packages)`;
 
 /**
- * Bundle packages to ESM
+ * Bundle packages to ESM for Observable and general JS ESM usage
  */
 const bundleModules: Task = {
   fn: async ({ sh, logger, iter, path, fs }) => {
