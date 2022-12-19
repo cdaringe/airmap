@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: sensor_type
+  schema: public
 select_permissions:
   - role: readonly
     permission:

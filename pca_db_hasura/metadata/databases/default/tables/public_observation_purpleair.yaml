@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: observation_purpleair
+  schema: public
 select_permissions:
   - role: readonly
     permission:

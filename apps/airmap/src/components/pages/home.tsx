@@ -81,7 +81,7 @@ export default function Home() {
                 sensorType: MINIWRAS_ID,
                 urls: [
                   "https://docs.google.com/spreadsheets/d/1XqB95gipLDOOsCfYFMV1RXREYUp14POM0fnV1hNRekA/edit#gid=802667302",
-                  "https://docs.google.com/spreadsheets/d/1l87PtfEy9vWAq4D0iDDh2dIYGZ8y6regd0Wk33kUH0c/edit#gid=2147112514",
+                  "https://docs.google.com/spreadsheets/d/1M7m01WPZJ6qG0hSgpEyRO977LOViQfanGpqy_GXSxY0/edit#gid=1094314331",
                 ].map((url) => toSheetsDataExportUrl(url)),
               })
             }

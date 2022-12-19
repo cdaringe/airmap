@@ -1,6 +1,6 @@
 export type Entry = {
   counter_t: number;
-  date: number;
+  date: Date;
   humidity: number;
   latitude: number;
   longitude: number;

@@ -1,3 +1,16 @@
 table:
-  schema: public
   name: observation_purpleair_hourly_agg
+  schema: public
+select_permissions:
+  - role: readonly
+    permission:
+      columns:
+        - sensor_id
+        - avg_humidity
+        - avg_pm_1_atm
+        - avg_pm_2_5_atm
+        - avg_pm_2_5_cf
+        - avg_temperature_f
+        - bucket
+        - timestamp
+      filter: {}
