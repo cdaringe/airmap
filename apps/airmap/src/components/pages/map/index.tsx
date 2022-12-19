@@ -1,3 +1,4 @@
+import { MINIWRAS_ID } from "../../../../../../packages/cleanair-sensor-common/mod.ts";
 import React, { useEffect, useMemo, useState } from "react";
 import ReactMapboxGl from "react-mapbox-gl";
 import { Props as MapProps } from "react-mapbox-gl/lib/map";
@@ -15,6 +16,9 @@ import MapCssLink from "./map.csslink";
 import setupControls from "./map.setup-controls";
 import { format } from "date-fns";
 import { useDateFilter } from "./hooks/use-date-filter";
+import { BottomSheet } from "react-spring-bottom-sheet";
+import "react-spring-bottom-sheet/dist/style.css";
+import { MiniWrasStats } from "../../charts/miniwras-pm2-humidity";
 
 const isValidDate = (d: Date) => !d.toString().match(/Invalid/);
 
@@ -42,6 +46,7 @@ export default function Map() {
   const [startDate, setStartDate] = useState<Date>(DEFAULT_START_DATE);
   const [isFilterBeforeEnd, setFilterBeforeEnd] = useState(false);
   const [endDate, setEndDate] = useState<Date>(DEFAULT_END_DATE);
+  const [isBottomSheetOpen, setBottomSheetOpen] = useState(false);
   useHandleNoDatasource();
   const [fitBounds, setFitBounds] = React.useState<MapProps["fitBounds"]>();
   const [center, setCenter] = React.useState<MapProps["center"]>([
@@ -219,8 +224,29 @@ export default function Map() {
               }}
             />
           </div>
+          {sensorType === MINIWRAS_ID ? (
+            <div className="map-overlay-control map-pollution-range-mode">
+              <input
+                type="checkbox"
+                checked={isBottomSheetOpen}
+                onChange={() => setBottomSheetOpen(!isBottomSheetOpen)}
+              />{" "}
+              Show charts
+              <br />
+            </div>
+          ) : null}
         </div>
       </Map>
+      <BottomSheet
+        blocking={false}
+        open={isBottomSheetOpen}
+        onDismiss={() => setBottomSheetOpen(false)}
+      >
+        <div className="p-4">
+          <h3>PM2.5 & Humidity - MiniWRAS & PocketLabs</h3>
+          <MiniWrasStats geojson={geojson} />
+        </div>
+      </BottomSheet>
     </>
   );
 }
