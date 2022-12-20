@@ -40,6 +40,7 @@ export const createModule = (r: ModResources) => {
         latitude: coord.latitude,
         longitude: coord.longitude,
         humidity: coord.humidity,
+        pocketlabsEntry: coord,
         skip: Math.abs(coord.date.getTime() - it.date.getTime()) > 60_000,
       };
       if (!entry.skip) {

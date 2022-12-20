@@ -10,6 +10,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+/**
+ * @see https://recharts.org/en-US/examples/SynchronizedLineChart
+ */
 export const MiniWrasStats: React.FC<
   PropsWithChildren<{
     geojson: GeoJSON.FeatureCollection;
