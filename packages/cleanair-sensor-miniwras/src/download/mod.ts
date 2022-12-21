@@ -23,14 +23,14 @@ export const createModule = (r: ModResources) => {
     ]);
     if (measures.length !== positions.length) {
       console.warn(
-        `lossy data - measures ${measures.length}, positions ${positions.length}`
+        `lossy data - measures ${measures.length}, positions ${positions.length}`,
       );
     }
     const coordStamps = positions.map((p) => p.date);
     return measures.reduce<MiniWRASEntry[]>((acc, it) => {
       const coordTimestampMatch = r.closestTo(it.date, coordStamps)!;
       const coord = positions.find(
-        (c) => c.date.getTime() === coordTimestampMatch.getTime()
+        (c) => c.date.getTime() === coordTimestampMatch.getTime(),
       );
       if (!coord) {
         throw new Error(`no position found for ${JSON.stringify(it)}`);
@@ -51,19 +51,18 @@ export const createModule = (r: ModResources) => {
   };
 
   const toGeoJSON = (
-    flowDatas: MiniWRASEntry[]
+    flowDatas: MiniWRASEntry[],
   ): GeoJSON.FeatureCollection => ({
     type: "FeatureCollection",
     features: flowDatas.map(
-      (properties) =>
-        ({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [properties.longitude, properties.latitude],
-          },
-          properties: { ...properties },
-        } as GeoJSON.Feature)
+      (properties) => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [properties.longitude, properties.latitude],
+        },
+        properties: { ...properties },
+      } as GeoJSON.Feature),
     ),
   });
 

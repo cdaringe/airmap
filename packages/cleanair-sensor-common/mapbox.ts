@@ -1,4 +1,4 @@
 export const tupleAsMapboxRange = (getField: ["get", string]) =>
-  (
-    [aGTE, bLT]: [number, number],
-  ) => ["all", [">=", getField, aGTE], ["<", getField, bLT]];
+(
+  [aGTE, bLT]: [number, number],
+) => ["all", [">=", getField, aGTE], ["<", getField, bLT]];

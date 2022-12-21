@@ -39,18 +39,18 @@ export const getLevels: MapGetLevels<FlowEntry> = ({
   }
   const numColors = COLORS.length;
   const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
-  const pm2Ranges = isMinMaxDynamicRange
+  const ranges = isMinMaxDynamicRange
     ? [...new Array(numColors)].map((_, i) => {
-        const base = min + i * levelSpan;
-        return [base, base + levelSpan] as [number, number];
-      })
+      const base = min + i * levelSpan;
+      return [base, base + levelSpan] as [number, number];
+    })
     : FIXED_PM2_LEVEL_RANGES;
   return {
-    circleCases: pm2Ranges
+    circleCases: ranges
       .map(tupleAsMapboxRange(mapBoxGetPM2Field))
       .flatMap((condition, i) => [condition, COLORS[i]]),
     colors: COLORS,
     fieldName: PM2_FIELD_NAME,
-    pm2Ranges,
+    ranges,
   };
 };

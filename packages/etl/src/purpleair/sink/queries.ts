@@ -48,12 +48,12 @@ export const getObservationBounds = (sensor_id: string) =>
     first: [
       {
         timestamp: string;
-      }
+      },
     ];
     last: [
       {
         timestamp: string;
-      }
+      },
     ];
   }>(QUERY_GET_OBSERVATION_BOUNDS, "GetObservationBounds", { sensor_id }).then(
     (result) => {
@@ -63,7 +63,7 @@ export const getObservationBounds = (sensor_id: string) =>
         first: first?.[0]?.timestamp,
         last: last?.[0]?.timestamp,
       };
-    }
+    },
   );
 
 const uploadObservations = (objects: unknown[]) =>

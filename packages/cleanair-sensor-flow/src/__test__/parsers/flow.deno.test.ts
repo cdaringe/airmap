@@ -103,7 +103,7 @@ Deno.test({
           longitude: 25,
           skip: false,
         },
-      ].map((d) => ({ ...d, date: new Date(d.date) }))
+      ].map((d) => ({ ...d, date: new Date(d.date) })),
     );
   },
 });

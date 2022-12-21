@@ -11,7 +11,7 @@ export type MapGetLevels<P = unknown> = ({
   circleCases: any[];
   colors: string[];
   fieldName: string;
-  pm2Ranges: [number, number][];
+  ranges: [number, number][];
 };
 
 export type SensorDataHook<P = any> = (urls: string[]) => {

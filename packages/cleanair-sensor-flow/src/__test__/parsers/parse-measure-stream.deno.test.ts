@@ -1,7 +1,8 @@
 import { assertEquals } from "https://deno.land/std@0.129.0/testing/asserts.ts";
 import { parse } from "../../streams/parse-measure-stream.ts";
 
-const csv = `timestamp,date (UTC),NO2 (ppb),VOC (ppb),pm 10 (ug/m3),pm 2.5 (ug/m3),NO2 (Plume AQI),VOC (Plume AQI),pm 10 (Plume AQI),pm 2.5 (Plume AQI)
+const csv =
+  `timestamp,date (UTC),NO2 (ppb),VOC (ppb),pm 10 (ug/m3),pm 2.5 (ug/m3),NO2 (Plume AQI),VOC (Plume AQI),pm 10 (Plume AQI),pm 2.5 (Plume AQI)
 1640991926,2021-12-31 23:05:26,181,147,8.939624786,1.022272468,135,12,9,2
 1640991986,2021-12-31 23:06:26,198,125,7.058031559,1.045340896,143,10,7,2
 1640992046,2021-12-31 23:07:26,211,119,10.38281059,2.265813351,149,10,10,5

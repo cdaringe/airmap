@@ -31,7 +31,7 @@ export const createModule = (r: ModResources) => {
   }) => {
     if (measures.length !== positions.length) {
       console.warn(
-        `lossy data - measures ${measures.length}, positions ${positions.length}`
+        `lossy data - measures ${measures.length}, positions ${positions.length}`,
       );
     }
     const coordStamps = positions.map((p) => p.timestamp);
@@ -43,7 +43,7 @@ export const createModule = (r: ModResources) => {
     };
     const takeValuesLessThanAndOneBeyond = (
       target: number,
-      values: number[]
+      values: number[],
     ) => {
       const justOverIndex = values.findIndex((v) => v >= target);
       if (justOverIndex === -1) return values;
@@ -57,11 +57,11 @@ export const createModule = (r: ModResources) => {
           try {
             const coordTsMatch = r.closestTo(
               voc.date,
-              takeValuesLessThanAndOneBeyond(voc.date.getTime(), coordStamps)
+              takeValuesLessThanAndOneBeyond(voc.date.getTime(), coordStamps),
             )!;
             dropUntilEq(coordTsMatch);
             const coord = positions.find(
-              (c) => c.timestamp === coordTsMatch.getTime()
+              (c) => c.timestamp === coordTsMatch.getTime(),
             )!;
             const entry = {
               ...voc,
@@ -85,7 +85,7 @@ export const createModule = (r: ModResources) => {
 
   const download = async (
     urls: string[],
-    { omitPositions }: { omitPositions?: boolean } = {}
+    { omitPositions }: { omitPositions?: boolean } = {},
   ) => {
     const [measurementsUrl, positionsUrl] = urls;
     invariant(measurementsUrl, "");
@@ -102,15 +102,14 @@ export const createModule = (r: ModResources) => {
   const toGeoJSON = (flowDatas: FlowEntry[]): GeoJSON.FeatureCollection => ({
     type: "FeatureCollection",
     features: flowDatas.map(
-      (properties) =>
-        ({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [properties.longitude, properties.latitude],
-          },
-          properties: { ...properties },
-        } as GeoJSON.Feature)
+      (properties) => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [properties.longitude, properties.latitude],
+        },
+        properties: { ...properties },
+      } as GeoJSON.Feature),
     ),
   });
 

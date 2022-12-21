@@ -14,6 +14,7 @@ import MapError from "./map.error";
 import NoDatapoint from "./map.nodatapoint";
 import MapCssLink from "./map.csslink";
 import setupControls from "./map.setup-controls";
+import Button from "../../atoms/button";
 import { format } from "date-fns";
 import { useDateFilter } from "./hooks/use-date-filter";
 import { BottomSheet } from "react-spring-bottom-sheet";
@@ -41,13 +42,14 @@ const DEFAULT_START_DATE = new Date("2020-01-01");
 const DEFAULT_END_DATE = new Date(`${new Date().getFullYear()}-12-31`);
 
 export default function Map() {
+  useHandleNoDatasource();
+  const [fieldToMap, setMappingField] = useState("");
   const [isMinMaxDynamicRange, setIsMinMaxDynamicRange] = useState(true);
   const [isFilterAfterStart, setIsFilteringAfterStart] = useState(false);
   const [startDate, setStartDate] = useState<Date>(DEFAULT_START_DATE);
   const [isFilterBeforeEnd, setFilterBeforeEnd] = useState(false);
   const [endDate, setEndDate] = useState<Date>(DEFAULT_END_DATE);
   const [isBottomSheetOpen, setBottomSheetOpen] = useState(false);
-  useHandleNoDatasource();
   const [fitBounds, setFitBounds] = React.useState<MapProps["fitBounds"]>();
   const [center, setCenter] = React.useState<MapProps["center"]>([
     -122.66155, 45.54846,
@@ -61,7 +63,10 @@ export default function Map() {
     error: sensorDownloaderError,
     data: { download, mapbox } = { mapbox: {}, download: {} },
   } = useSensorMappingResources(sensorType);
-  const { getLevels } = mapbox;
+  const { getLevels: defaultGetLevels, getLevelsByField } = mapbox;
+  const getLevels = fieldToMap
+    ? getLevelsByField[fieldToMap]!
+    : defaultGetLevels;
   const { downloadGeoJSON, dateField } = download;
   const {
     isLoading: isDataLoading,
@@ -166,7 +171,7 @@ export default function Map() {
             <div style={{ fontWeight: "bold" }}>
               {pollutionLevels?.fieldName}
             </div>
-            {pollutionLevels?.pm2Ranges.map(([lower, upper], i) => {
+            {pollutionLevels?.ranges.map(([lower, upper], i) => {
               return (
                 <div key={`${isMinMaxDynamicRange}-${i}`}>
                   <span
@@ -180,6 +185,23 @@ export default function Map() {
               );
             })}
           </div>
+          {getLevelsByField ? (
+            <div className="map-overlay-control map-pollution-range-mode">
+              <h4 className="font-bold">Field to map</h4>
+              {Object.keys(getLevelsByField).map((fieldName) => (
+                <>
+                  <input
+                    type="radio"
+                    key={fieldName}
+                    name="field-to-map"
+                    onClick={() => setMappingField(fieldName)}
+                  />
+                  <label htmlFor="field-to-map">{` ${fieldName}`}</label>
+                  <br />
+                </>
+              ))}
+            </div>
+          ) : null}
           <div className="map-overlay-control map-pollution-range-mode">
             <input
               type="checkbox"
@@ -226,13 +248,9 @@ export default function Map() {
           </div>
           {sensorType === MINIWRAS_ID ? (
             <div className="map-overlay-control map-pollution-range-mode">
-              <input
-                type="checkbox"
-                checked={isBottomSheetOpen}
-                onChange={() => setBottomSheetOpen(!isBottomSheetOpen)}
-              />{" "}
-              Show charts
-              <br />
+              <Button onClick={() => setBottomSheetOpen(!isBottomSheetOpen)}>
+                Show charts
+              </Button>
             </div>
           ) : null}
         </div>

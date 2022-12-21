@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Label,
 } from "recharts";
 
 /**
@@ -30,15 +31,34 @@ export const MiniWrasStats: React.FC<
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis yAxisId="left" />
-        <YAxis yAxisId="right" orientation="right" />
+        <XAxis dataKey="name" label="Time" />
+        <YAxis yAxisId="left">
+          <Label
+            angle={-90}
+            value="ug/m3"
+            position="insideLeft"
+            style={{ textAnchor: "middle" }}
+          />
+        </YAxis>
+        <YAxis yAxisId="right" orientation="right">
+          <Label
+            angle={90}
+            value="Relative Humidity %"
+            position="insideRight"
+            style={{ textAnchor: "middle" }}
+          />
+        </YAxis>
         <Tooltip />
-        <Legend />
+        <Legend
+          wrapperStyle={{ marginLeft: 10 }}
+          align="right"
+          verticalAlign="middle"
+          layout="vertical"
+        />
         <Line
           yAxisId="left"
           type="monotone"
-          dataKey={(p) => p.properties.pm_2_3}
+          dataKey={(p) => p.properties.pm_2_5}
           name="PM2.5 (MW)"
           stroke="#8884d8"
           activeDot={{ r: 8 }}

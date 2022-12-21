@@ -19,7 +19,13 @@ const COLORS = [
 let mapBoxGetPM2Field: ["get", string] = ["get", PM2_CORRECTED_FIELD_NAME];
 
 const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
-  0, 0.25, 0.5, 1, 2.5, 5, 20,
+  0,
+  0.25,
+  0.5,
+  1,
+  2.5,
+  5,
+  20,
 ].map((lower, i, arr) => {
   const upper = arr[i + 1] || Infinity;
   return [lower, upper] as [number, number];
@@ -39,17 +45,17 @@ export const getLevels: MapGetLevels<Entry> = ({
   }
   const numColors = COLORS.length;
   const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
-  const pm2Ranges = isMinMaxDynamicRange
+  const ranges = isMinMaxDynamicRange
     ? [...new Array(numColors)].map((_, i) => {
-        const base = min + i * levelSpan;
-        return [base, base + levelSpan] as [number, number];
-      })
+      const base = min + i * levelSpan;
+      return [base, base + levelSpan] as [number, number];
+    })
     : FIXED_PM2_LEVEL_RANGES;
   return {
     fieldName: PM2_CORRECTED_FIELD_NAME,
     colors: COLORS,
-    pm2Ranges,
-    circleCases: pm2Ranges
+    ranges,
+    circleCases: ranges
       .map(tupleAsMapboxRange(mapBoxGetPM2Field))
       .flatMap((condition, i) => [condition, COLORS[i]]),
   };
