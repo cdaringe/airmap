@@ -5,6 +5,7 @@ export type DataSource = {
   datasource: "googlesheetsurl" | "csvurl";
   sensorType: number;
   urls: string[];
+  luggage?: any;
 };
 
 export type DataSourceContext = {
@@ -16,6 +17,7 @@ export const ctx = React.createContext<DataSourceContext>({
     datasource: "googlesheetsurl",
     sensorType: NO_SENSOR_ID,
     urls: [],
+    luggage: null,
   },
   update: () => {},
 });
@@ -31,6 +33,7 @@ export const read = (): DataSource => {
     urls: [],
     sensorType: NO_SENSOR_ID,
     datasource: "googlesheetsurl",
+    luggage: null,
   };
   try {
     const stored = window.localStorage.getItem("datasource");

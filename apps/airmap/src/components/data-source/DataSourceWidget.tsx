@@ -22,16 +22,20 @@ type Props = {
   onDatasourceSourceChange: HTMLProps<HTMLSelectElement>["onChange"];
   onSubmit: () => void;
   onUrlsChange: (urls: string[]) => void;
+  onKmlChange: (kml: string) => void;
   onSensorTypeChange: (sensorType: number) => void;
   urls: string[];
   sensorType: number;
+  luggage?: unknown;
 };
 
 export const DataSourceWidget: FC<Props> = ({
   datasource,
   isRenderingUrlErrorState,
   isSubmitDisabled,
+  luggage,
   onDatasourceSourceChange,
+  onKmlChange,
   onSubmit,
   onUrlsChange,
   onSensorTypeChange,
@@ -76,7 +80,7 @@ export const DataSourceWidget: FC<Props> = ({
         key={`${sensorType}-url-1`}
         required
         error={isRenderingUrlErrorState}
-        className={`w-full mt-1 w-full`}
+        className={`w-full mt-1`}
         placeholder={
           sensorType === FLOW_ID
             ? "User Measures: https://url/to/data"
@@ -92,7 +96,7 @@ export const DataSourceWidget: FC<Props> = ({
           required
           key={`${sensorType}-url-2`}
           error={isRenderingUrlErrorState}
-          className={`w-full mt-1 w-full`}
+          className={`w-full mt-1`}
           placeholder="User Positions: https://url/to/data"
           defaultValue={urls[1]}
           onChange={(evt) => onUrlsChange([urls[0], evt.currentTarget.value])}
@@ -105,10 +109,35 @@ export const DataSourceWidget: FC<Props> = ({
           https://docs.google.com/spreadsheets/d/:id/gviz/tq
         </p>
       ) : null}
+      {sensorType === MINIWRAS_ID ? (
+        <div className="mt-1">
+          <label
+            htmlFor="kineticlitegps"
+            className="p-2 text-white bg-blue-600 rounded hover:cursor-pointer"
+          >
+            Upload KineticLite GPS
+          </label>
+          <input
+            type="file"
+            onChange={async (evt) => {
+              const files = evt.target?.files;
+              if (!files) throw new Error("null files");
+              const [file] = files;
+              const text = await file.text();
+              onKmlChange(text);
+            }}
+            aria-label="gps upload"
+            className="hidden"
+            accept=".kml"
+            id="kineticlitegps"
+            name="kineticlitegps"
+          ></input>
+          {luggage ? "> Uploaded" : null}
+        </div>
+      ) : null}
       <Button
         disabled={isSubmitDisabled}
         className="block m-auto mt-2"
-        bg={isSubmitDisabled ? "bg-gray-300" : undefined}
         onClick={onSubmit}
       >
         Submit

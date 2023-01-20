@@ -3,9 +3,9 @@ import {
   isGoogleSheetsCompatibleUrl,
   toSheetsDataExportUrl,
 } from "../../../../../packages/cleanair-google-sheets/mod.ts";
-import { useDataSource } from "../data-source/use-data-source";
+import { useDataSource, DataSource } from "../data-source/use-data-source";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useCallback } from "react";
 import { useMapAuth } from "../mapping/use-map-auth";
 import Button from "../atoms/button";
 import {
@@ -13,15 +13,22 @@ import {
   FLOW_ID,
   MINIWRAS_ID,
 } from "../../../../../packages/cleanair-sensor-common/mod.ts";
+
+type DSKey = keyof DataSource;
+type DsUpdateFn = <K extends DSKey>(k: K, v: DataSource[K]) => void;
+
 const isDev = process.env.NODE_ENV !== "production";
 
 const NO_SENSOR_ID = 0;
 
 export default function Home() {
-  const {
-    value: { urls, datasource, sensorType },
-    update,
-  } = useDataSource();
+  const { value, update: rawUpdate } = useDataSource();
+  const { urls, datasource, sensorType, luggage } = value;
+  const update = useCallback<DsUpdateFn>(
+    (key, v) => rawUpdate({ ...value, [key]: v }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [value]
+  );
   const {
     value: { accessToken },
     update: _updateMapAuth,
@@ -32,7 +39,10 @@ export default function Home() {
   const router = useRouter();
   const isRenderingUrlErrorState = !!(urls.length && !isValidDataUrl);
   const isSubmitDisabled =
-    !isValidDataUrl || !accessToken || sensorType === NO_SENSOR_ID;
+    !isValidDataUrl ||
+    !accessToken ||
+    sensorType === NO_SENSOR_ID ||
+    (sensorType === MINIWRAS_ID && !luggage);
   return (
     <form
       className="max-w-screen-md content home w-96"
@@ -42,32 +52,24 @@ export default function Home() {
       <DataSourceWidget
         {...{
           isSubmitDisabled,
+          luggage,
           datasource,
           sensorType,
-          onDatasourceSourceChange: (evt) => {
-            update({
-              urls,
-              sensorType,
-              datasource: evt.currentTarget.value as "googlesheetsurl",
-            });
-          },
           isRenderingUrlErrorState,
-          onSensorTypeChange: (sensorType) => {
-            update({ urls, sensorType, datasource });
-          },
-          onUrlsChange: (urls) => {
-            update({ urls, sensorType, datasource });
-          },
+          onDatasourceSourceChange: (evt) =>
+            update("datasource", evt.currentTarget.value as "googlesheetsurl"),
+          onSensorTypeChange: (s) => update("sensorType", s),
+          onUrlsChange: (urls) => update("urls", urls),
+          onKmlChange: (kml) => update("luggage", kml),
           urls,
           onSubmit: () => {
             if (isSubmitDisabled) {
               return;
             }
-            update({
-              datasource,
-              sensorType,
-              urls: urls.map((url) => toSheetsDataExportUrl(url)),
-            });
+            update(
+              "urls",
+              urls.map((url) => toSheetsDataExportUrl(url))
+            );
             router.push("/map");
           },
         }}
@@ -76,7 +78,8 @@ export default function Home() {
         <>
           <Button
             onClick={() =>
-              update({
+              rawUpdate({
+                luggage,
                 datasource: "csvurl",
                 sensorType: MINIWRAS_ID,
                 urls: [
@@ -90,7 +93,8 @@ export default function Home() {
           </Button>
           <Button
             onClick={() =>
-              update({
+              rawUpdate({
+                luggage,
                 datasource: "csvurl",
                 sensorType: FLOW_ID,
                 urls: [
@@ -104,7 +108,8 @@ export default function Home() {
           </Button>
           <Button
             onClick={() =>
-              update({
+              rawUpdate({
+                luggage,
                 datasource: "csvurl",
                 sensorType: POCKET_LABS_ID,
                 urls: [

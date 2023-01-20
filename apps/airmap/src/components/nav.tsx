@@ -8,9 +8,9 @@ export function Nav({ className, ...rest }: React.HTMLProps<HTMLDivElement>) {
       className={clsx(className, "bg-white dark:bg-gray-800 shadow ")}
       {...rest}
     >
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="px-8 mx-auto max-w-7xl">
         <div className="flex items-center justify-between h-16">
-          <div className=" flex items-center">
+          <div className="flex items-center ">
             <Link href="/">
               <a className="">
                 <div>
@@ -19,20 +19,25 @@ export function Nav({ className, ...rest }: React.HTMLProps<HTMLDivElement>) {
               </a>
             </Link>
             <div className="hidden md:block">
-              <div className="ml-2 flex items-baseline space-x-4">
+              <div className="flex items-baseline ml-2 space-x-4">
                 <Link href="/">
-                  <a className="text-gray-800 dark:text-white hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  <a className="px-3 py-2 text-sm font-medium text-gray-800 rounded-md dark:text-white hover:text-gray-800 dark:hover:text-white">
                     Home
                   </a>
                 </Link>
                 <Link href="/map">
-                  <a className="text-gray-800 dark:text-white hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  <a className="px-3 py-2 text-sm font-medium text-gray-800 rounded-md dark:text-white hover:text-gray-800 dark:hover:text-white">
                     Map
                   </a>
                 </Link>
                 <Link href="/charts">
-                  <a className="text-gray-800 dark:text-white hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  <a className="px-3 py-2 text-sm font-medium text-gray-800 rounded-md dark:text-white hover:text-gray-800 dark:hover:text-white">
                     Charts
+                  </a>
+                </Link>
+                <Link href="/gps">
+                  <a className="px-3 py-2 text-sm font-medium text-gray-800 rounded-md dark:text-white hover:text-gray-800 dark:hover:text-white">
+                    GPS
                   </a>
                 </Link>
               </div>
@@ -43,17 +48,17 @@ export function Nav({ className, ...rest }: React.HTMLProps<HTMLDivElement>) {
       <div className="md:hidden">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link href="/">
-            <a className="text-gray-800 dark:text-white block px-3 py-2 rounded-md text-base font-medium">
+            <a className="block px-3 py-2 text-base font-medium text-gray-800 rounded-md dark:text-white">
               Home
             </a>
           </Link>
           <Link href="/map">
-            <a className="text-gray-800 dark:text-white block px-3 py-2 rounded-md text-base font-medium">
+            <a className="block px-3 py-2 text-base font-medium text-gray-800 rounded-md dark:text-white">
               Map
             </a>
           </Link>
           <Link href="/charts">
-            <a className="text-gray-800 dark:text-white block px-3 py-2 rounded-md text-base font-medium">
+            <a className="block px-3 py-2 text-base font-medium text-gray-800 rounded-md dark:text-white">
               Charts
             </a>
           </Link>

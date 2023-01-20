@@ -55,7 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Nav />
             <Component {...pageProps} />
             {router.pathname === "/" ? (
-              <footer className="border-t border-blue-200 flex-0 text-center p-2 visited:text-purple-600 text-blue-600 hover:underline">
+              <footer className="p-2 text-center text-blue-600 border-t border-blue-200 flex-0 visited:text-purple-600 hover:underline">
                 <a
                   href="http://portlandcleanair.org/"
                   rel="noopener noreferrer"
