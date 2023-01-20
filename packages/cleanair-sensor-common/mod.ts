@@ -27,3 +27,4 @@ export const NO_SENSOR_ID = -1;
 export const FLOW_ID = 1;
 export const POCKET_LABS_ID = 2;
 export const MINIWRAS_ID = 3;
+export const AIRMAP_GPS_ID = 4;

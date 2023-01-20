@@ -12,6 +12,7 @@ import {
   POCKET_LABS_ID,
   FLOW_ID,
   MINIWRAS_ID,
+  AIRMAP_GPS_ID,
 } from "../../../../../packages/cleanair-sensor-common/mod.ts";
 
 type DSKey = keyof DataSource;
@@ -21,14 +22,12 @@ const isDev = process.env.NODE_ENV !== "production";
 
 const NO_SENSOR_ID = 0;
 
+const LUGGAGE_USING_SENSOR_IDS: number[] = [];
+
 export default function Home() {
   const { value, update: rawUpdate } = useDataSource();
   const { urls, datasource, sensorType, luggage } = value;
-  const update = useCallback<DsUpdateFn>(
-    (key, v) => rawUpdate({ ...value, [key]: v }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [value]
-  );
+  const update: DsUpdateFn = (key, v) => rawUpdate({ ...value, [key]: v });
   const {
     value: { accessToken },
     update: _updateMapAuth,
@@ -58,7 +57,15 @@ export default function Home() {
           isRenderingUrlErrorState,
           onDatasourceSourceChange: (evt) =>
             update("datasource", evt.currentTarget.value as "googlesheetsurl"),
-          onSensorTypeChange: (s) => update("sensorType", s),
+          onSensorTypeChange: (sensorType) =>
+            rawUpdate((ds) => ({
+              ...ds,
+              luggage: LUGGAGE_USING_SENSOR_IDS.includes(value.sensorType)
+                ? ds.luggage
+                : null,
+              urls: [],
+              sensorType,
+            })),
           onUrlsChange: (urls) => update("urls", urls),
           onKmlChange: (kml) => update("luggage", kml),
           urls,
@@ -119,6 +126,19 @@ export default function Home() {
             }
           >
             default pocketlabs
+          </Button>
+          <Button
+            onClick={() => {
+              rawUpdate({
+                datasource: "csvurl",
+                sensorType: AIRMAP_GPS_ID,
+                urls: [
+                  "https://docs.google.com/spreadsheets/d/1gPARQ_CpXraEFj039-zmD8tlSgaj2Cz35L5Yy2r28kQ/edit?usp=sharing",
+                ],
+              });
+            }}
+          >
+            default airmap gps
           </Button>
         </>
       ) : null}

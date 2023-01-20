@@ -62,6 +62,11 @@ export function Nav({ className, ...rest }: React.HTMLProps<HTMLDivElement>) {
               Charts
             </a>
           </Link>
+          <Link href="/gps">
+            <a className="block px-3 py-2 text-base font-medium text-gray-800 rounded-md dark:text-white">
+              GPS
+            </a>
+          </Link>
         </div>
       </div>
     </nav>

@@ -8,6 +8,7 @@ import {
   MINIWRAS_ID,
   NO_SENSOR_ID,
   POCKET_LABS_ID,
+  AIRMAP_GPS_ID,
 } from "../../../../../packages/cleanair-sensor-common/mod.ts";
 
 export type DataSource = {
@@ -69,6 +70,7 @@ export const DataSourceWidget: FC<Props> = ({
         <option value={FLOW_ID}>Flow</option>
         <option value={POCKET_LABS_ID}>PocketLabs</option>
         <option value={MINIWRAS_ID}>MiniWRAS</option>
+        <option value={AIRMAP_GPS_ID}>airmap™ GPS</option>
       </Select>
       <DataSourceSelector
         required

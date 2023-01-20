@@ -10,7 +10,7 @@ export type DataSource = {
 
 export type DataSourceContext = {
   value: DataSource;
-  update: (ds: DataSource) => void;
+  update: React.Dispatch<React.SetStateAction<DataSource>>;
 };
 export const ctx = React.createContext<DataSourceContext>({
   value: {
