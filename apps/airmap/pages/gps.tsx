@@ -84,9 +84,10 @@ export default function GpsTracker() {
   );
   const onStop = React.useCallback(() => {
     const reset = () => setStopClockRemaining(DEFAULT_MIN_STOP_CLICKS);
-    if (countStopClickRemaining) {
-      setStopClockRemaining((x) => x - 1);
-      const resetT = setTimeout(reset, 1_000);
+    const next = countStopClickRemaining - 1;
+    if (next) {
+      setStopClockRemaining(next);
+      const resetT = setTimeout(reset, 2_000);
       return () => clearTimeout(resetT);
     } else {
       clearTimeout(timeoutRef.current!);
@@ -96,6 +97,29 @@ export default function GpsTracker() {
     }
   }, [countStopClickRemaining]);
   const isRunning = Number.isFinite(timeoutRef.current);
+  React.useEffect(
+    function wakeLock() {
+      try {
+        const wakeLock = (navigator as any).wakeLock;
+        if (!wakeLock) throw new Error("no wake lock");
+        if (!isRunning) return;
+        wakeLock.request("screen").then(
+          () => {},
+          (err: unknown) => {
+            // the wake lock request fails - usually system related, such being low on battery
+            setErr(
+              `WakeLock Error. This generally happens due to not using GOOGLE CHROME only, low battery or weird permissions on device:\n${err}`
+            );
+          }
+        );
+      } catch (err) {
+        setErr(
+          `Please try Google Chrome. WakeLock API not available\n\n${err}`
+        );
+      }
+    },
+    [err, setErr, isRunning]
+  );
   return (
     <div className="p-2">
       <Button
@@ -111,7 +135,13 @@ export default function GpsTracker() {
           isRunning ? onStop() : onRecord();
         }}
       >
-        {isRunning ? `Stop (${countStopClickRemaining})` : "Start"}
+        {isRunning
+          ? `Stop${
+              countStopClickRemaining === 3
+                ? ""
+                : ` (Confirm quickly, ${countStopClickRemaining}x clicks)`
+            }`
+          : "Start"}
       </Button>
       <Button
         disabled={!isRunning}
@@ -156,7 +186,7 @@ export default function GpsTracker() {
           }
         }}
       />
-      {err ? err : null}
+      {err ? <pre>{err}</pre> : null}
       <pre className="block" ref={preElRef}></pre>
     </div>
   );
