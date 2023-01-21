@@ -43,6 +43,7 @@ export default function GpsTracker() {
   }, [setIsPaused]);
   const [runId, setRunId] = React.useState(new Date().getTime());
   const [err, setErr] = React.useState("");
+  const [warning, setWarning] = React.useState("");
   const getPosAndAppend = React.useCallback(async () => {
     setRunId((p) => p + 1);
     try {
@@ -99,23 +100,25 @@ export default function GpsTracker() {
   const isRunning = Number.isFinite(timeoutRef.current);
   React.useEffect(
     function wakeLock() {
+      const warnWakeLock = (msg?: string) =>
+        setWarning(
+          [
+            `Warning: WakeLock error. WakeLock helps your phone stay awake while it's polling GPS data. It is not required, but helps keep data flowing reliably. This generally happens when not using Google Chrome, using Apple devices, low battery, or permissions issues. We will proceed without it.`,
+            msg,
+          ]
+            .filter(Boolean)
+            .join("\n\n")
+        );
       try {
         const wakeLock = (navigator as any).wakeLock;
         if (!wakeLock) throw new Error("no wake lock");
         if (!isRunning) return;
         wakeLock.request("screen").then(
           () => {},
-          (err: unknown) => {
-            // the wake lock request fails - usually system related, such being low on battery
-            setErr(
-              `WakeLock Error. This generally happens due to not using GOOGLE CHROME only, low battery or weird permissions on device:\n${err}`
-            );
-          }
+          (err: unknown) => warnWakeLock(String(err))
         );
       } catch (err) {
-        setErr(
-          `Please try Google Chrome. WakeLock API not available\n\n${err}`
-        );
+        warnWakeLock(`If you have issues, try Google Chrome.`);
       }
     },
     [err, setErr, isRunning]
@@ -175,6 +178,7 @@ export default function GpsTracker() {
       </Button>
       <label htmlFor="durationMs">Interval (ms)</label>
       <Input
+        className="mb-2"
         type="number"
         name="durationMs"
         value={durationMs}
@@ -186,7 +190,16 @@ export default function GpsTracker() {
           }
         }}
       />
-      {err ? <pre>{err}</pre> : null}
+      {err ? (
+        <pre className="w-full p-2 mb-1 bg-red-200 border border-red-500 rounded">
+          {err}
+        </pre>
+      ) : null}
+      {warning ? (
+        <pre className="w-full p-2 mb-1 whitespace-pre-line bg-orange-200 border border-orange-500 rounded">
+          {warning}
+        </pre>
+      ) : null}
       <pre className="block" ref={preElRef}></pre>
     </div>
   );
