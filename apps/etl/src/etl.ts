@@ -1,14 +1,14 @@
-import { sensors } from "./sensors";
-import { SensorAccess } from "./interfaces";
+import assert from "assert";
 import pAll from "p-all";
+import pino from "pino";
+import { partition } from "./collections/partition";
+import { SensorAccess } from "./interfaces";
+import * as sink from "./purpleair/sink/queries";
 import {
   getSourceObservations,
-  getSourceSensor,
+  getSourceSensor
 } from "./purpleair/source/thingspeak";
-import * as sink from "./purpleair/sink/queries";
-import assert from "assert";
-import { partition } from "./collections/partition";
-import pino from "pino";
+import { sensors } from "./sensors";
 
 const logger = pino({ level: "info" });
 
@@ -148,20 +148,11 @@ async function etl(sensorAccess: SensorAccess) {
 
 const etlAll = async (sensors: SensorAccess[]) => {
   let count = 0;
-  await pAll(
-    sensors.map(
-      (s) => () =>
-        etl(s).then(() => {
-          ++count;
-          logger.info(`${count} sensors transferred`);
-        }),
-    ),
-    {
-      concurrency: process.env.SOURCE_CONCURRENCY
-        ? parseInt(process.env.SOURCE_CONCURRENCY, 10)
-        : 1,
-    },
-  );
+  for (const sensor of sensors) {
+    await etl(sensor)
+    ++count;
+    logger.info(`${count} sensors transferred`);
+  }
 };
 
 export const run = () => etlAll(sensors);
