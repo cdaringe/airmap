@@ -9,7 +9,7 @@ export const useInitialBoundingBox = (
     if (!geojson) return;
     const bounds = bbox(geojson);
     if (bounds[0] <= -Infinity || bounds[0] >= Infinity) {
-      console.error("infitity detected. bounds skipped");
+      console.error("infinity detected. bounds skipped");
       return;
     }
     // @todo [[n,n], [n,n]] vs [n,n,n,n]

@@ -9,8 +9,7 @@ import Head from "next/head";
 import React from "react";
 import type { AppProps } from "next/app";
 import { ReactQueryDevtools } from "react-query/devtools";
-
-const IS_SERVER = typeof window === "undefined";
+import { CSR } from "../src/components/csr";
 
 const { DataSourceProvider, read: dsRead, persist: dsPersist } = ds;
 const { MapAuthProvider, read: mapAuthRead, persist: mapAuthPersist } = mapAuth;
@@ -38,33 +37,33 @@ function MyApp({ Component, pageProps }: AppProps) {
     mapAuthPersist(payload);
     mapAuthSetValue(payload);
   }, []);
-  if (IS_SERVER) return null;
   return (
-    <DataSourceProvider value={{ value: dsValue, update: updateDataSource }}>
-      <MapAuthProvider value={{ value: mapAuthValue, update: updateMapAuth }}>
-        <QueryClientProvider client={queryClient}>
-          <Head>
-            <title>airmap</title>
-            <meta
-              name="description"
-              content="air-quality-data in, map-wise air data out!"
-            />
-            <link rel="icon" href="/favicon.ico" />
-          </Head>
-          <div id="layout">
-            <Nav />
-            <Component {...pageProps} />
-            {router.pathname === "/" ? (
-              <footer className="p-2 text-center text-blue-600 border-t border-blue-200 flex-0 visited:text-purple-600 hover:underline">
-                <a
-                  href="http://portlandcleanair.org/"
-                  rel="noopener noreferrer"
-                >
-                  By your friends at portlandcleanair.org
-                </a>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: `
+    <CSR>
+      <DataSourceProvider value={{ value: dsValue, update: updateDataSource }}>
+        <MapAuthProvider value={{ value: mapAuthValue, update: updateMapAuth }}>
+          <QueryClientProvider client={queryClient}>
+            <Head>
+              <title>airmap</title>
+              <meta
+                name="description"
+                content="air-quality-data in, map-wise air data out!"
+              />
+              <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <div id="layout">
+              <Nav />
+              <Component {...pageProps} />
+              {router.pathname === "/" ? (
+                <footer className="p-2 text-center text-blue-600 border-t border-blue-200 flex-0 visited:text-purple-600 hover:underline">
+                  <a
+                    href="http://portlandcleanair.org/"
+                    rel="noopener noreferrer"
+                  >
+                    By your friends at portlandcleanair.org
+                  </a>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: `
     <a
     href="https://github.com/cdaringe/airmap"
     class="github-corner"
@@ -124,17 +123,18 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   </style>
 `,
-                  }}
-                />
-              </footer>
-            ) : undefined}
-          </div>
-          {process.env.NODE_ENV !== "production" && (
-            <ReactQueryDevtools initialIsOpen={false} />
-          )}
-        </QueryClientProvider>
-      </MapAuthProvider>
-    </DataSourceProvider>
+                    }}
+                  />
+                </footer>
+              ) : undefined}
+            </div>
+            {process.env.NODE_ENV !== "production" && (
+              <ReactQueryDevtools initialIsOpen={false} />
+            )}
+          </QueryClientProvider>
+        </MapAuthProvider>
+      </DataSourceProvider>
+    </CSR>
   );
 }
 export default MyApp;

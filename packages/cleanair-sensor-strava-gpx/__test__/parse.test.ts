@@ -1,0 +1,23 @@
+import { assertEquals } from "https://deno.land/std@0.129.0/testing/asserts.ts";
+import * as mod from "../mod.ts";
+import { DOMParser } from "https://esm.sh/linkedom";
+
+// deno-lint-ignore no-explicit-any
+(globalThis as any).DOMParser = DOMParser;
+
+const fixtureFilename = import.meta
+  .resolve("./fixture.gpx.xml")
+  .replace("file://", "");
+const input = Deno.readTextFileSync(fixtureFilename);
+
+Deno.test({
+  name: "parse strava",
+  fn: () => {
+    const parsed = mod.ofGpxString(input);
+    assertEquals(parsed[0], {
+      date: new Date("2023-02-02T05:03:39.000Z"),
+      lat: 45.546748,
+      lon: -122.647861,
+    });
+  },
+});

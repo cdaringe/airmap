@@ -10,6 +10,7 @@ import {
   POCKET_LABS_ID,
   AIRMAP_GPS_ID,
 } from "../../../../../packages/cleanair-sensor-common/mod.ts";
+import { MiniWrasDataSource } from "./MiniWrasDataSource";
 
 export type DataSource = {
   url: string;
@@ -24,6 +25,7 @@ type Props = {
   onSubmit: () => void;
   onUrlsChange: (urls: string[]) => void;
   onKmlChange: (kml: string) => void;
+  onMiniWrasReady: (luggage: any) => void;
   onSensorTypeChange: (sensorType: number) => void;
   urls: string[];
   sensorType: number;
@@ -37,12 +39,14 @@ export const DataSourceWidget: FC<Props> = ({
   luggage,
   onDatasourceSourceChange,
   onKmlChange,
+  onMiniWrasReady,
   onSubmit,
   onUrlsChange,
   onSensorTypeChange,
   sensorType,
   urls,
 }) => {
+  const isUsingUrlInput = sensorType !== MINIWRAS_ID;
   return (
     <>
       <p className="text-center text-gray-600 gray-200">
@@ -72,28 +76,33 @@ export const DataSourceWidget: FC<Props> = ({
         <option value={MINIWRAS_ID}>MiniWRAS</option>
         <option value={AIRMAP_GPS_ID}>airmap™ GPS</option>
       </Select>
-      <DataSourceSelector
-        required
-        className="w-full mt-1"
-        value={datasource}
-        onChange={onDatasourceSourceChange}
-      />
-      <Input
-        key={`${sensorType}-url-1`}
-        required
-        error={isRenderingUrlErrorState}
-        className={`w-full mt-1`}
-        placeholder={
-          sensorType === FLOW_ID
-            ? "User Measures: https://url/to/data"
-            : "https://url/to/data"
-        }
-        defaultValue={urls[0]}
-        onChange={(evt) =>
-          onUrlsChange([evt.currentTarget.value, urls[1]].filter(Boolean))
-        }
-      />
-      {sensorType === FLOW_ID || sensorType === MINIWRAS_ID ? (
+      {isUsingUrlInput ? (
+        <>
+          <DataSourceSelector
+            required
+            className="w-full mt-1"
+            value={datasource}
+            onChange={onDatasourceSourceChange}
+          />
+
+          <Input
+            key={`${sensorType}-url-1`}
+            required
+            error={isRenderingUrlErrorState}
+            className={`w-full mt-1`}
+            placeholder={
+              sensorType === FLOW_ID
+                ? "User Measures: https://url/to/data"
+                : "https://url/to/data"
+            }
+            defaultValue={urls[0]}
+            onChange={(evt) =>
+              onUrlsChange([evt.currentTarget.value, urls[1]].filter(Boolean))
+            }
+          />
+        </>
+      ) : null}
+      {sensorType === FLOW_ID ? (
         <Input
           required
           key={`${sensorType}-url-2`}
@@ -113,7 +122,12 @@ export const DataSourceWidget: FC<Props> = ({
       ) : null}
       {sensorType === MINIWRAS_ID ? (
         <div className="mt-1">
-          <label
+          <MiniWrasDataSource
+            onInputRead={(v) => {
+              onMiniWrasReady(v);
+            }}
+          />
+          {/* <label
             htmlFor="kineticlitegps"
             className="p-2 text-white bg-blue-600 rounded hover:cursor-pointer"
           >
@@ -134,16 +148,18 @@ export const DataSourceWidget: FC<Props> = ({
             id="kineticlitegps"
             name="kineticlitegps"
           ></input>
-          {luggage ? "> Uploaded" : null}
+          {luggage ? "> Uploaded" : null} */}
         </div>
       ) : null}
-      <Button
-        disabled={isSubmitDisabled}
-        className="block m-auto mt-2"
-        onClick={onSubmit}
-      >
-        Submit
-      </Button>
+      {sensorType === MINIWRAS_ID ? null : (
+        <Button
+          disabled={isSubmitDisabled}
+          className="block m-auto mt-2"
+          onClick={onSubmit}
+        >
+          Submit
+        </Button>
+      )}
     </>
   );
 };

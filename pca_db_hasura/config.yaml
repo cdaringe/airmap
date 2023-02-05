@@ -1,5 +1,11 @@
 version: 3
-endpoint: https://pca.cdaringe.com/
+# dev
+endpoint: http://localhost:8080/
+# connect to pg db in the console at: postgresql://airman:airman@pca_db:5544/pca
+# these values are derived from docker ENV values in pca_db
+
+# prod
+# endpoint: https://pca.cdaringe.com/
 metadata_directory: metadata
 actions:
   kind: synchronous

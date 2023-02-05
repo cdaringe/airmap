@@ -1,14 +1,14 @@
-import { sensors } from "./sensors";
-import { SensorAccess } from "./interfaces";
+import assert from "assert";
 import pAll from "p-all";
+import pino from "pino";
+import { partition } from "./collections/partition";
+import { SensorAccess } from "./interfaces";
+import * as sink from "./purpleair/sink/queries";
 import {
   getSourceObservations,
   getSourceSensor,
 } from "./purpleair/source/thingspeak";
-import * as sink from "./purpleair/sink/queries";
-import assert from "assert";
-import { partition } from "./collections/partition";
-import pino from "pino";
+import { sensors } from "./sensors";
 
 const logger = pino({ level: "info" });
 
@@ -18,15 +18,6 @@ async function etl(sensorAccess: SensorAccess) {
   let searchBounds = [
     { earliest: OLDEST_ALLOWED_DATA_DATE, latest: new Date() },
   ];
-  const [sourceSensor] = await getSourceSensor(sensorAccess);
-  const {
-    Label,
-    Lat,
-    Lon,
-    THINGSPEAK_PRIMARY_ID,
-    THINGSPEAK_PRIMARY_ID_READ_KEY,
-  } = sourceSensor;
-  const channelId = sourceSensor.THINGSPEAK_PRIMARY_ID;
   const sinkSensor = await sink.getSensor(channelId);
   if (sinkSensor.errors?.length) {
     throw new Error(JSON.stringify(sinkSensor.errors));
@@ -72,11 +63,9 @@ async function etl(sensorAccess: SensorAccess) {
    * always. You cannot request data in ascending order :|. So,
    * we must search backwards.
    */
-  for (
-    const bounds of searchBounds.filter(
-      ({ earliest, latest }) => latest > earliest,
-    )
-  ) {
+  for (const bounds of searchBounds.filter(
+    ({ earliest, latest }) => latest > earliest
+  )) {
     logger.info(`searching: ${prettyRange(bounds)}`);
     let isFetchingMore = true;
     let isFatalData = false;
@@ -107,7 +96,7 @@ async function etl(sensorAccess: SensorAccess) {
             // only log warning once, using isFatalData as the stateful indicator
             if (!isFatalData) {
               console.error(
-                `        dropping data--missing fields: ${JSON.stringify(it)}`,
+                `        dropping data--missing fields: ${JSON.stringify(it)}`
               );
             }
             isFatalData = true;
@@ -135,7 +124,8 @@ async function etl(sensorAccess: SensorAccess) {
         if (!earliest) return currDate;
         return currDate < earliest ? currDate : earliest;
       }, null);
-      isFetchingMore = !isFatalData &&
+      isFetchingMore =
+        !isFatalData &&
         !!earliestFoundDate &&
         earliestFoundDate > bounds.earliest;
       if (isFetchingMore && earliestFoundDate) {
@@ -148,20 +138,11 @@ async function etl(sensorAccess: SensorAccess) {
 
 const etlAll = async (sensors: SensorAccess[]) => {
   let count = 0;
-  await pAll(
-    sensors.map(
-      (s) => () =>
-        etl(s).then(() => {
-          ++count;
-          logger.info(`${count} sensors transferred`);
-        }),
-    ),
-    {
-      concurrency: process.env.SOURCE_CONCURRENCY
-        ? parseInt(process.env.SOURCE_CONCURRENCY, 10)
-        : 1,
-    },
-  );
+  for (const sensor of sensors) {
+    await etl(sensor);
+    ++count;
+    logger.info(`${count} sensors transferred`);
+  }
 };
 
 export const run = () => etlAll(sensors);

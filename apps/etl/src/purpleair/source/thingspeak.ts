@@ -4,7 +4,7 @@ import { isProd } from "../../env";
 import {
   PurpleResponse,
   SensorAccess,
-  ThingSpeakResponse,
+  PurpleHistoryResponse,
 } from "../../interfaces";
 import { asQueryParamDate } from "./url-formatting";
 
@@ -15,52 +15,40 @@ const retry = { limit: isProd ? 3 : 0 };
 const getPurpleUrl = ({ key, show }: SensorAccess) =>
   `https://www.purpleair.com/json?key=${key}&show=${show}`;
 
-const getThingspeakUrl = ({
-  channel,
-  fmt = "json",
-  apiKey,
+const getSensorUrl = ({
+  sensorId,
   start,
-  end,
 }: {
-  channel: string;
-  fmt?: "json" | "csv";
-  apiKey: string;
+  sensorId: number;
   start: Date;
-  end: Date;
 }) => {
   const url = [
-    `https://api.thingspeak.com/channels/${channel}/feeds.${fmt}?`,
-    `start=${asQueryParamDate(start)}`,
-    `end=${asQueryParamDate(end)}`,
-    `results=8000`,
-    `api_key=${apiKey}`,
-  ]
-    .filter(Boolean)
-    .join("&");
-  // console.log(url);
-  return url;
+    `https://api.purpleair.com/v1/sensors/${sensorId}/json?`,
+    `start_timestamp=${start}`,
+    `average=60`,
+    "fields=pm2.5_atm,humidity",
+  ].join("&");
+  return encodeURIComponent(url);
 };
 
 export const getSourceObservations = ({
-  channelId,
   apiKey,
-  end,
   start,
+  sensorId,
 }: {
-  channelId: string;
   apiKey: string;
   start: Date;
-  end: Date;
+  sensorId: number;
 }) => {
-  const url = getThingspeakUrl({ channel: channelId, apiKey, start, end });
+  const url = getSensorUrl({ start, sensorId });
   return got(url, {
+    headers: {
+      Referer: "https://api.purpleair.com/",
+      "X-API-Key": apiKey,
+      Accept: "application/json",
+    },
     retry,
-  })
-    .json<ThingSpeakResponse>()
-    .catch((err) => {
-      debugger;
-      throw err;
-    });
+  }).json<PurpleHistoryResponse>();
 };
 
 export const getSourceSensor = (sensorAccess: SensorAccess) => {

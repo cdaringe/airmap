@@ -8,10 +8,14 @@ const V_AIR = 0.0012;
 
 const toDensityContribution = (
   particleCount: number,
-  particleDiameter: number,
+  particleDiameter: number
 ) =>
-  Math.PI / 6 * Math.pow(particleDiameter / 1000000000, 3) * RHO_TRUE *
-  particleCount / V_AIR / 1000000000;
+  ((Math.PI / 6) *
+    Math.pow(particleDiameter / 1000000000, 3) *
+    RHO_TRUE *
+    particleCount) /
+  V_AIR /
+  1000000000;
 
 type Entry = { date: Date; sub500nm: number; pm_2_5: number };
 type State = {
@@ -21,8 +25,8 @@ type State = {
   records: Entry[];
 };
 
-const usLocalDateTimetoDate = (v: string) =>
-  new Date(
+const usLocalDateTimetoDate = (v: string) => {
+  return new Date(
     v
       .trim()
       .split(" ")
@@ -32,10 +36,11 @@ const usLocalDateTimetoDate = (v: string) =>
           const pad = (v: string) => (v.length === 1 ? `0${v}` : v);
           return `${y}-${pad(m)}-${pad(d)}`;
         }
-        return `T${part}.000-07:00`;
+        return `T${part}.000+01:00`;
       })
-      .join(""),
+      .join("")
   );
+};
 
 const float = (v: string) => parseFloat(v);
 const fieldParsersByName = {
@@ -45,16 +50,18 @@ const fieldParsersByName = {
 
 export const parse = async (
   stream: ReadableStreamDefaultReader<Uint8Array>,
-  state: State = { records: [], partial: "", particleDiametersAscending: [] },
+  state: State = { records: [], partial: "", particleDiametersAscending: [] }
 ): Promise<State> => {
   const { done, value } = await stream.read();
   if (value || done) {
-    state.partial += typeof value === "string"
-      ? value
-      : value
-      ? new TextDecoder().decode(value)
-      : "";
-    const rows = state.partial.split(/\n/g);
+    state.partial +=
+      typeof value === "string"
+        ? value
+        : value
+        ? new TextDecoder().decode(value)
+        : "";
+    const rawRows = state.partial.split(/\n/g);
+    const rows = rawRows.map((v) => v.trim()).filter((x) => !!x);
     const lastRowIdx = rows.length - 1;
     rows.forEach((row, i) => {
       /**
@@ -65,7 +72,7 @@ export const parse = async (
       if (lastRowIdx === i && !done) {
         state.partial = row;
       } else {
-        const cells = row.split(",");
+        const cells = row.includes(",") ? row.split(",") : row.split("\t");
         if (!state.headerIndiciesByName) {
           state.headerIndiciesByName = cells.reduce<Record<string, number>>(
             (acc, curr, i) => {
@@ -74,12 +81,12 @@ export const parse = async (
               const particleDiameterMatch = colName.match(/\s*(\d+\.\d+)\s+nm/);
               if (particleDiameterMatch) {
                 state.particleDiametersAscending.push(
-                  parseInt(particleDiameterMatch[1], 10),
+                  parseInt(particleDiameterMatch[1], 10)
                 );
               }
               return acc;
             },
-            {},
+            {}
           );
         } else {
           const date_raw = cells[state.headerIndiciesByName["Time"]!];
@@ -93,8 +100,10 @@ export const parse = async (
           let j = 0;
           while (colIdx < sub500nmEndCol) {
             const numParticles = parseFloat(cells[colIdx]);
-            const diameterMidpoint = (state.particleDiametersAscending[j] +
-              state.particleDiametersAscending[j + 1]) / 2;
+            const diameterMidpoint =
+              (state.particleDiametersAscending[j] +
+                state.particleDiametersAscending[j + 1]) /
+              2;
             sub500nm += toDensityContribution(numParticles, diameterMidpoint);
             ++j;
             ++colIdx;

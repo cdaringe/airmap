@@ -1,19 +1,19 @@
-import { DataSourceWidget } from "../data-source/DataSourceWidget";
+import { DataSourceWidget } from "../../data-source/DataSourceWidget";
 import {
   isGoogleSheetsCompatibleUrl,
   toSheetsDataExportUrl,
-} from "../../../../../packages/cleanair-google-sheets/mod.ts";
-import { useDataSource, DataSource } from "../data-source/use-data-source";
+} from "../../../../../../packages/cleanair-google-sheets/mod.ts";
+import { useDataSource, DataSource } from "../../data-source/use-data-source";
 import { useRouter } from "next/router";
-import React, { useCallback } from "react";
-import { useMapAuth } from "../mapping/use-map-auth";
-import Button from "../atoms/button";
+import React from "react";
+import { useMapAuth } from "../../mapping/use-map-auth";
+import Button from "../../atoms/button";
 import {
   POCKET_LABS_ID,
   FLOW_ID,
   MINIWRAS_ID,
   AIRMAP_GPS_ID,
-} from "../../../../../packages/cleanair-sensor-common/mod.ts";
+} from "../../../../../../packages/cleanair-sensor-common/mod.ts";
 
 type DSKey = keyof DataSource;
 type DsUpdateFn = <K extends DSKey>(k: K, v: DataSource[K]) => void;
@@ -68,6 +68,7 @@ export default function Home() {
             })),
           onUrlsChange: (urls) => update("urls", urls),
           onKmlChange: (kml) => update("luggage", kml),
+          onMiniWrasReady: (v) => update("luggage", v),
           urls,
           onSubmit: () => {
             if (isSubmitDisabled) {
