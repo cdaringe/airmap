@@ -26,7 +26,7 @@ const getSensorUrl = ({
     `https://api.purpleair.com/v1/sensors/${sensorId}/json?`,
     `start_timestamp=${start}`,
     `average=60`,
-    "fields=pm2.5_atm",
+    "fields=pm2.5_atm,humidity",
   ].join("&");
   return encodeURIComponent(url);
 };
@@ -48,12 +48,7 @@ export const getSourceObservations = ({
       Accept: "application/json",
     },
     retry,
-  })
-    .json<PurpleHistoryResponse>()
-    .catch((err) => {
-      debugger;
-      throw err;
-    });
+  }).json<PurpleHistoryResponse>();
 };
 
 export const getSourceSensor = (sensorAccess: SensorAccess) => {

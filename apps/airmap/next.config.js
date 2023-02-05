@@ -16,7 +16,10 @@ module.exports = {
      * NODE_OPTIONS='--inspect-brk' ./node_modules/.bin/next dev
      */
     const loader = { loader: "./deno-compat-loader.js" };
+    // next@12
     const swcLoaderUses = config.module.rules[2].oneOf[2].use;
+    // next@13
+    // const swcLoaderUses = config.module.rules[3].oneOf[2].use;
 
     if (!swcLoaderUses) {
       throw new Error(

@@ -1,0 +1,18 @@
+version: "3"
+services:
+  pca_db:
+    image: timescale/timescaledb:latest-pg14
+    restart: unless-stopped
+    ports:
+      - 5544:5544
+    command: -p 5544
+    environment:
+      POSTGRES_USER: airman
+      POSTGRES_PASSWORD: ${PCA_DB_PASSWORD}
+      POSTGRES_DB: pca
+      TS_TUNE_MAX_BG_WORKERS: 8
+  pca_gql:
+    image: hasura/graphql-engine:v2.15.2
+    depends_on:
+      - pca_db
+    restart: unless-stopped

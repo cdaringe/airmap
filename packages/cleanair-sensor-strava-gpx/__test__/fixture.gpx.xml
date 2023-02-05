@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="StravaGPX iPhone" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" xmlns="http://www.topografix.com/GPX/1/1">
+ <metadata>
+  <time>2023-02-02T05:03:39Z</time>
+ </metadata>
+ <trk>
+  <name>Night Walk</name>
+  <type>10</type>
+  <trkseg>
+   <trkpt lat="45.5467480" lon="-122.6478610">
+    <ele>48.3</ele>
+    <time>2023-02-02T05:03:39Z</time>
+   </trkpt>
+   <trkpt lat="45.5466650" lon="-122.6478760">
+    <ele>48.3</ele>
+    <time>2023-02-02T05:03:40Z</time>
+   </trkpt>
+   <trkpt lat="45.5466640" lon="-122.6478870">
+    <ele>48.3</ele>
+    <time>2023-02-02T05:03:41Z</time>
+   </trkpt>
+   <trkpt lat="45.5466640" lon="-122.6478980">
+    <ele>48.3</ele>
+    <time>2023-02-02T05:03:42Z</time>
+   </trkpt>
+   <trkpt lat="45.5466630" lon="-122.6479090">
+    <ele>48.3</ele>
+    <time>2023-02-02T05:03:43Z</time>
+   </trkpt>
+   <trkpt lat="45.5466630" lon="-122.6479200">
+    <ele>48.4</ele>
+    <time>2023-02-02T05:03:44Z</time>
+   </trkpt>
+   <trkpt lat="45.5466630" lon="-122.6479300">
+    <ele>48.4</ele>
+    <time>2023-02-02T05:03:45Z</time>
+   </trkpt>
+   <trkpt lat="45.5466770" lon="-122.6479370">
+    <ele>48.4</ele>
+    <time>2023-02-02T05:03:46Z</time>
+   </trkpt>
+   <trkpt lat="45.5466800" lon="-122.6479450">
+    <ele>48.4</ele>
+    <time>2023-02-02T05:03:47Z</time>
+   </trkpt>
+   <trkpt lat="45.5466770" lon="-122.6479710">
+    <ele>48.4</ele>
+    <time>2023-02-02T05:03:48Z</time>
+   </trkpt>
+   <trkpt lat="45.5466770" lon="-122.6479770">
+    <ele>48.4</ele>
+    <time>2023-02-02T05:03:49Z</time>
+   </trkpt>
+   <trkpt lat="45.5466810" lon="-122.6479940">
+    <ele>48.4</ele>
+    <time>2023-02-02T05:03:50Z</time>
+   </trkpt>
+  </trkseg>
+ </trk>
+</gpx>

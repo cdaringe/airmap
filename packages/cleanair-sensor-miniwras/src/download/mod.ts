@@ -11,7 +11,11 @@ import { parse as parsePL } from "../../../cleanair-sensor-pocketlabs/src/stream
 import { MiniWRASEntry, ModResources } from "../interfaces.ts";
 import { invariant } from "../../../invariant/mod.ts";
 import { type GeoJSON } from "../../../cleanair-sensor-common/mod.ts";
+import type { Entry as PocketlabsEntry } from "../../../cleanair-sensor-pocketlabs/src/interfaces.ts";
+import type { StravaEntry } from "../../../cleanair-sensor-strava-gpx/mod.ts";
 
+type MiniWrasCombinedEntry = MiniWRASEntry & StravaEntry;
+const OLD_DATE = new Date(0);
 export const createModule = (r: ModResources) => {
   const download = async (urls: string[]) => {
     const [measurementsUrl, positionsUrl] = urls;
@@ -23,14 +27,14 @@ export const createModule = (r: ModResources) => {
     ]);
     if (measures.length !== positions.length) {
       console.warn(
-        `lossy data - measures ${measures.length}, positions ${positions.length}`,
+        `lossy data - measures ${measures.length}, positions ${positions.length}`
       );
     }
     const coordStamps = positions.map((p) => p.date);
     return measures.reduce<MiniWRASEntry[]>((acc, it) => {
       const coordTimestampMatch = r.closestTo(it.date, coordStamps)!;
       const coord = positions.find(
-        (c) => c.date.getTime() === coordTimestampMatch.getTime(),
+        (c) => c.date.getTime() === coordTimestampMatch.getTime()
       );
       if (!coord) {
         throw new Error(`no position found for ${JSON.stringify(it)}`);
@@ -51,26 +55,68 @@ export const createModule = (r: ModResources) => {
   };
 
   const toGeoJSON = (
-    flowDatas: MiniWRASEntry[],
+    flowDatas: MiniWrasCombinedEntry[]
   ): GeoJSON.FeatureCollection => ({
     type: "FeatureCollection",
-    features: flowDatas.map(
-      (properties) => ({
+    features: flowDatas.map((properties) => {
+      const coordinates = [properties.lon, properties.lat];
+      return {
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [properties.longitude, properties.latitude],
+          coordinates,
         },
         properties: { ...properties },
-      } as GeoJSON.Feature),
-    ),
+      } as GeoJSON.Feature;
+    }),
   });
 
   const downloadGeoJSON = (urls: string[]) => download(urls).then(toGeoJSON);
 
   const dateField = /* transformed from "date (UTC)"" on download */ "date";
 
+  /**
+   * Combine all observations, assuming they are already in time ascending order
+   */
+  const combine = ({
+    pocketlabs = [],
+    strava,
+    miniwras,
+  }: {
+    pocketlabs?: PocketlabsEntry[];
+    miniwras: MiniWRASEntry[];
+    strava: StravaEntry[];
+  }): GeoJSON => {
+    debugger; // eslint-disable-line
+    const results: MiniWrasCombinedEntry[] = [];
+    for (const miniv of miniwras) {
+      const targetDate = miniv.date;
+      while (true) {
+        const stravaEntry = strava[0];
+        const stravaDate: Date | null = stravaEntry?.date;
+        if (!stravaDate || !stravaEntry) {
+          console.warn(`no strava data, skipping, dropping miniwras point`);
+          break;
+        } else if (stravaDate < targetDate) {
+          // drop unused strava point
+          strava.shift();
+        } else if (stravaDate.getTime() - targetDate.getTime() < 60_000) {
+          results.push({ ...stravaEntry, ...miniv });
+          strava.shift(); // consume used strava point
+          break;
+        } else {
+          console.warn(
+            `miniwras > 1 minute away from strava points, dropping miniwras point`
+          );
+          break; // no strava point for this miniwras point close enough
+        }
+      }
+    }
+    return toGeoJSON(results);
+  };
+
   return {
+    combine,
     download,
     downloadGeoJSON,
     dateField,

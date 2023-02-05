@@ -46,3 +46,4 @@ dist/**
 apps/airmap/out/
 node_modules
 dist
+.docker

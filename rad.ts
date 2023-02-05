@@ -4,6 +4,15 @@ const format: Task = `deno fmt packages`;
 const test: Task = `deno test --import-map import_map.json --unstable -A $(fd .test.ts packages)`;
 
 /**
+ * Launch dev docker based services
+ */
+const services: Task = [
+  "PCA_DB_PASSWORD=airman",
+  "PCA_GQL_ADMIN_SECRET=airman",
+  "docker-compose -f docker-compose.pca.dev.yml -f docker-compose.pca.base.yml up --force-recreate",
+].join(" ");
+
+/**
  * Bundle packages to ESM for Observable and general JS ESM usage
  */
 const bundleModules: Task = {
@@ -38,6 +47,7 @@ const deploy: Task = {
 };
 
 export const tasks: Tasks = {
+  ...{ services, s: services },
   ...{ test, t: test },
   ...{ format, f: format },
   ...{ bundleModules, b: bundleModules },

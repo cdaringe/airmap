@@ -20,6 +20,7 @@ import { useDateFilter } from "./hooks/use-date-filter";
 import { BottomSheet } from "react-spring-bottom-sheet";
 import "react-spring-bottom-sheet/dist/style.css";
 import { MiniWrasStats } from "../../charts/miniwras-pm2-humidity";
+import { ErrorBoundary } from "../../error-boundary";
 
 const isValidDate = (d: Date) => !d.toString().match(/Invalid/);
 
@@ -76,7 +77,13 @@ export default function Map() {
     // use `typeof download` to cache bust react-query when the download
     // function has not yet finished downloading
     queryKey: ["map", `sensor-${sensorType}`, ...urls, typeof downloadGeoJSON],
-    queryFn: () => downloadGeoJSON?.(urls),
+    queryFn: () => {
+      if (sensorType === MINIWRAS_ID) {
+        // we only support MINIWRAS from file uploading from the home screen
+        return ds.value.luggage;
+      }
+      return downloadGeoJSON?.(urls);
+    },
     cacheTime: 1e9,
   });
   const error = sensorDownloaderError || dataDownloadError;
@@ -126,8 +133,9 @@ export default function Map() {
   const dataPoint = geojson?.features[0]?.properties as
     | Record<string, string>
     | undefined;
+  console.log(geojson.features[0]);
   return (
-    <>
+    <ErrorBoundary>
       <MapCssLink />
       <Map
         onStyleLoad={setupControls}
@@ -147,7 +155,9 @@ export default function Map() {
               geojson,
               circleCases: pollutionLevels?.circleCases,
               onSelectFeature: (feature) => {
-                if (fitBounds) setFitBounds(undefined);
+                if (fitBounds) {
+                  setFitBounds(undefined);
+                }
                 if (center) {
                   setCenter(feature.geometry.coordinates as [number, number]);
                 }
@@ -166,7 +176,7 @@ export default function Map() {
             }}
           />
         ) : undefined}
-        <div className="map-overlay">
+        <div id="pollution-map-overlay" className="map-overlay">
           <div className="map-overlay-control map-legend">
             <div style={{ fontWeight: "bold" }}>
               {pollutionLevels?.fieldName}
@@ -189,7 +199,7 @@ export default function Map() {
             <div className="map-overlay-control map-pollution-range-mode">
               <h4 className="font-bold">Field to map</h4>
               {Object.keys(getLevelsByField).map((fieldName) => (
-                <>
+                <div key={fieldName}>
                   <input
                     type="radio"
                     key={fieldName}
@@ -198,7 +208,7 @@ export default function Map() {
                   />
                   <label htmlFor="field-to-map">{` ${fieldName}`}</label>
                   <br />
-                </>
+                </div>
               ))}
             </div>
           ) : null}
@@ -265,6 +275,6 @@ export default function Map() {
           <MiniWrasStats geojson={geojson} />
         </div>
       </BottomSheet>
-    </>
+    </ErrorBoundary>
   );
 }

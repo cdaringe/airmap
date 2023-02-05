@@ -65,10 +65,15 @@ export interface PurpleHistoryResponse {
    */
   end_timestamp: number;
   average: number;
-  fields: ["time_stamp", "pm2.5_atm"];
-  data: [isotimestamp: string, pm25atm: number][];
+  fields: ["time_stamp", "humidity", "temperature", "pressure", "pm2.5_atm"];
+  data: [
+    isotimestamp: string,
+    humidity: number,
+    temperature: number,
+    pressure: number,
+    pm25atm: number
+  ][];
 }
-
 
 export type Observation = {
   created_at: string;

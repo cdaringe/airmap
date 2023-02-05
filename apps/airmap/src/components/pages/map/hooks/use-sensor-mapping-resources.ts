@@ -5,35 +5,48 @@ import {
   MINIWRAS_ID,
   AIRMAP_GPS_ID,
 } from "../../../../../../../packages/cleanair-sensor-common/mod.ts";
+
+export const getPocket = () =>
+  import(
+    "../../../../../../../packages/cleanair-sensor-pocketlabs/src/resources.ts"
+  ).then((m) => m.getResources());
+
+export const getFlow = () =>
+  import(
+    "../../../../../../../packages/cleanair-sensor-flow/src/resources.ts"
+  ).then(async (m) => {
+    const { closestTo } = await import("date-fns");
+    return m.getResources({ closestTo });
+  });
+
+export const getMiniWras = () =>
+  import(
+    "../../../../../../../packages/cleanair-sensor-miniwras/src/resources.ts"
+  ).then(async (m) => {
+    const { closestTo } = await import("date-fns");
+    return m.getResources({ closestTo });
+  });
+
+export const getAirmapGps = () =>
+  import(
+    "../../../../../../../packages/cleanair-sensor-airmapgps/src/resources.ts"
+  ).then(async (m) => {
+    const { closestTo } = await import("date-fns");
+    return m.getResources({ closestTo });
+  });
+
 export const useSensorMappingResources = (sensorType: number) => {
   return useQuery({
     queryKey: `get-mapping-${sensorType}`,
     queryFn: async () => {
       const mod = await (sensorType === POCKET_LABS_ID
-        ? import(
-            "../../../../../../../packages/cleanair-sensor-pocketlabs/src/resources.ts"
-          ).then((m) => m.getResources())
+        ? getPocket()
         : sensorType === FLOW_ID
-        ? import(
-            "../../../../../../../packages/cleanair-sensor-flow/src/resources.ts"
-          ).then(async (m) => {
-            const { closestTo } = await import("date-fns");
-            return m.getResources({ closestTo });
-          })
+        ? getFlow()
         : sensorType === MINIWRAS_ID
-        ? import(
-            "../../../../../../../packages/cleanair-sensor-miniwras/src/resources.ts"
-          ).then(async (m) => {
-            const { closestTo } = await import("date-fns");
-            return m.getResources({ closestTo });
-          })
+        ? getMiniWras()
         : sensorType === AIRMAP_GPS_ID
-        ? import(
-            "../../../../../../../packages/cleanair-sensor-airmapgps/src/resources.ts"
-          ).then(async (m) => {
-            const { closestTo } = await import("date-fns");
-            return m.getResources({ closestTo });
-          })
+        ? getAirmapGps()
         : (() => {
             throw new Error(`unsupported sensor type ${sensorType}`);
           })());

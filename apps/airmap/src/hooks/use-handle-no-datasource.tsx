@@ -1,16 +1,23 @@
 import { useDataSource } from "../components/data-source/use-data-source";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { MINIWRAS_ID } from "../../../../packages/cleanair-sensor-common/mod.ts";
+
+const isMiniWrasOk = (sensorType: number, luggage: any) =>
+  sensorType === MINIWRAS_ID && luggage;
+
 export const useHandleNoDatasource = () => {
   const {
-    value: { urls },
+    value: { luggage, urls, sensorType },
   } = useDataSource();
   const router = useRouter();
-  useEffect(
-    () =>
-      (!urls.length || urls.some((url) => !url)
-        ? router.push("/")
-        : undefined) && undefined,
-    [urls, router]
-  );
+  useEffect(() => {
+    if (isMiniWrasOk(sensorType, luggage)) {
+      return;
+    }
+    if (!urls.length || urls.some((url) => !url)) {
+      console.warn("no datasource detected, routing back to homepage");
+      router.push("/");
+    }
+  }, [urls, router, sensorType, luggage]);
 };

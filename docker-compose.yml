@@ -1,0 +1,49 @@
+# this file is sync'd into configuration files by the provision/deploy repo
+version: "3"
+services:
+  pca_gql:
+    image: hasura/graphql-engine:v2.15.2
+    ports:
+      - 8080
+    depends_on:
+      - pca_db
+    restart: unless-stopped
+    volumes:
+      - /www/pca/hasura:/pca
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://airman:${PCA_DB_PASSWORD}@pca_db:5544/pca
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+      HASURA_GRAPHQL_ADMIN_SECRET: ${PCA_GQL_ADMIN_SECRET}
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log
+      #, query-log
+      HASURA_GRAPHQL_METADATA_DIRECTORY: /pca/metadata
+      HASURA_GRAPHQL_MIGRATIONS_DIRECTORY: /pca/migrations
+      HASURA_GRAPHQL_SEEDS_DIRECTORY: /pca/seeds
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: readonly
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+      HASURA_GRAPHQL_EVENTS_HTTP_POOL_SIZE: 10
+      HASURA_GRAPHQL_SCHEMA_SYNC_POLL_INTERVAL: 60000
+
+    labels:
+      - traefik.http.routers.pcagql.tls=true
+      - traefik.http.routers.pcagql.tls.certresolver=leacme
+      - traefik.http.routers.pcagql.rule=Host(`pca.cdaringe.com`)
+      - traefik.http.middlewares.pgagqlcors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT
+      - traefik.http.middlewares.pgagqlcors.headers.accesscontrolalloworiginlist=https://cdaringe.static.observableusercontent.com,http://localhost:9695
+      - traefik.http.middlewares.pgagqlcors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.pgagqlcors.headers.accesscontrolallowheaders=*
+      - traefik.http.middlewares.pgagqlcors.headers.addvaryheader=true
+      - traefik.http.routers.pcagql.middlewares=pgagqlcors@docker
+
+  # pca_etl:
+  #   image: cdaringe/etl-purple
+  #   depends_on:
+  #     - pca_gql
+  #   restart: unless-stopped
+  #   environment:
+  #     - API_ENDPOINT=https://pca.cdaringe.com/v1/graphql
+  #     - API_SECRET_HEADER_KEY=x-hasura-admin-secret
+  #     - HASURA_GRAPHQL_ADMIN_SECRET=${PCA_GQL_ADMIN_SECRET}
+  #     - SOURCE_CONCURRENCY=1
+  #   labels:
+  #     - traefik.enable=false
