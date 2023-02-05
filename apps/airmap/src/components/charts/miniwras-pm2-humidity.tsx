@@ -19,6 +19,10 @@ export const MiniWrasStats: React.FC<
     geojson: GeoJSON.FeatureCollection;
   }>
 > = ({ geojson }) => {
+  const isPocketDataAvailable = !!geojson.features[0]?.properties?.pocketlabs;
+  if (!isPocketDataAvailable) {
+    return <p>Pocketlabs data is missing. Please upload a pocket labs file.</p>;
+  }
   return (
     <ResponsiveContainer aspect={3} width="100%">
       <LineChart
@@ -66,7 +70,7 @@ export const MiniWrasStats: React.FC<
         <Line
           yAxisId="left"
           type="monotone"
-          dataKey={(p) => p.properties.pocketlabsEntry.pm_2_5}
+          dataKey={(p) => p.properties.pocketlabs.pm_2_5}
           name="PM2.5 (PL)"
           stroke="#6684d8"
           activeDot={{ r: 8 }}
@@ -74,7 +78,7 @@ export const MiniWrasStats: React.FC<
         <Line
           yAxisId="right"
           type="monotone"
-          dataKey={(p) => p.properties.pocketlabsEntry.humidity}
+          dataKey={(p) => p.properties.pocketlabs.humidity}
           name="Humidity (PL)"
           stroke="#82ca9d"
         />

@@ -14,7 +14,9 @@ import { type GeoJSON } from "../../../cleanair-sensor-common/mod.ts";
 import type { Entry as PocketlabsEntry } from "../../../cleanair-sensor-pocketlabs/src/interfaces.ts";
 import type { StravaEntry } from "../../../cleanair-sensor-strava-gpx/mod.ts";
 
-type MiniWrasCombinedEntry = MiniWRASEntry & StravaEntry;
+type MiniWrasCombinedEntry = MiniWRASEntry &
+  StravaEntry & { pocketlabs?: PocketlabsEntry };
+
 const OLD_DATE = new Date(0);
 export const createModule = (r: ModResources) => {
   const download = async (urls: string[]) => {
@@ -71,7 +73,11 @@ export const createModule = (r: ModResources) => {
     }),
   });
 
-  const downloadGeoJSON = (urls: string[]) => download(urls).then(toGeoJSON);
+  const downloadGeoJSON = (_urls: string[]) => {
+    // @warning download miniwras from URLs is @deprecated. not all inputs
+    // are available in .csv from googlesheets
+    // download(urls).then(toGeoJSON);
+  };
 
   const dateField = /* transformed from "date (UTC)"" on download */ "date";
 
@@ -88,27 +94,58 @@ export const createModule = (r: ModResources) => {
     strava: StravaEntry[];
   }): GeoJSON => {
     const results: MiniWrasCombinedEntry[] = [];
-    for (const miniv of miniwras) {
-      const targetDate = miniv.date;
+
+    function getStravaEntry(targetDate: Date) {
       while (true) {
         const stravaEntry = strava[0];
         const stravaDate: Date | null = stravaEntry?.date;
         if (!stravaDate || !stravaEntry) {
           console.warn(`no strava data, skipping, dropping miniwras point`);
-          break;
+          return null;
         } else if (stravaDate < targetDate) {
-          // drop unused strava point
+          // drop unused strava point, try next
           strava.shift();
         } else if (stravaDate.getTime() - targetDate.getTime() < 60_000) {
-          results.push({ ...stravaEntry, ...miniv });
           strava.shift(); // consume used strava point
-          break;
+          return stravaEntry;
         } else {
           console.warn(
             `miniwras > 1 minute away from strava points, dropping miniwras point`
           );
-          break; // no strava point for this miniwras point close enough
+          // no strava point for this miniwras point close enough.
+          return null;
         }
+      }
+    }
+
+    function getPocketEntry(targetDate: Date) {
+      while (true) {
+        const entry = pocketlabs[0];
+        const date: Date | null = entry?.date;
+        if (!date || !entry) {
+          return null;
+        } else if (date < targetDate) {
+          // drop unused point, try next
+          pocketlabs.shift();
+        } else if (date.getTime() - targetDate.getTime() < 60_000) {
+          pocketlabs.shift(); // consume used point
+          return entry;
+        } else {
+          return null;
+        }
+      }
+    }
+
+    for (const miniv of miniwras) {
+      const targetDate = miniv.date;
+      const stravaEntry = getStravaEntry(targetDate);
+      const pocketEntry = getPocketEntry(targetDate);
+      if (stravaEntry) {
+        results.push({
+          ...stravaEntry,
+          ...miniv,
+          pocketlabs: pocketEntry ? pocketEntry : undefined,
+        });
       }
     }
     return toGeoJSON(results);
