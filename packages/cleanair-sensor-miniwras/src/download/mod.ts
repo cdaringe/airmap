@@ -87,7 +87,6 @@ export const createModule = (r: ModResources) => {
     miniwras: MiniWRASEntry[];
     strava: StravaEntry[];
   }): GeoJSON => {
-    debugger; // eslint-disable-line
     const results: MiniWrasCombinedEntry[] = [];
     for (const miniv of miniwras) {
       const targetDate = miniv.date;
