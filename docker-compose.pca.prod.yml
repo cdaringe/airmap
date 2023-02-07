@@ -5,11 +5,13 @@ services:
     volumes:
       - /www/pca/db_data:/var/lib/postgresql/data
   pca_gql:
+    ports:
+      - 8080
     volumes:
       - /www/pca/hasura:/pca
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://airman:${PCA_DB_PASSWORD}@pca_db:5544/pca
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_ADMIN_SECRET: ${PCA_GQL_ADMIN_SECRET}
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log
       #, query-log
@@ -38,9 +40,15 @@ services:
       - pca_gql
     restart: unless-stopped
     environment:
-      - API_ENDPOINT=https://pca.cdaringe.com/v1/graphql
+      - API_ENDPOINT=http://pca_gql:8080/v1/graphql
       - API_SECRET_HEADER_KEY=x-hasura-admin-secret
       - HASURA_GRAPHQL_ADMIN_SECRET=${PCA_GQL_ADMIN_SECRET}
+      - PCA_DB_HOST=pca_db
+      - PCA_DB_PASSWORD=${PCA_DB_PASSWORD}
+      - PCA_DB_PORT=5544
+      - PCA_DB_USER=airman
+      - PURPLE_AIR_READ_KEY=${PURPLE_AIR_READ_KEY}
+      - PURPLE_AIR_WRITE_KEY=${PURPLE_AIR_WRITE_KEY}
       - SOURCE_CONCURRENCY=1
     labels:
       - traefik.enable=false

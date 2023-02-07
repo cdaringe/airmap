@@ -17,13 +17,7 @@ const COLORS = [
 const PM2_FIELD_NAME = "pm_2_5" as const;
 const SUB_500_NM_FIELD_NAME = "sub500nm" as const;
 const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
-  0,
-  0.25,
-  0.5,
-  1,
-  2.5,
-  5,
-  20,
+  0, 0.25, 0.5, 1, 2.5, 5, 20,
 ].map((lower, i, arr) => {
   const upper = arr[i + 1] || Infinity;
   return [lower, upper] as [number, number];
@@ -51,9 +45,9 @@ export const getLevels: MapGetLevels<MiniWRASEntry> = ({
   const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
   const ranges = isMinMaxDynamicRange
     ? [...new Array(numColors)].map((_, i) => {
-      const base = min + i * levelSpan;
-      return [base, base + levelSpan] as [number, number];
-    })
+        const base = min + i * levelSpan;
+        return [base, base + levelSpan] as [number, number];
+      })
     : FIXED_PM2_LEVEL_RANGES;
   return {
     circleCases: ranges
@@ -81,9 +75,9 @@ export const getLevelsSub500nm: MapGetLevels<MiniWRASEntry> = ({
   const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
   const ranges = isMinMaxDynamicRange
     ? [...new Array(numColors)].map((_, i) => {
-      const base = min + i * levelSpan;
-      return [base, base + levelSpan] as [number, number];
-    })
+        const base = min + i * levelSpan;
+        return [base, base + levelSpan] as [number, number];
+      })
     : FIXED_PM2_LEVEL_RANGES;
   return {
     circleCases: ranges

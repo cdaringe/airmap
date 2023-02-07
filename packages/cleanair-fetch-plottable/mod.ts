@@ -15,15 +15,16 @@ type State = {
 
 export const parse = async (
   stream: ReadableStreamDefaultReader<Uint8Array>,
-  state: State = { records: [], partial: "" },
+  state: State = { records: [], partial: "" }
 ): Promise<State> => {
   const { done, value } = await stream.read();
   if (value || done) {
-    state.partial += typeof value === "string"
-      ? value
-      : value
-      ? new TextDecoder().decode(value)
-      : "";
+    state.partial +=
+      typeof value === "string"
+        ? value
+        : value
+        ? new TextDecoder().decode(value)
+        : "";
     const rows = state.partial.split(/\n/g);
     const lastRowIdx = rows.length - 1;
     rows.forEach((row, i) => {
@@ -41,7 +42,7 @@ export const parse = async (
           }
           state.headerIndiciesByName = cells.reduce(
             (acc, curr, i) => ({ ...acc, [curr.trim()]: i }),
-            {},
+            {}
           );
         } else {
           const device = cells[state.headerIndiciesByName["device"]!];

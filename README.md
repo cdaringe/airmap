@@ -37,13 +37,21 @@ example sheets:
 
 ## miniwras
 
+<!--
 - measures (miniwras): https://docs.google.com/spreadsheets/d/1XqB95gipLDOOsCfYFMV1RXREYUp14POM0fnV1hNRekA/edit#gid=802667302
+
 - positions (kinetic lite)
 - humidity (pocketlabs): https://docs.google.com/spreadsheets/d/1M7m01WPZJ6qG0hSgpEyRO977LOViQfanGpqy_GXSxY0/edit#gid=1094314331
-
-<!--
-we used to use FLOW, but have migrated to pocketlabs for position & humidity data
+  we used to use FLOW, but have migrated to pocketlabs for position & humidity data
 - positions: https://docs.google.com/spreadsheets/d/1l87PtfEy9vWAq4D0iDDh2dIYGZ8y6regd0Wk33kUH0c/edit#gid=2147112514
- -->
+
+  -->
 
 </details>
+
+## todo
+
+- compress db, fix indicies
+  - get local db into state where we want it
+  - stream copy remote => transform => local
+    - (all tables: sensors, observations)

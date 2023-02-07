@@ -1,25 +1,44 @@
-import { Observation } from "../../interfaces";
+import {
+  Observation,
+  PurpleHistoryDataRecord,
+  PurpleSensorResponse,
+  SensorLocationOutdoor,
+} from "../../interfaces";
 import { graphQL } from "./gql-common";
 
 const PURPLE_SENSOR_ID = 2;
 
 const QUERY_GET_SENSOR = `
-query GetSensor($id: String!) {
-  sensor(where: {id: {_eq: $id}}) {
+query GetSensor($sensor_owned_id: Int!) {
+  sensor(where: {sensor_owned_id: {_eq: $sensor_owned_id}}) {
     id
+    is_outdoor
+    latest_sync_timestamp
+    latest_observation_timestamp
+    latitude
+    longitude
+    name
+    sensor_owned_id
+    sensor_type_id
   }
-}`.trim();
+}
+`.trim();
 
-const QUERY_GET_OBSERVATION_BOUNDS = `
-query GetObservationBounds($sensor_id: String!) {
-  last: observation_purpleair(order_by: {timestamp: desc}, limit: 1, where: {sensor_id: {_eq: $sensor_id}}) {
-    timestamp
-  }
-  first: observation_purpleair(order_by: {timestamp: asc}, limit: 1, where: {sensor_id: {_eq: $sensor_id}}) {
-    timestamp
-  }
-}`.trim();
-
+/**
+ * This type is found/derived from GraphQL schema explorer.
+ * I simply opened the docs in graphiql, searched for the input type,
+ * copied it, and mapped the GQL types to TS types
+ */
+type Observation_purpleair_insert_input = {
+  humidity: number;
+  pm_1_atm: number;
+  pm_2_5_atm: number;
+  pm_2_5_cf: number;
+  pressure: number;
+  sensor_id: number;
+  temperature_f: number;
+  timestamp: string;
+};
 const MUTATION_UPLOAD_OBSERVATIONS = `
 mutation UploadPurpleObservations($objects: [observation_purpleair_insert_input!]!) {
   insert_observation_purpleair(objects: $objects) {
@@ -28,45 +47,94 @@ mutation UploadPurpleObservations($objects: [observation_purpleair_insert_input!
 }`.trim();
 
 const MUTATION_CREATE_SENSOR = `
-mutation CreateSensor($id:String!,$name:String!,$typeId:Int!,$lat:Float,$lon:Float) {
+mutation CreateSensor(
+  $is_outdoor:Boolean!,
+  $latitude:Float,
+  $longitude:Float,
+  $name:String!,
+  $sensor_owned_id:Int,
+  $sensor_type_id:Int!
+) {
   insert_sensor_one(object: {
-    id:$id,
+    is_outdoor:$is_outdoor,
+    latitude:$latitude,
+    longitude:$longitude,
     name:$name,
-    sensor_type_id:$typeId,
-    latitude:$lat,
-    longitude:$lon
+    sensor_owned_id:$sensor_owned_id,
+    sensor_type_id:$sensor_type_id
   }) {
     __typename
   }
-}`.trim();
+}
+`.trim();
 
-export const getSensor = (id: string) =>
-  graphQL<{ sensor: { id: string }[] }>(QUERY_GET_SENSOR, "GetSensor", { id });
-
-export const getObservationBounds = (sensor_id: string) =>
-  graphQL<{
-    first: [
-      {
-        timestamp: string;
-      },
-    ];
-    last: [
-      {
-        timestamp: string;
-      },
-    ];
-  }>(QUERY_GET_OBSERVATION_BOUNDS, "GetObservationBounds", { sensor_id }).then(
-    (result) => {
-      if (result.errors) throw new Error(result.errors[0]);
-      const { first, last } = result.data || {};
-      return {
-        first: first?.[0]?.timestamp,
-        last: last?.[0]?.timestamp,
-      };
+/**
+ * @example
+ * ```
+ * {
+ *  "id": 1,
+ *  "latest_observation_timestamp": "2023-02-07T03:10:13.627Z",
+ *  "latest_sync_timestamp": "2023-02-07T03:10:13.627Z"
+ *  }
+ * ```
+ */
+const MUTATION_UPDATE_SENSOR_ON_OBSERVATION = `
+mutation UpdateSensorOnObservations(
+  $id: Int!,
+  $latest_observation_timestamp:timestamptz!,
+  $latest_sync_timestamp:timestamptz!
+) {
+  update_sensor(
+    where: {
+    	id: {_eq: $id}
     },
-  );
+    _set: {
+      latest_observation_timestamp: $latest_observation_timestamp,
+      latest_sync_timestamp: $latest_sync_timestamp
+    }
+  )
+  {
+    returning {
+      __typename
+    }
+  }
+}
+`.trim();
 
-const uploadObservations = (objects: unknown[]) =>
+export type LocalSensor = {
+  id: number;
+  is_outdoor: boolean;
+  latest_sync_timestamp: string;
+  latest_observation_timestamp: string;
+  latitude: number;
+  longitude: number;
+  name: string;
+  sensor_owned_id: number;
+  sensor_type_id: number;
+};
+export const getSensor = (sensorIndex: number) =>
+  graphQL<{
+    sensor: LocalSensor[];
+  }>(QUERY_GET_SENSOR, "GetSensor", { sensor_owned_id: sensorIndex });
+
+export const updateSensorOnObservations = (opts: {
+  sensorId: number;
+  latest_observation_timestamp: Date;
+  latest_sync_timestamp: Date;
+}) =>
+  graphQL(MUTATION_UPDATE_SENSOR_ON_OBSERVATION, "UpdateSensorOnObservations", {
+    id: opts.sensorId,
+    latest_observation_timestamp:
+      opts.latest_observation_timestamp.toISOString(),
+    latest_sync_timestamp: opts.latest_sync_timestamp.toISOString(),
+  }).then((result) => {
+    if (result.errors) {
+      throw new Error(JSON.stringify(result.errors));
+    }
+    return result;
+  });
+
+const uploadObservations = (objects: Observation_purpleair_insert_input[]) =>
   graphQL(MUTATION_UPLOAD_OBSERVATIONS, "UploadPurpleObservations", {
     objects: objects,
   }).then((result) => {
@@ -76,25 +144,14 @@ const uploadObservations = (objects: unknown[]) =>
     return result;
   });
 
-export const createSinkSensor = ({
-  id,
-  name,
-  typeId = PURPLE_SENSOR_ID,
-  lat,
-  lon,
-}: {
-  id: string;
-  name: string;
-  typeId?: number;
-  lat: number;
-  lon: number;
-}) =>
+export const createSinkSensor = (sensor: PurpleSensorResponse["sensor"]) =>
   graphQL(MUTATION_CREATE_SENSOR, "CreateSensor", {
-    id,
-    name,
-    typeId,
-    lat,
-    lon,
+    is_outdoor: sensor.location_type === (0 as SensorLocationOutdoor),
+    latitude: sensor.latitude,
+    longitude: sensor.longitude,
+    name: sensor.name,
+    sensor_owned_id: sensor.sensor_index,
+    sensor_type_id: PURPLE_SENSOR_ID,
   }).then((r) => {
     if (r.errors?.length) {
       throw new Error(JSON.stringify(r.errors));
@@ -102,11 +159,23 @@ export const createSinkSensor = ({
     return r;
   });
 
-export async function postRecords(observations: Observation[]) {
-  const records = observations.map(({ created_at, ...observation }) => ({
-    ...observation,
-    timestamp: created_at,
-  }));
+export async function postRecords(
+  localSensor: LocalSensor,
+  purpleRecords: PurpleHistoryDataRecord[]
+) {
+  const records = purpleRecords.map((pr) => {
+    const insertInput: Observation_purpleair_insert_input = {
+      humidity: pr.humidity,
+      pm_1_atm: pr["pm1.0_atm"],
+      pm_2_5_atm: pr["pm2.5_atm"],
+      pm_2_5_cf: pr["pm2.5_cf_1"],
+      pressure: pr.pressure,
+      sensor_id: localSensor.id,
+      temperature_f: pr.temperature,
+      timestamp: pr.time_stamp,
+    };
+    return insertInput;
+  });
   const { errors, data: _ } = await uploadObservations(records);
   if (errors && errors.length) {
     throw new Error(JSON.stringify(errors));

@@ -1,148 +1,110 @@
-import assert from "assert";
-import pAll from "p-all";
 import pino from "pino";
-import { partition } from "./collections/partition";
 import { SensorAccess } from "./interfaces";
 import * as sink from "./purpleair/sink/queries";
-import {
-  getSourceObservations,
-  getSourceSensor,
-} from "./purpleair/source/thingspeak";
+import * as source from "./purpleair/source/purpleapi";
 import { sensors } from "./sensors";
+import { addSeconds, differenceInHours } from "date-fns";
+const { IS_VSCODE_DEBUG } = process.env;
 
 const logger = pino({ level: "info" });
 
-const OLDEST_ALLOWED_DATA_DATE = new Date("2020-01-01");
+async function getOrAddSinkSensor(
+  sensorIndex: number,
+  isAssertingSensorExists = false
+): Promise<sink.LocalSensor> {
+  const sinkSensorResult = await sink.getSensor(sensorIndex);
+  assertNoErrors(sinkSensorResult);
+  const [sinkSensor] = sinkSensorResult.data?.sensor || [];
+  if (!sinkSensor) {
+    if (isAssertingSensorExists) {
+      throw new Error(`sensor missing for sensor index: ${sensorIndex}`);
+    }
+    const sourceSensorRes = await source.getSourceSensor({ sensorIndex });
+    await sink.createSinkSensor(sourceSensorRes.sensor);
+    return getOrAddSinkSensor(sensorIndex, true);
+  }
+  return sinkSensor;
+}
 
-async function etl(sensorAccess: SensorAccess) {
-  let searchBounds = [
-    { earliest: OLDEST_ALLOWED_DATA_DATE, latest: new Date() },
-  ];
-  const sinkSensor = await sink.getSensor(channelId);
-  if (sinkSensor.errors?.length) {
-    throw new Error(JSON.stringify(sinkSensor.errors));
+async function etl(
+  access: SensorAccess,
+  isColdStart = !IS_VSCODE_DEBUG
+): Promise<void> {
+  const { sensorIndex } = access;
+  const sinkSensor = await getOrAddSinkSensor(sensorIndex);
+  const nowDate = new Date();
+  const lastSyncedDate = new Date(sinkSensor.latest_sync_timestamp);
+  const hoursSinceSync = differenceInHours(nowDate, lastSyncedDate);
+  if (isColdStart && hoursSinceSync < 24) {
+    logger.info(
+      `skipping sync on ${sensorIndex} [hoursSinceSync: ${hoursSinceSync}]`
+    );
+    return;
   }
-  const numMatchingSensors = sinkSensor.data?.sensor.length;
-  assert(typeof numMatchingSensors === "number");
-  const prettySensor = `${Label} ${THINGSPEAK_PRIMARY_ID}`;
+  const prettySensor = `(id: ${sinkSensor.id}, sensor_owned_id: ${sinkSensor.sensor_owned_id}, name: ${sinkSensor.name})`;
   logger.info(`processing sensor: ${prettySensor}`);
-  if (numMatchingSensors === 0) {
-    await sink.createSinkSensor({
-      id: channelId,
-      name: Label,
-      lat: Lat,
-      lon: Lon,
-    });
-  } else {
-    const { first, last } = await sink.getObservationBounds(channelId);
-    if (first && last) {
-      // data exists, so get new datas AND ensure that we
-      // slurp up old datas _before_ our earliest known point
-      searchBounds = [
-        {
-          earliest: OLDEST_ALLOWED_DATA_DATE,
-          latest: new Date(new Date(first).getTime() - 1_000),
-        },
-        {
-          earliest: new Date(new Date(last).getTime() + 1_000),
-          latest: new Date(),
-        },
-      ].reverse();
-    } else {
-      // pass, use default full range
-    }
+  const observations = await source.getSourceObservations({
+    sensorId: sensorIndex,
+    start: addSeconds(new Date(sinkSensor.latest_observation_timestamp), 1),
+  });
+  // it's not _actually_ an observation, but it is the correct watermark
+  const nextLatestObservationDate = new Date(observations.end_timestamp * 1000);
+  await sink.updateSensorOnObservations({
+    sensorId: sinkSensor.id,
+    latest_sync_timestamp: nowDate,
+    latest_observation_timestamp: nextLatestObservationDate,
+  });
+  const range = {
+    start: new Date(observations.start_timestamp * 1000),
+    end: nextLatestObservationDate,
+  };
+  logger.info({
+    event: "etl",
+    count: observations.data.length,
+    range,
+  });
+  if (observations.data.length) {
+    await sink.postRecords(sinkSensor, observations.data);
   }
-  const prettyRange = (bounds: { earliest: Date; latest: Date }) =>
-    [bounds.earliest, bounds.latest]
-      .map((d) => d.toISOString().replace(/T.*/, ""))
-      .join(" -> ");
-  /**
-   * The Thingspeak API is weird and annoying.
-   * If you query GET ?start=...&end=..., you'd expect data from
-   * start to end. But, you actually get data from end -> start,
-   * always. You cannot request data in ascending order :|. So,
-   * we must search backwards.
-   */
-  for (const bounds of searchBounds.filter(
-    ({ earliest, latest }) => latest > earliest
-  )) {
-    logger.info(`searching: ${prettyRange(bounds)}`);
-    let isFetchingMore = true;
-    let isFatalData = false;
-    while (isFetchingMore) {
-      logger.info(`fetching ${bounds.latest.toISOString().replace(/T.*/, "")}`);
-      const { feeds } = await getSourceObservations({
-        channelId,
-        start: bounds.earliest,
-        end: bounds.latest,
-        apiKey: THINGSPEAK_PRIMARY_ID_READ_KEY,
-      });
-      const pm1_atm = "field1";
-      const pm2_atm = "field2";
-      const pm2_cf1 = "field8";
-      // const pm3_atm = "field3";
-      const temperature = "field6";
-      const humidity = "field7";
-      const records = feeds
-        .filter((it) => {
-          const isFieldMissing = [
-            pm1_atm,
-            pm2_atm,
-            pm2_cf1,
-            temperature,
-            humidity,
-          ].some((f) => typeof it[f as keyof typeof it] !== "string");
-          if (isFieldMissing) {
-            // only log warning once, using isFatalData as the stateful indicator
-            if (!isFatalData) {
-              console.error(
-                `        dropping data--missing fields: ${JSON.stringify(it)}`
-              );
-            }
-            isFatalData = true;
-            return false;
-          }
-          return true;
-        })
-        .map((it) => ({
-          pm_1_atm: parseInt(it[pm1_atm], 10),
-          pm_2_5_atm: parseInt(it[pm2_atm], 10),
-          pm_2_5_cf: parseInt(it[pm2_cf1], 10),
-          // pm3_atm: parseInt(it[pm3_atm], 10),
-          temperature_f: parseFloat(it[temperature]),
-          humidity: parseFloat(it[humidity]),
-          sensor_id: channelId,
-          created_at: it.created_at,
-        }));
-      if (records.length) {
-        for (const chunkRecords of partition(records, 2000)) {
-          await sink.postRecords(chunkRecords);
-        }
-      }
-      const earliestFoundDate = feeds.reduce<null | Date>((earliest, curr) => {
-        const currDate = new Date(curr.created_at);
-        if (!earliest) return currDate;
-        return currDate < earliest ? currDate : earliest;
-      }, null);
-      isFetchingMore =
-        !isFatalData &&
-        !!earliestFoundDate &&
-        earliestFoundDate > bounds.earliest;
-      if (isFetchingMore && earliestFoundDate) {
-        bounds.latest = new Date(earliestFoundDate?.getTime() - 1_000);
-      }
-    }
+  if (isProd) {
+    await sleep(1000);
   }
-  logger.info(`finished ${prettySensor}`);
+  return etl(access, false);
 }
 
 const etlAll = async (sensors: SensorAccess[]) => {
   let count = 0;
-  for (const sensor of sensors) {
+  const sensorsToEtl = sensors.slice(0, 1);
+  // const sensorsToEtl = sensors;
+  for (const sensor of sensorsToEtl) {
+    /* @info debug only */ // await dumpSensorData(sensor.sensorIndex);
     await etl(sensor);
     ++count;
     logger.info(`${count} sensors transferred`);
   }
 };
+
+import * as fs from "fs";
+import { sleep } from "./util";
+import { isProd } from "./env";
+
+async function dumpSensorData(sensorIndex: number) {
+  const sensor = await source.getSourceSensor({ sensorIndex });
+  fs.appendFileSync(
+    "./sensors.json",
+    JSON.stringify({
+      name: sensor.sensor.name,
+      sensorIndex,
+      type: sensor.sensor.location_type,
+    }) + "\n"
+  );
+  await sleep(200);
+}
+
+function assertNoErrors<T extends { errors?: string[] }>(t: T) {
+  if (t.errors?.length) {
+    throw new Error(JSON.stringify(t.errors));
+  }
+}
 
 export const run = () => etlAll(sensors);

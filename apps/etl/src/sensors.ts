@@ -4,7 +4,7 @@
  * to get the key (primary keys) from the sensor ids.
  * {@link https://map.purpleair.com/1/mAQI/a10/p604800/cC0?select=134026#11.12/45.501/-122.6449}
  */
-export const sensors = [
+export const sensorsRaw = [
   [131585, "TIUT9AE1GN9U9IXK"],
   [132859, "M8D5BF5M35ATJCSX"],
   [133043, "OJVO5AB9V0UB3EIU"],
@@ -172,7 +172,12 @@ export const sensors = [
   [126933, "U677XZX4NXXGVAOQ"],
   [127467, "TVZ0PH1BQKLS5TDH"],
   [127985, "0KAM2VHLJ07FBN6M"],
-].map(([show, key]) => ({ key: key as string, show: show as number }));
+] as const;
+
+export const sensors = sensorsRaw.map(([sensorIndex, key]) => ({
+  key,
+  sensorIndex,
+}));
 
 /**
  * Hacky little browser scripts to get the good stuff.

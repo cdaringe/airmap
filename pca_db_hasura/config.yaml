@@ -1,12 +1,16 @@
 version: 3
+
 # dev
-endpoint: http://localhost:8080/
-# connect to pg db in the console at: postgresql://airman:airman@pca_db:5544/pca
+# see ./readme.md for launching and migrating dev
+# connect to pg db in the console @:
+#   postgresql://airman:airman@pca_db:5544/pca
+#     or
+#   postgresql://airman:airman@127.0.0.1:5544/pca
 # these values are derived from docker ENV values in pca_db
 
 # prod
-# endpoint: https://pca.cdaringe.com/
+endpoint: https://pca.cdaringe.com/
 metadata_directory: metadata
 actions:
   kind: synchronous
-  handler_webhook_baseurl: http://localhost:3000
+  # handler_webhook_baseurl: http://localhost:3000

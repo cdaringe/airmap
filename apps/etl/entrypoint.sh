@@ -1,10 +1,10 @@
-# /usr/bin/env sh
-# set -e
-# echo '{"msg": "booting - next attempt in 1 hour"}'
+#!/usr/bin/env sh
+echo '{"msg": "booted"}'
 # sleep 3600
 while true; do
+  echo '{"msg": "sleeping for 86400 seconds"}'
   # 1x day
-  echo '{"msg": "attempting scrape"}'
   sleep 86400
+  echo '{"msg": "attempting scrape"}'
   npm start
 done

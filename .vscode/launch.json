@@ -1,7 +1,4 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
@@ -21,29 +18,30 @@
       "skipFiles": ["<node_internals>/**/*.js"]
     },
     {
-      "type": "pwa-node",
-      "request": "launch",
-      "name": "Launch Program",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/components/pages/__tests__/home.test.tsx",
-      "outFiles": ["${workspaceFolder}/**/*.js"]
-    },
-    {
       "name": "etl - ts-node file",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "node",
       "runtimeArgs": [
         "--nolazy",
-        "--loader",
-        "ts-node/esm",
+        "-r",
+        "ts-node/register",
         "-r",
         "dotenv/config"
       ],
-      "args": ["${file}"],
-      "cwd": "${workspaceRoot}/packages/etl",
-      "internalConsoleOptions": "openOnSessionStart",
-      "skipFiles": ["<node_internals>/**", "node_modules/**"]
+      // "args": ["${file}"],
+      "args": ["./src/bin.ts"],
+      "cwd": "${workspaceRoot}/apps/etl",
+      "console": "integratedTerminal",
+      // "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**"
+        // "node_modules/**"
+      ],
+      "env": {
+        "HASURA_GRAPHQL_ADMIN_SECRET": "airman",
+        "IS_VSCODE_DEBUG": "true"
+      }
     }
   ]
 }

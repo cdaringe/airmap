@@ -1,4 +1,0 @@
--- Could not auto-generate a down migration.
--- Please write an appropriate down migration for the SQL below:
--- alter table "public"."observation_purpleair" add column "pm_2_5_cf" real
---  not null;
