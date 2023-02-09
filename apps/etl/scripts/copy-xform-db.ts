@@ -35,7 +35,6 @@ async function observationsToDisk() {
         res();
       });
       stream.on("err", rej);
-      debugger; // eslint-disable-line
       const jsonPipe = JSONStream.stringify();
       stream.pipe(jsonPipe).pipe(process.stdout);
     });

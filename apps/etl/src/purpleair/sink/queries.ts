@@ -121,18 +121,29 @@ export const updateSensorOnObservations = (opts: {
   sensorId: number;
   latest_observation_timestamp: Date;
   latest_sync_timestamp: Date;
-}) =>
-  graphQL(MUTATION_UPDATE_SENSOR_ON_OBSERVATION, "UpdateSensorOnObservations", {
+}) => {
+  const input = {
     id: opts.sensorId,
     latest_observation_timestamp:
       opts.latest_observation_timestamp.toISOString(),
     latest_sync_timestamp: opts.latest_sync_timestamp.toISOString(),
-  }).then((result) => {
+  };
+  return graphQL(
+    MUTATION_UPDATE_SENSOR_ON_OBSERVATION,
+    "UpdateSensorOnObservations",
+    input
+  ).then((result) => {
     if (result.errors) {
-      throw new Error(JSON.stringify(result.errors));
+      throw new Error(
+        JSON.stringify({
+          error: result.errors,
+          input,
+        })
+      );
     }
     return result;
   });
+};
 
 const uploadObservations = (objects: Observation_purpleair_insert_input[]) =>
   graphQL(MUTATION_UPLOAD_OBSERVATIONS, "UploadPurpleObservations", {
@@ -178,6 +189,11 @@ export async function postRecords(
   });
   const { errors, data: _ } = await uploadObservations(records);
   if (errors && errors.length) {
-    throw new Error(JSON.stringify(errors));
+    throw new Error(
+      JSON.stringify({
+        errors,
+        sampleInput: records[0],
+      })
+    );
   }
 }

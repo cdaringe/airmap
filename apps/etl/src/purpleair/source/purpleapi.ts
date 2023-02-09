@@ -86,7 +86,7 @@ export const getSourceObservations = ({
             }
             return {
               ...acc,
-              [key]: value,
+              [key]: key === "time_stamp" ? new Date(value * 1000) : value,
             };
           }, {} as PurpleHistoryDataRecord);
         }),

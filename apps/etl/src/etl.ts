@@ -35,6 +35,10 @@ async function etl(
   const nowDate = new Date();
   const lastSyncedDate = new Date(sinkSensor.latest_sync_timestamp);
   const hoursSinceSync = differenceInHours(nowDate, lastSyncedDate);
+  /**
+   * cold starts are subject to skipping all processing. if the process is
+   * already hot, let it continue processing.
+   */
   if (isColdStart && hoursSinceSync < 24) {
     logger.info(
       `skipping sync on ${sensorIndex} [hoursSinceSync: ${hoursSinceSync}]`
@@ -45,7 +49,8 @@ async function etl(
   logger.info(`processing sensor: ${prettySensor}`);
   const observations = await source.getSourceObservations({
     sensorId: sensorIndex,
-    start: addSeconds(new Date(sinkSensor.latest_observation_timestamp), 1),
+    start: new Date("2022-01-26T00:00:56.000Z"),
+    // start: addSeconds(new Date(sinkSensor.latest_observation_timestamp), 1),
   });
   // it's not _actually_ an observation, but it is the correct watermark
   const nextLatestObservationDate = new Date(observations.end_timestamp * 1000);
@@ -74,10 +79,9 @@ async function etl(
 
 const etlAll = async (sensors: SensorAccess[]) => {
   let count = 0;
-  const sensorsToEtl = sensors.slice(0, 1);
-  // const sensorsToEtl = sensors;
+  // const sensorsToEtl = sensors.slice(0, 1);
+  const sensorsToEtl = sensors;
   for (const sensor of sensorsToEtl) {
-    /* @info debug only */ // await dumpSensorData(sensor.sensorIndex);
     await etl(sensor);
     ++count;
     logger.info(`${count} sensors transferred`);
