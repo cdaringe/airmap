@@ -150,25 +150,37 @@ const uploadObservations = (objects: Observation_purpleair_insert_input[]) =>
     objects: objects,
   }).then((result) => {
     if (result.errors) {
-      throw new Error(JSON.stringify(result.errors));
+      throw new Error(
+        JSON.stringify({
+          errors: result.errors,
+          sampleObservation: objects[0],
+        })
+      );
     }
     return result;
   });
 
-export const createSinkSensor = (sensor: PurpleSensorResponse["sensor"]) =>
-  graphQL(MUTATION_CREATE_SENSOR, "CreateSensor", {
+export const createSinkSensor = (sensor: PurpleSensorResponse["sensor"]) => {
+  const input = {
     is_outdoor: sensor.location_type === (0 as SensorLocationOutdoor),
     latitude: sensor.latitude,
     longitude: sensor.longitude,
     name: sensor.name,
     sensor_owned_id: sensor.sensor_index,
     sensor_type_id: PURPLE_SENSOR_ID,
-  }).then((r) => {
+  };
+  return graphQL(MUTATION_CREATE_SENSOR, "CreateSensor", input).then((r) => {
     if (r.errors?.length) {
-      throw new Error(JSON.stringify(r.errors));
+      throw new Error(
+        JSON.stringify({
+          errors: r.errors,
+          input,
+        })
+      );
     }
     return r;
   });
+};
 
 export async function postRecords(
   localSensor: LocalSensor,

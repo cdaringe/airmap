@@ -6,6 +6,8 @@ import { sensors } from "./sensors";
 import { addSeconds, differenceInHours } from "date-fns";
 const { IS_VSCODE_DEBUG } = process.env;
 
+const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
+
 const logger = pino({ level: "info" });
 
 async function getOrAddSinkSensor(
@@ -34,23 +36,44 @@ async function etl(
   const sinkSensor = await getOrAddSinkSensor(sensorIndex);
   const nowDate = new Date();
   const lastSyncedDate = new Date(sinkSensor.latest_sync_timestamp);
+  const latestObservationTimestamp = new Date(
+    sinkSensor.latest_observation_timestamp
+  );
   const hoursSinceSync = differenceInHours(nowDate, lastSyncedDate);
+  const fourteenDaysAgo = new Date(nowDate.getTime() - FOURTEEN_DAYS_MS);
+  const isFourteenDaySampleAvailable =
+    latestObservationTimestamp.getTime() < fourteenDaysAgo.getTime();
+  const prettySensor = {
+    id: sinkSensor.id,
+    purpleId: sinkSensor.sensor_owned_id,
+    name: sinkSensor.name,
+  };
+  if (!isFourteenDaySampleAvailable) {
+    logger.info({
+      sensor: prettySensor,
+      processing: false,
+      skip: true,
+      reason: `14 days of data unavailable`,
+    });
+    return;
+  }
   /**
    * cold starts are subject to skipping all processing. if the process is
    * already hot, let it continue processing.
    */
   if (isColdStart && hoursSinceSync < 24) {
-    logger.info(
-      `skipping sync on ${sensorIndex} [hoursSinceSync: ${hoursSinceSync}]`
-    );
+    logger.info({
+      sensor: prettySensor,
+      processing: false,
+      skip: true,
+      reason: `too recent of sync, hoursSinceSync: ${hoursSinceSync}`,
+    });
     return;
   }
-  const prettySensor = `(id: ${sinkSensor.id}, sensor_owned_id: ${sinkSensor.sensor_owned_id}, name: ${sinkSensor.name})`;
-  logger.info(`processing sensor: ${prettySensor}`);
+  logger.info({ sensor: prettySensor, processing: true });
   const observations = await source.getSourceObservations({
     sensorId: sensorIndex,
-    start: new Date("2022-01-26T00:00:56.000Z"),
-    // start: addSeconds(new Date(sinkSensor.latest_observation_timestamp), 1),
+    start: addSeconds(latestObservationTimestamp, 1),
   });
   // it's not _actually_ an observation, but it is the correct watermark
   const nextLatestObservationDate = new Date(observations.end_timestamp * 1000);

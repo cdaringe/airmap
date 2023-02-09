@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -exo pipefail
 
 BUILD_DIR=/www/pca/tmp-etl-build
