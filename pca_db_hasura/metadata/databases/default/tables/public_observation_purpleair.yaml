@@ -1,6 +1,10 @@
 table:
   name: observation_purpleair
   schema: public
+object_relationships:
+  - name: sensor
+    using:
+      foreign_key_constraint_on: sensor_id
 select_permissions:
   - role: readonly
     permission:

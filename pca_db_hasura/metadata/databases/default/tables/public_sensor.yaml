@@ -1,6 +1,18 @@
 table:
   name: sensor
   schema: public
+object_relationships:
+  - name: sensor_type
+    using:
+      foreign_key_constraint_on: sensor_type_id
+array_relationships:
+  - name: observation_purpleairs
+    using:
+      foreign_key_constraint_on:
+        column: sensor_id
+        table:
+          name: observation_purpleair
+          schema: public
 select_permissions:
   - role: readonly
     permission:

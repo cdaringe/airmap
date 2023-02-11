@@ -30,13 +30,13 @@ query GetSensor($sensor_owned_id: Int!) {
  * copied it, and mapped the GQL types to TS types
  */
 type Observation_purpleair_insert_input = {
-  humidity: number;
-  pm_1_atm: number;
+  humidity?: number;
+  pm_1_atm?: number;
   pm_2_5_atm: number;
-  pm_2_5_cf: number;
-  pressure: number;
+  pm_2_5_cf?: number;
+  pressure?: number;
   sensor_id: number;
-  temperature_f: number;
+  temperature_f?: number;
   timestamp: string;
 };
 const MUTATION_UPLOAD_OBSERVATIONS = `
@@ -97,6 +97,50 @@ mutation UpdateSensorOnObservations(
     returning {
       __typename
     }
+  }
+}
+`.trim();
+
+const MUTATION_CREATE_DAILY_API_ENTRY = `
+mutation CreateDailyApiMeta(
+  $date:timestamptz!
+) {
+  insert_observation_purpleair_api_meta_one(object:{
+    date: $date
+  }) {
+    __typename
+    date
+    count_api_calls
+  }
+}
+`.trim();
+
+const UPDATE_DAILY_API_META = `
+mutation UpdateDailyApiMeta(
+  $date:timestamptz!,
+  $count_api_calls: Int!
+) {
+  update_observation_purpleair_api_meta_by_pk(
+    pk_columns: {
+      date:$date
+    },
+    _set: {
+      count_api_calls: $count_api_calls
+    }
+  ) {
+  	count_api_calls
+  }
+}
+`.trim();
+
+const QUERY_GET_API_META = `
+query GetObservationPurpleairApiMeta($date: timestamptz!) {
+  observation_purpleair_api_meta(where:{
+    date: {
+      _eq: $date
+    }
+  }) {
+    count_api_calls
   }
 }
 `.trim();
@@ -208,4 +252,94 @@ export async function postRecords(
       })
     );
   }
+}
+
+function floorDate(date: Date) {
+  const [isoDateP1, isoDateP2] = date.toISOString().split("T");
+  const isoDateP2Floored = isoDateP2.replace(/\d/g, "0");
+  const dateFloored = new Date([isoDateP1, isoDateP2Floored].join("T"));
+  return dateFloored;
+}
+
+type Meta = {
+  date: string;
+  count_api_calls: number;
+};
+
+export async function getDailyApiMeta(date: Date) {
+  const dateFloored = floorDate(date);
+  const input = { date: dateFloored.toISOString() };
+  return graphQL<{ observation_purpleair_api_meta: Meta[] }>(
+    QUERY_GET_API_META,
+    "QUERY_GET_API_META",
+    input
+  ).then((r) => {
+    if (r.errors?.length) {
+      throw new Error(
+        JSON.stringify({
+          errors: r.errors,
+          input,
+        })
+      );
+    }
+    const [first] = r.data?.observation_purpleair_api_meta || [];
+    if (first) {
+      return first;
+    }
+    return null;
+  });
+}
+
+export async function createDailyApiMeta(date: Date) {
+  const dateFloored = floorDate(date);
+  const input = { date: dateFloored.toISOString() };
+  return graphQL<{ insert_observation_purpleair_api_meta_one: Meta }>(
+    MUTATION_CREATE_DAILY_API_ENTRY,
+    "CreateDailyApiMeta",
+    input
+  ).then((r) => {
+    if (r.errors?.length) {
+      throw new Error(
+        JSON.stringify({
+          errors: r.errors,
+          input,
+        })
+      );
+    }
+    const meta = r.data?.insert_observation_purpleair_api_meta_one;
+    if (!meta) {
+      throw new Error(`create meta failed :( ${JSON.stringify(r)}`);
+    }
+    return meta;
+  });
+}
+
+export async function updateDailyApiMeta({
+  date,
+  count_api_calls,
+}: {
+  date: Date;
+  count_api_calls: number;
+}) {
+  const dateFloored = floorDate(date);
+  const input = { date: dateFloored.toISOString(), count_api_calls };
+  return graphQL<{
+    update_observation_purpleair_api_meta_by_pk: null | {
+      count_api_calls: number;
+    };
+  }>(UPDATE_DAILY_API_META, "UpdateDailyApiMeta", input).then((r) => {
+    if (r.errors?.length) {
+      throw new Error(
+        JSON.stringify({
+          errors: r.errors,
+          input,
+        })
+      );
+    }
+    if (r.data?.update_observation_purpleair_api_meta_by_pk === null) {
+      throw new Error(
+        `update_observation_purpleair_api_meta_by_pk returned null. did you forget to create the daily entry?`
+      );
+    }
+  });
 }

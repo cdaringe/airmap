@@ -1,6 +1,14 @@
 table:
   name: sensor_type
   schema: public
+array_relationships:
+  - name: sensors
+    using:
+      foreign_key_constraint_on:
+        column: sensor_type_id
+        table:
+          name: sensor
+          schema: public
 select_permissions:
   - role: readonly
     permission:
