@@ -1,5 +1,6 @@
 // https://www.mathworks.com/help/thingspeak/readdata.html
 import _got from "got";
+import { ApiCallTracker } from "../../api-call-tracker";
 import { getConfig } from "../../config";
 import { isProd } from "../../env";
 import {
@@ -20,8 +21,6 @@ const rateLimitGot = (() => {
     return _got(...params);
   };
 })() as typeof _got;
-
-const DAYS_MS = 1000 * 60 * 60 * 24;
 
 const retry = { limit: isProd ? 2 : 0 };
 
@@ -49,15 +48,18 @@ const getSensorObservationHistoryUrl = ({
   return url;
 };
 
-export const getSourceObservations = ({
+export const getSourceObservations = async ({
   start,
   sensorId,
+  sourceCallTracker,
 }: {
   start: Date;
   sensorId: number;
+  sourceCallTracker: ApiCallTracker;
 }) => {
   const readKey = getConfig().PURPLE_AIR_READ_KEY;
   const url = getSensorObservationHistoryUrl({ start, sensorId });
+  await sourceCallTracker.incr();
   return rateLimitGot(url, {
     headers: jsonHeaders(readKey),
     retry,
@@ -95,9 +97,16 @@ export const getSourceObservations = ({
     });
 };
 
-export const getSourceSensor = ({ sensorIndex }: { sensorIndex: number }) => {
+export const getSourceSensor = async ({
+  sensorIndex,
+  sourceCallTracker,
+}: {
+  sensorIndex: number;
+  sourceCallTracker: ApiCallTracker;
+}) => {
   const readKey = getConfig().PURPLE_AIR_READ_KEY;
   const url = `${PURPLE_API_BASE_URL}/sensors/${sensorIndex}?fields=name,model,location_type,latitude,longitude`;
+  await sourceCallTracker.incr();
   return rateLimitGot(url, {
     headers: jsonHeaders(readKey),
     retry,

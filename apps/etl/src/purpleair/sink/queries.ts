@@ -271,7 +271,7 @@ export async function getDailyApiMeta(date: Date) {
   const input = { date: dateFloored.toISOString() };
   return graphQL<{ observation_purpleair_api_meta: Meta[] }>(
     QUERY_GET_API_META,
-    "QUERY_GET_API_META",
+    "GetObservationPurpleairApiMeta",
     input
   ).then((r) => {
     if (r.errors?.length) {

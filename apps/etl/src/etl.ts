@@ -31,8 +31,10 @@ async function getOrAddSinkSensor({
     if (isAssertingSensorExists) {
       throw new Error(`sensor missing for sensor index: ${sensorIndex}`);
     }
-    const sourceSensorRes = await source.getSourceSensor({ sensorIndex });
-    sourceCallTracker.incr();
+    const sourceSensorRes = await source.getSourceSensor({
+      sensorIndex,
+      sourceCallTracker,
+    });
     await sink.createSinkSensor(sourceSensorRes.sensor);
     return getOrAddSinkSensor({
       sensorIndex,
@@ -48,6 +50,7 @@ async function getOrCreateApiMeta(date: Date) {
   if (meta) {
     return meta;
   }
+  logger.info(`creating new daily meta`);
   return sink.createDailyApiMeta(date);
 }
 
@@ -86,7 +89,7 @@ async function etl(opts: {
       sensor: prettySensor,
       processing: false,
       skip: true,
-      reason: `14 days of data unavailable`,
+      reason: `14 days of data out of range`,
     });
     return;
   }
@@ -103,13 +106,12 @@ async function etl(opts: {
     });
     return;
   }
-  logger.info({ sensor: prettySensor, processing: true });
 
   // get observations
-  sourceCallTracker.incr();
   const observations = await source.getSourceObservations({
     sensorId: sensorIndex,
     start: addSeconds(latestObservationTimestamp, 1),
+    sourceCallTracker,
   });
 
   // it's not _actually_ an observation, but it is the correct watermark
@@ -125,7 +127,9 @@ async function etl(opts: {
   };
   logger.info({
     event: "etl",
-    count: observations.data.length,
+    sensor: prettySensor,
+    numObservations: observations.data.length,
+    numSourceApiCalls: sourceCallTracker.count,
     range,
   });
   if (observations.data.length) {
@@ -145,40 +149,33 @@ const etlAll = async (sensors: SensorAccess[]) => {
   for (const sensor of sensorsToEtl) {
     // pre (etl)
     const dailyApiMeta = await getOrCreateApiMeta(nowDate);
-    if (dailyApiMeta.count_api_calls > 900) {
-      logger.info({
-        dailyApiMeta,
-        warning: "api limit near. halting",
-      });
-      break;
-    }
-    const sourceCallTracker = new ApiCallTracker();
+    logger.info({ dailyApiMeta });
+    const sourceCallTracker = new ApiCallTracker(
+      dailyApiMeta.count_api_calls,
+      nowDate
+    );
 
     // etl
     await etl({ access: sensor, sourceCallTracker, nowDate });
 
     // post (etl)
-    await sink.updateDailyApiMeta({
-      date: nowDate,
-      count_api_calls: dailyApiMeta.count_api_calls + sourceCallTracker.count,
-    });
     ++count;
     logger.info(`${count} sensors transferred`);
   }
 };
 
-async function dumpSensorData(sensorIndex: number) {
-  const sensor = await source.getSourceSensor({ sensorIndex });
-  fs.appendFileSync(
-    "./sensors.json",
-    JSON.stringify({
-      name: sensor.sensor.name,
-      sensorIndex,
-      type: sensor.sensor.location_type,
-    }) + "\n"
-  );
-  await sleep(200);
-}
+// async function dumpSensorData(sensorIndex: number) {
+//   const sensor = await source.getSourceSensor({ sensorIndex, sou });
+//   fs.appendFileSync(
+//     "./sensors.json",
+//     JSON.stringify({
+//       name: sensor.sensor.name,
+//       sensorIndex,
+//       type: sensor.sensor.location_type,
+//     }) + "\n"
+//   );
+//   await sleep(200);
+// }
 
 function assertNoErrors<T extends { errors?: string[] }>(t: T) {
   if (t.errors?.length) {
