@@ -48,10 +48,3 @@ example sheets:
   -->
 
 </details>
-
-## todo
-
-- compress db, fix indicies
-  - get local db into state where we want it
-  - stream copy remote => transform => local
-    - (all tables: sensors, observations)
