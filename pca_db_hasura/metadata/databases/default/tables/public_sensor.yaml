@@ -17,10 +17,14 @@ select_permissions:
   - role: readonly
     permission:
       columns:
-        - id
+        - is_outdoor
         - name
+        - id
+        - sensor_owned_id
         - sensor_type_id
         - latitude
         - longitude
         - description
+        - latest_observation_timestamp
+        - latest_sync_timestamp
       filter: {}
