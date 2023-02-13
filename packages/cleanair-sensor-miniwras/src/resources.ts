@@ -1,6 +1,6 @@
-import { createModule as createDownloadModule } from "./download/mod.ts";
-import { ModResources } from "./interfaces.ts";
-import * as mapbox from "./mapbox.ts";
+import { createModule as createDownloadModule } from "./download/mod";
+import { ModResources } from "./interfaces";
+import * as mapbox from "./mapbox";
 import * as stream from "./streams/parse-measure-stream";
 
 export const getResources = (r: ModResources) => {

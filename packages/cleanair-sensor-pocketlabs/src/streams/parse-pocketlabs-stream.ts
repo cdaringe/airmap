@@ -1,4 +1,4 @@
-import { Entry } from "../interfaces.ts";
+import { Entry } from "../interfaces";
 
 function invariant<TValue>(
   value: TValue,

@@ -1,3 +1,4 @@
-export * from "./src/download/mod_deno.ts";
-export { default } from "./src/download/mod_deno.ts";
-export * from "./src/interfaces.ts";
+export * from "./src/download/mod";
+export * from "./src/download/mod_web";
+export { default } from "./src/download/mod_web";
+export * from "./src/interfaces";

@@ -1,8 +1,8 @@
-import { type GeoJSON } from "../../../cleanair-sensor-common/mod.ts";
+import { type GeoJSON } from "../../../cleanair-sensor-common/mod";
 /// <reference types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/geojson/index.d.ts" />
-import { streamGoogleSheetsCsv } from "../../../cleanair-google-sheets/mod.ts";
-import { Entry, ModResources } from "../interfaces.ts";
-import { invariant } from "../../../invariant/mod.ts";
+import { streamGoogleSheetsCsv } from "../../../cleanair-google-sheets/mod";
+import { Entry, ModResources } from "../interfaces";
+import { invariant } from "../../../invariant/mod";
 
 type State = {
   partial: string;
@@ -53,9 +53,9 @@ export const createModule = (r: ModResources) => {
                 invariant(longitude, `long :(`);
                 invariant(timestamp, "timestamp :(");
                 state.records.push({
-                  latitude,
-                  longitude,
-                  timestamp,
+                  latitude: parseFloat(latitude),
+                  longitude: parseFloat(longitude),
+                  timestamp: new Date(timestamp),
                   _: 0,
                 } as Entry);
                 if (done) {

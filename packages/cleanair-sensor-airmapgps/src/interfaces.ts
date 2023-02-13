@@ -1,3 +1,4 @@
+import { closestTo } from "date-fns";
 export type Entry = {
   timestamp: Date;
   latitude: number;
@@ -6,5 +7,5 @@ export type Entry = {
 };
 
 export type ModResources = {
-  closestTo: (a: unknown, ...b: unknown[]) => Date;
+  closestTo: typeof closestTo;
 };

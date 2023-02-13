@@ -1,8 +1,8 @@
 /* deno has web apis, but jsdom, happy-dom, and browser env _dont_ */
-import { assertEquals } from "https://deno.land/std@0.129.0/testing/asserts.ts";
-import { parse } from "../parse-pocketlabs-stream.ts";
-import * as path from "https://deno.land/std@0.130.0/path/mod.ts";
-import makeloc from "https://deno.land/x/dirname/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.129.0/testing/asserts";
+import { parse } from "../parse-pocketlabs-stream";
+import * as path from "https://deno.land/std@0.130.0/path/mod";
+import makeloc from "https://deno.land/x/dirname/mod";
 
 const { __dirname } = makeloc(import.meta);
 

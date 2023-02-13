@@ -1,4 +1,5 @@
-import { Entry } from "../../cleanair-sensor-pocketlabs/src/interfaces.ts";
+import * as dateFns from "date-fns";
+import { Entry } from "../../cleanair-sensor-pocketlabs/src/interfaces";
 
 export type MiniWRASEntry = {
   date: Date;
@@ -13,5 +14,5 @@ export type MiniWRASEntry = {
 };
 
 export type ModResources = {
-  closestTo: (a: unknown, ...b: unknown[]) => Date;
+  closestTo: typeof dateFns.closestTo;
 };

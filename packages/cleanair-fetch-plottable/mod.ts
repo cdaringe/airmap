@@ -1,5 +1,5 @@
-import { streamGoogleSheetsCsv } from "../cleanair-google-sheets/mod.ts";
-import { invariant } from "../invariant/mod.ts";
+import { streamGoogleSheetsCsv } from "../cleanair-google-sheets/mod";
+import { invariant } from "../invariant/mod";
 
 type Entry = {
   device: string;

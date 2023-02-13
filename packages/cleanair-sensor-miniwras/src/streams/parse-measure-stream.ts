@@ -1,4 +1,4 @@
-import { invariant } from "../../../invariant/mod.ts";
+import { invariant } from "../../../invariant/mod";
 
 const COL_NAME_DATA_START = "10.00 nm";
 const COL_NAME_DATA_END_SUB_500_NM = "449.48 nm";

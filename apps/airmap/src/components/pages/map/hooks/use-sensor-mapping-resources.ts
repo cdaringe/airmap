@@ -4,16 +4,16 @@ import {
   FLOW_ID,
   MINIWRAS_ID,
   AIRMAP_GPS_ID,
-} from "../../../../../../../packages/cleanair-sensor-common/mod.ts";
+} from "../../../../../../../packages/cleanair-sensor-common/mod";
 
 export const getPocket = () =>
   import(
-    "../../../../../../../packages/cleanair-sensor-pocketlabs/src/resources.ts"
+    "../../../../../../../packages/cleanair-sensor-pocketlabs/src/resources"
   ).then((m) => m.getResources());
 
 export const getFlow = () =>
   import(
-    "../../../../../../../packages/cleanair-sensor-flow/src/resources.ts"
+    "../../../../../../../packages/cleanair-sensor-flow/src/resources"
   ).then(async (m) => {
     const { closestTo } = await import("date-fns");
     return m.getResources({ closestTo });
@@ -21,7 +21,7 @@ export const getFlow = () =>
 
 export const getMiniWras = () =>
   import(
-    "../../../../../../../packages/cleanair-sensor-miniwras/src/resources.ts"
+    "../../../../../../../packages/cleanair-sensor-miniwras/src/resources"
   ).then(async (m) => {
     const { closestTo } = await import("date-fns");
     return m.getResources({ closestTo });
@@ -29,7 +29,7 @@ export const getMiniWras = () =>
 
 export const getAirmapGps = () =>
   import(
-    "../../../../../../../packages/cleanair-sensor-airmapgps/src/resources.ts"
+    "../../../../../../../packages/cleanair-sensor-airmapgps/src/resources"
   ).then(async (m) => {
     const { closestTo } = await import("date-fns");
     return m.getResources({ closestTo });

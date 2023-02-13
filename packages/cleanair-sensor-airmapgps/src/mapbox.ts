@@ -1,8 +1,8 @@
 import {
   MapGetLevels,
   tupleAsMapboxRange,
-} from "../../cleanair-sensor-common/mod.ts";
-import { FlowEntry } from "./interfaces.ts";
+} from "../../cleanair-sensor-common/mod";
+import { FlowEntry } from "./interfaces";
 
 const COLORS = ["#6fc400"];
 

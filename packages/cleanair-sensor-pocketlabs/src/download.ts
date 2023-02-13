@@ -1,8 +1,8 @@
 /// <reference types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/geojson/index.d.ts" />
-import { parse } from "./streams/parse-pocketlabs-stream.ts";
-import { streamGoogleSheetsCsv } from "../../cleanair-google-sheets/mod.ts";
-import { Entry } from "./interfaces.ts";
-import { type GeoJSON } from "../../cleanair-sensor-common/mod.ts";
+import { parse } from "./streams/parse-pocketlabs-stream";
+import { streamGoogleSheetsCsv } from "../../cleanair-google-sheets/mod";
+import { Entry } from "./interfaces";
+import { type GeoJSON } from "../../cleanair-sensor-common/mod";
 
 const applyEpaCorrection = (old: number, humidity: number) =>
   0.0534 * old - 0.0844 * humidity + 5.604;

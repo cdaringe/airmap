@@ -1,8 +1,8 @@
 import {
   MapGetLevels,
   tupleAsMapboxRange,
-} from "../../cleanair-sensor-common/mod.ts";
-import { Entry } from "./interfaces.ts";
+} from "../../cleanair-sensor-common/mod";
+import { Entry } from "./interfaces";
 
 const PM2_CORRECTED_FIELD_NAME = "pm_2_5";
 

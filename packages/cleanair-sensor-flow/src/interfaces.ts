@@ -1,3 +1,5 @@
+import * as dateFns from "date-fns";
+
 export type MeasureEntry = {
   date: Date;
   voc_ppb: number;
@@ -11,5 +13,5 @@ export type FlowEntry = {
 } & MeasureEntry;
 
 export type ModResources = {
-  closestTo: (a: unknown, ...b: unknown[]) => Date;
+  closestTo: typeof dateFns.closestTo;
 };
