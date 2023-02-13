@@ -4,20 +4,19 @@
  * They must be streamed and zipped together.
  */
 /// <reference types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/geojson/index.d.ts" />
-import { streamGoogleSheetsCsv } from "../../../cleanair-google-sheets/mod.ts";
-import { parse as parseMeasure } from "../streams/parse-measure-stream.ts";
-// import { parse as parsePositions } from "../../../cleanair-sensor-flow/src/streams/parse-positions-stream.ts";
-import { parse as parsePL } from "../../../cleanair-sensor-pocketlabs/src/streams/parse-pocketlabs-stream.ts";
-import { MiniWRASEntry, ModResources } from "../interfaces.ts";
-import { invariant } from "../../../invariant/mod.ts";
-import { type GeoJSON } from "../../../cleanair-sensor-common/mod.ts";
-import type { Entry as PocketlabsEntry } from "../../../cleanair-sensor-pocketlabs/src/interfaces.ts";
-import type { StravaEntry } from "../../../cleanair-sensor-strava-gpx/mod.ts";
+import { streamGoogleSheetsCsv } from "../../../cleanair-google-sheets/mod";
+import { parse as parseMeasure } from "../streams/parse-measure-stream";
+// import { parse as parsePositions } from "../../../cleanair-sensor-flow/src/streams/parse-positions-stream";
+import { parse as parsePL } from "../../../cleanair-sensor-pocketlabs/src/streams/parse-pocketlabs-stream";
+import { MiniWRASEntry, ModResources } from "../interfaces";
+import { invariant } from "../../../invariant/mod";
+import { type GeoJSON } from "../../../cleanair-sensor-common/mod";
+import type { Entry as PocketlabsEntry } from "../../../cleanair-sensor-pocketlabs/src/interfaces";
+import type { StravaEntry } from "../../../cleanair-sensor-strava-gpx/mod";
 
 type MiniWrasCombinedEntry = MiniWRASEntry &
   StravaEntry & { pocketlabs?: PocketlabsEntry };
 
-const OLD_DATE = new Date(0);
 export const createModule = (r: ModResources) => {
   const download = async (urls: string[]) => {
     const [measurementsUrl, positionsUrl] = urls;

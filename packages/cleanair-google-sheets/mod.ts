@@ -1,4 +1,4 @@
-import { fetchTextStreamReader } from "../fetch-streaming/mod.ts";
+import { fetchTextStreamReader } from "../fetch-streaming/mod";
 
 export function isGoogleSheetsCompatibleUrl(urlstr: string) {
   try {

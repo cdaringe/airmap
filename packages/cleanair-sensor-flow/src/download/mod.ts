@@ -1,4 +1,4 @@
-import { type GeoJSON } from "../../../cleanair-sensor-common/mod.ts";
+import { type GeoJSON } from "../../../cleanair-sensor-common/mod";
 
 /**
  * Download Flow sensor datas.
@@ -6,18 +6,18 @@ import { type GeoJSON } from "../../../cleanair-sensor-common/mod.ts";
  * They must be streamed and zipped together.
  */
 /// <reference types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/geojson/index.d.ts" />
-import { streamGoogleSheetsCsv } from "../../../cleanair-google-sheets/mod.ts";
+import { streamGoogleSheetsCsv } from "../../../cleanair-google-sheets/mod";
 import {
   MeasureEntry,
   parse as parseMeasure,
-} from "../streams/parse-measure-stream.ts";
+} from "../streams/parse-measure-stream";
 import {
   parse as parsePositions,
   PositionsEntry,
-} from "../streams/parse-positions-stream.ts";
-import { FlowEntry, ModResources } from "../interfaces.ts";
-import { invariant } from "../../../invariant/mod.ts";
-import { take } from "./iter.ts";
+} from "../streams/parse-positions-stream";
+import { FlowEntry, ModResources } from "../interfaces";
+import { invariant } from "../../../invariant/mod";
+import { take } from "./iter";
 
 export const createModule = (r: ModResources) => {
   const combine = async ({

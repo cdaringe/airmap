@@ -1,8 +1,8 @@
 import {
   MapGetLevels,
   tupleAsMapboxRange,
-} from "../../cleanair-sensor-common/mod.ts";
-import { MiniWRASEntry } from "./interfaces.ts";
+} from "../../cleanair-sensor-common/mod";
+import { MiniWRASEntry } from "./interfaces";
 
 const COLORS = [
   "#6fc400",

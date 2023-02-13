@@ -1,4 +1,4 @@
-import { toGeoJSON } from "./togeojson.ts";
+import { toGeoJSON } from "./togeojson";
 
 export const toGeoJson = (kmlContent: unknown) => {
   const xmlDoc = new DOMParser().parseFromString(kmlContent, "application/xml");

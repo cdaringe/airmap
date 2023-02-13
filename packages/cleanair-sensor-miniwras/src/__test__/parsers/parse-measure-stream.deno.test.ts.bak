@@ -1,5 +1,5 @@
-import { assertEquals } from "https://deno.land/std@0.129.0/testing/asserts.ts";
-import { parse } from "../../streams/parse-measure-stream.ts";
+import { assertEquals } from "https://deno.land/std@0.129.0/testing/asserts";
+import { parse } from "../../streams/parse-measure-stream";
 
 /**
  * CSV online: https://docs.google.com/spreadsheets/d/1XqB95gipLDOOsCfYFMV1RXREYUp14POM0fnV1hNRekA/edit#gid=802667302

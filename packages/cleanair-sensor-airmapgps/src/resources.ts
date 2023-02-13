@@ -1,6 +1,6 @@
-import { createModule as createDownloadModule } from "./download/mod.ts";
-import * as mapbox from "./mapbox.ts";
-import { ModResources } from "./interfaces.ts";
+import { createModule as createDownloadModule } from "./download/mod";
+import * as mapbox from "./mapbox";
+import { ModResources } from "./interfaces";
 
 export const getResources = (r: ModResources) => {
   const download = createDownloadModule(r);

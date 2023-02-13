@@ -1,10 +1,10 @@
-import type { Task, Tasks } from "https://deno.land/x/rad/src/mod.ts";
+import type { Task, Tasks } from "https://deno.land/x/rad/src/mod";
 
 const format: Task = `deno fmt packages`;
 const test: Task = `deno test --import-map import_map.json --unstable -A $(fd .test.ts packages)`;
 
 /**
- * Launch dev docker based services
+ * Launch dev docker based services for PurpleAir ETL app
  */
 const services: Task = [
   "PCA_DB_PASSWORD=airman",
@@ -28,7 +28,8 @@ const bundleModules: Task = {
       }, Promise.resolve([]));
     for (const modFilename of pkgsWithMod) {
       const dest = `build/${modFilename.replace(/ts$/, "js")}`;
-      const cmd = `deno bundle ${modFilename} ${dest}`;
+      // const cmd = `deno bundle ${modFilename} ${dest}`;
+      const cmd = `pnpm exec esbuild --format=esm --bundle ${modFilename} --outfile=${dest}`;
       await Deno.mkdir(path.dirname(dest), { recursive: true });
       logger.info(cmd);
       await sh(cmd);
@@ -39,17 +40,29 @@ const bundleModules: Task = {
 const deploy: Task = {
   dependsOn: [bundleModules],
   fn: async ({ sh, logger }) => {
+    const minVersion = 3; // manually up this time to time
+    const versionRaw = Deno.env.get("VERSION");
+    if (!versionRaw) {
+      throw new Error(`VERSION expected!`);
+    }
+    const version = parseInt(versionRaw, 10);
+    if (!Number.isInteger(version)) {
+      throw new Error(`invalid version int ${version}`);
+    }
+    if (version < minVersion) {
+      throw new Error(`version must be >= ${minVersion}`);
+    }
     logger.info(`rsync'ing ESM`);
     await sh(
-      `rsync -r build/ $HTTP_SERVER_ADMIN@$HTTP_SERVER_IP:/www/static/airmap`
+      `rsync -r build/ $HTTP_SERVER_ADMIN@$HTTP_SERVER_IP:/www/static/airmap/v${version}`
     );
   },
 };
 
 export const tasks: Tasks = {
-  ...{ services, s: services },
-  ...{ test, t: test },
-  ...{ format, f: format },
   ...{ bundleModules, b: bundleModules },
   ...{ deploy, d: deploy },
+  ...{ format, f: format },
+  ...{ services, s: services },
+  ...{ test, t: test },
 };

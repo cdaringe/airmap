@@ -1,4 +1,4 @@
-import { invariant } from "../invariant/mod.ts";
+import { invariant } from "../invariant/mod";
 
 export const fetchTextStreamReader = (url: string, init?: RequestInit) =>
   fetch(url, init)
