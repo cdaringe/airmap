@@ -1,4 +1,4 @@
-import { MINIWRAS_ID } from "../../../../../../packages/cleanair-sensor-common/mod.ts";
+import { MINIWRAS_ID } from "../../../../../../packages/cleanair-sensor-common/mod";
 import React, { useEffect, useMemo, useState } from "react";
 import ReactMapboxGl from "react-mapbox-gl";
 import { Props as MapProps } from "react-mapbox-gl/lib/map";
@@ -181,7 +181,9 @@ export default function Map() {
             <div style={{ fontWeight: "bold" }}>
               {pollutionLevels?.fieldName}
             </div>
-            {pollutionLevels?.ranges.map(([lower, upper], i) => {
+            {pollutionLevels?.ranges.map((range, i) => {
+              const [lower, upper] = range;
+              console.log(range);
               return (
                 <div key={`${isMinMaxDynamicRange}-${i}`}>
                   <span
@@ -189,7 +191,8 @@ export default function Map() {
                     className="map-legend-key"
                   />
                   <span>
-                    [{lower.toFixed(1)}, {upper.toFixed(1)})
+                    [{lower < 1 ? lower.toFixed(3) : lower.toFixed(1)},{" "}
+                    {upper < 1 ? upper.toFixed(3) : upper.toFixed(1)})
                   </span>
                 </div>
               );

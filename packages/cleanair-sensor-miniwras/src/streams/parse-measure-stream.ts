@@ -11,11 +11,11 @@ const toDensityContribution = (
   particleDiameter: number
 ) =>
   ((Math.PI / 6) *
-    Math.pow(particleDiameter / 1000000000, 3) *
+    (particleDiameter / 1000000000) ** 3 *
     RHO_TRUE *
-    particleCount) /
-  V_AIR /
-  1000000000;
+    particleCount *
+    1000000000) /
+  V_AIR;
 
 type Entry = { date: Date; sub500nm: number; pm_2_5: number };
 type State = {
