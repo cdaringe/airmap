@@ -6,7 +6,6 @@
 /// <reference types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/geojson/index.d.ts" />
 import { streamGoogleSheetsCsv } from "../../../cleanair-google-sheets/mod";
 import { parse as parseMeasure } from "../streams/parse-measure-stream";
-// import { parse as parsePositions } from "../../../cleanair-sensor-flow/src/streams/parse-positions-stream";
 import { parse as parsePL } from "../../../cleanair-sensor-pocketlabs/src/streams/parse-pocketlabs-stream";
 import { MiniWRASEntry, ModResources } from "../interfaces";
 import { invariant } from "../../../invariant/mod";

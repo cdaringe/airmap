@@ -133,7 +133,6 @@ export default function Map() {
   const dataPoint = geojson?.features[0]?.properties as
     | Record<string, string>
     | undefined;
-  console.log(geojson.features[0]);
   return (
     <ErrorBoundary>
       <MapCssLink />
@@ -183,7 +182,6 @@ export default function Map() {
             </div>
             {pollutionLevels?.ranges.map((range, i) => {
               const [lower, upper] = range;
-              console.log(range);
               return (
                 <div key={`${isMinMaxDynamicRange}-${i}`}>
                   <span

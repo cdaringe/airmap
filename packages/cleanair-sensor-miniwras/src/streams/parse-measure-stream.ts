@@ -17,11 +17,24 @@ const toDensityContribution = (
     1000000000) /
   V_AIR;
 
-type Entry = { date: Date; sub500nm: number; pm_2_5: number };
+type ParticleDebug = {
+  diameterHeader: string;
+  diameterMidpoint: number;
+  densityContribution: number;
+  numParticles: number;
+};
+type Entry = {
+  date: Date;
+  // debug: ParticleDebug[];
+  pm_2_5: number;
+  sub500nm: number;
+};
+
 type State = {
   partial: string;
   particleDiametersAscending: number[];
   headerIndiciesByName?: Record<string, number>;
+  headerCells?: string[];
   records: Entry[];
 };
 
@@ -74,6 +87,7 @@ export const parse = async (
       } else {
         const cells = row.includes(",") ? row.split(",") : row.split("\t");
         if (!state.headerIndiciesByName) {
+          state.headerCells = cells;
           state.headerIndiciesByName = cells.reduce<Record<string, number>>(
             (acc, curr, i) => {
               const colName = curr.trim();
@@ -98,18 +112,31 @@ export const parse = async (
           const sub500nmEndCol =
             state.headerIndiciesByName[COL_NAME_DATA_END_SUB_500_NM];
           let j = 0;
+          const debug: Entry["debug"] = [];
           while (colIdx < sub500nmEndCol) {
             const numParticles = parseFloat(cells[colIdx]);
             const diameterMidpoint =
               (state.particleDiametersAscending[j] +
                 state.particleDiametersAscending[j + 1]) /
               2;
-            sub500nm += toDensityContribution(numParticles, diameterMidpoint);
+            const densityContribution = toDensityContribution(
+              numParticles,
+              diameterMidpoint
+            );
+            debug.push({
+              diameterHeader: state.headerCells?.[colIdx] || "",
+              diameterMidpoint,
+              densityContribution,
+              numParticles,
+            });
+            sub500nm += densityContribution;
             ++j;
             ++colIdx;
           }
+          console.debug(debug);
           state.records.push({
             date: fieldParsersByName.date(date_raw),
+            // debug,
             sub500nm,
             pm_2_5: fieldParsersByName.pm_2_5(pm_2_5),
           });
