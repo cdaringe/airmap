@@ -91,5 +91,5 @@ export const getLevelsSub500nm: MapGetLevels<MiniWRASEntry> = ({
 
 export const getLevelsByField = {
   [PM2_FIELD_NAME]: getLevels,
-  [SUB_500_NM_FIELD_NAME]: getLevelsSub500nm,
+  [SUB_500_NM_FIELD_NAME + " μg/m^3"]: getLevelsSub500nm,
 };

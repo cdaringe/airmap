@@ -3,24 +3,37 @@ import { invariant } from "../../../invariant/mod";
 const COL_NAME_DATA_START = "10.00 nm";
 const COL_NAME_DATA_END_SUB_500_NM = "449.48 nm";
 
-const RHO_TRUE = 1800;
-const V_AIR = 0.0012;
+const RHO_TRUE = 1800; /* kg / m3 */
 
-const toDensityContribution = (
+const calibration = [
+  6.842765, 7.1751666, 7.0114602, 6.9088991, 7.0263146, 6.9180838, 7.0393966,
+  6.989318, 6.9812267, 5.2701795, 14.0655402, 13.8262107, 14.1929174,
+  14.0017841, 13.8883794, 13.9963284, 14.0409634, 14.2779903, 13.8513492,
+  13.898864, 13.6873067, 14.3390373, 13.8184393, 14.1478588, 14.0655395,
+  13.8262102, 14.1929179, 13.8296286, 14.062005, 13.9963317, 14.040958,
+  14.001345, 13.96783, /* div/0 */ 14, 13.95533, 14.00924, /* div/0 */ 14,
+  /* div/0 */ 14, /* div/0 */ 14, /* div/0 */ 14, /* div/0 */ 14,
+];
+
+const nmToM = (nm: number) => nm / 1e9;
+const countsPerCm3ToM3 = (countsCm: number) => countsCm * (100 * 100 * 100);
+
+const toμg = (
   particleCount: number,
-  particleDiameter: number
+  particleNmDiameter: number,
+  calibrationDivisor: number
 ) =>
-  ((Math.PI / 6) *
-    (particleDiameter / 1000000000) ** 3 *
-    RHO_TRUE *
-    particleCount *
-    1000000000) /
-  V_AIR;
+  (countsPerCm3ToM3(particleCount) /
+    calibrationDivisor) /* scalar: particles */ *
+  (Math.PI / 6) /* scalar: volume */ *
+  nmToM(particleNmDiameter) ** 3 /* m^3 / 1 */ *
+  RHO_TRUE /* kg / m^3 */ *
+  (1e9 /* µg */ / /* kg */ 1); // /* µg */
 
 type ParticleDebug = {
   diameterHeader: string;
-  diameterMidpoint: number;
-  densityContribution: number;
+  diameterMidpointNm: number;
+  μg: number;
   numParticles: number;
 };
 type Entry = {
@@ -113,27 +126,36 @@ export const parse = async (
             state.headerIndiciesByName[COL_NAME_DATA_END_SUB_500_NM];
           let j = 0;
           const debug: Entry["debug"] = [];
+          let calibrationIndex = 0;
           while (colIdx < sub500nmEndCol) {
             const numParticles = parseFloat(cells[colIdx]);
-            const diameterMidpoint =
+            const diameterMidpointNm =
               (state.particleDiametersAscending[j] +
                 state.particleDiametersAscending[j + 1]) /
               2;
-            const densityContribution = toDensityContribution(
+            ++calibrationIndex;
+            const calibrationDivisor = calibration[calibrationIndex];
+            const μg = toμg(
               numParticles,
-              diameterMidpoint
+              diameterMidpointNm,
+              calibrationDivisor
             );
             debug.push({
+              calibrationDivisor,
               diameterHeader: state.headerCells?.[colIdx] || "",
-              diameterMidpoint,
-              densityContribution,
+              diameterMidpointNm,
+              μg,
               numParticles,
             });
-            sub500nm += densityContribution;
+            sub500nm += μg;
             ++j;
             ++colIdx;
           }
-          console.debug(debug);
+          console.log({
+            sampleNum: state.records.length,
+            sub500nm,
+            debug,
+          });
           state.records.push({
             date: fieldParsersByName.date(date_raw),
             // debug,

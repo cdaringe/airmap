@@ -64,7 +64,7 @@ export const MiniWrasStats: React.FC<
           type="monotone"
           dataKey={(p) => p.properties.pm_2_5}
           name="PM2.5 (MW)"
-          stroke="#8884d8"
+          stroke="red"
           activeDot={{ r: 8 }}
         />
         <Line
@@ -72,7 +72,7 @@ export const MiniWrasStats: React.FC<
           type="monotone"
           dataKey={(p) => p.properties.pocketlabs.pm_2_5}
           name="PM2.5 (PL)"
-          stroke="#6684d8"
+          stroke="blue"
           activeDot={{ r: 8 }}
         />
         <Line
@@ -80,7 +80,7 @@ export const MiniWrasStats: React.FC<
           type="monotone"
           dataKey={(p) => p.properties.pocketlabs.humidity}
           name="Humidity (PL)"
-          stroke="#82ca9d"
+          stroke="lightslategray"
         />
       </LineChart>
     </ResponsiveContainer>
