@@ -1,4 +1,4 @@
-export type StravaEntry = { date: Date; lat: number; lon: number };
+export type Entry = { date: Date; lat: number; lon: number };
 
 /**
  * Parse strava gpx to array of points

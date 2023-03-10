@@ -9,7 +9,7 @@ import {
   NO_SENSOR_ID,
   POCKET_LABS_ID,
   AIRMAP_GPS_ID,
-} from "../../../../../packages/cleanair-sensor-common/mod.ts";
+} from "../../../../../packages/cleanair-sensor-common/mod";
 import { MiniWrasDataSource } from "./MiniWrasDataSource";
 
 export type DataSource = {

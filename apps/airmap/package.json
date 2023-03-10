@@ -14,7 +14,8 @@
     "lint": "next lint",
     "format": "prettier --write 'src/**' 'pages/**' './*.{js,json,md}'",
     "test": "echo 'skipped until we convert to observable'",
-    "test_": "ava"
+    "test_": "ava",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@turf/turf": "^6.5.0",

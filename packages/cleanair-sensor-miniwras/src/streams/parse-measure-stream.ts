@@ -18,27 +18,30 @@ const calibration = [
 const nmToM = (nm: number) => nm / 1e9;
 const countsPerCm3ToM3 = (countsCm: number) => countsCm * (100 * 100 * 100);
 
-const toμg = (
+const toPartialμgPerM3 = (
   particleCount: number,
   particleNmDiameter: number,
   calibrationDivisor: number
 ) =>
-  (countsPerCm3ToM3(particleCount) /
-    calibrationDivisor) /* scalar: particles */ *
+  (countsPerCm3ToM3(
+    particleCount /* particles / cm^3 */
+  ) /* particles / m^3 */ /
+    calibrationDivisor) *
   (Math.PI / 6) /* scalar: volume */ *
   nmToM(particleNmDiameter) ** 3 /* m^3 / 1 */ *
   RHO_TRUE /* kg / m^3 */ *
-  (1e9 /* µg */ / /* kg */ 1); // /* µg */
+  (1e9 /* µg */ / /* kg */ 1); // /* µg / m^3 */
 
 type ParticleDebug = {
+  calibrationDivisor: number;
   diameterHeader: string;
   diameterMidpointNm: number;
-  μg: number;
   numParticles: number;
+  μg: number;
 };
-type Entry = {
+export type DatEntry = {
   date: Date;
-  // debug: ParticleDebug[];
+  debug?: ParticleDebug[];
   pm_2_5: number;
   sub500nm: number;
 };
@@ -48,7 +51,7 @@ type State = {
   particleDiametersAscending: number[];
   headerIndiciesByName?: Record<string, number>;
   headerCells?: string[];
-  records: Entry[];
+  records: DatEntry[];
 };
 
 const usLocalDateTimetoDate = (v: string) => {
@@ -125,7 +128,7 @@ export const parse = async (
           const sub500nmEndCol =
             state.headerIndiciesByName[COL_NAME_DATA_END_SUB_500_NM];
           let j = 0;
-          const debug: Entry["debug"] = [];
+          const debug: DatEntry["debug"] = [];
           let calibrationIndex = 0;
           while (colIdx < sub500nmEndCol) {
             const numParticles = parseFloat(cells[colIdx]);
@@ -135,7 +138,7 @@ export const parse = async (
               2;
             ++calibrationIndex;
             const calibrationDivisor = calibration[calibrationIndex];
-            const μg = toμg(
+            const μg = toPartialμgPerM3(
               numParticles,
               diameterMidpointNm,
               calibrationDivisor

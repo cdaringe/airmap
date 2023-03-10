@@ -15,7 +15,7 @@ import {
   parse as parsePositions,
   PositionsEntry,
 } from "../streams/parse-positions-stream";
-import { FlowEntry, ModResources } from "../interfaces";
+import { Entry, ModResources } from "../interfaces";
 import { invariant } from "../../../invariant/mod";
 import { take } from "./iter";
 
@@ -50,7 +50,7 @@ export const createModule = (r: ModResources) => {
       const numOfItems = justOverIndex + 1;
       return take(numOfItems, values);
     };
-    const combined: FlowEntry[] = [];
+    const combined: Entry[] = [];
     for (const voc of measures) {
       await new Promise<void>((resolve, reject) => {
         queueMicrotask(() => {
@@ -99,19 +99,18 @@ export const createModule = (r: ModResources) => {
     return omitPositions ? measures : combine({ measures, positions, r });
   };
 
-  const toGeoJSON = (flowDatas: FlowEntry[]): GeoJSON.FeatureCollection => ({
+  const toGeoJSON = (
+    flowDatas: Entry[]
+  ): GeoJSON.FeatureCollection<GeoJSON.Point, Entry> => ({
     type: "FeatureCollection",
-    features: flowDatas.map(
-      (properties) =>
-        ({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [properties.longitude, properties.latitude],
-          },
-          properties: { ...properties },
-        } as GeoJSON.Feature)
-    ),
+    features: flowDatas.map((properties) => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [properties.longitude!, properties.latitude!],
+      },
+      properties,
+    })),
   });
 
   const downloadGeoJSON = (urls: string[]) => download(urls).then(toGeoJSON);

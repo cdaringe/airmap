@@ -23,8 +23,7 @@ export const getMiniWras = () =>
   import(
     "../../../../../../../packages/cleanair-sensor-miniwras/src/resources"
   ).then(async (m) => {
-    const { closestTo } = await import("date-fns");
-    return m.getResources({ closestTo });
+    return m.getResources();
   });
 
 export const getAirmapGps = () =>

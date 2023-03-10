@@ -1,11 +1,15 @@
 import { useRouter } from "next/router";
 import React from "react";
 import { FileUploader } from "react-drag-drop-files";
+import { Entry as StravaEntry } from "../../../../../packages/cleanair-sensor-strava-gpx/mod";
+import type { DatEntry } from "../../../../../packages/cleanair-sensor-miniwras/src/interfaces";
+import type { Entry as PocketEntry } from "../../../../../packages/cleanair-sensor-pocketlabs/src/interfaces";
 import Button from "../atoms/button";
 import {
   getMiniWras,
   getPocket,
 } from "../pages/map/hooks/use-sensor-mapping-resources";
+import { combine } from "../../../../../packages/cleanair-sensor-miniwras/mod";
 
 const fileTypes = new Set(["dat", "csv", "gpx"] as const);
 
@@ -21,9 +25,15 @@ export const MiniWrasDataSource: React.FC<{
   const [isReady, setIsReady] = React.useState(false);
   const [err, setErr] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
-  const [pocketData, setPocketData] = React.useState<null | any[]>(null);
-  const [miniWrasData, setMiniWrasData] = React.useState<null | any[]>(null);
-  const [stravaData, setStravaData] = React.useState<null | any[]>(null);
+  const [pocketData, setPocketData] = React.useState<undefined | PocketEntry[]>(
+    undefined
+  );
+  const [miniWrasData, setMiniWrasData] = React.useState<
+    undefined | DatEntry[]
+  >(undefined);
+  const [stravaData, setStravaData] = React.useState<undefined | StravaEntry[]>(
+    undefined
+  );
   React.useEffect(
     function submitOnReady() {
       if (!err && miniWrasData && stravaData) {
@@ -58,15 +68,15 @@ export const MiniWrasDataSource: React.FC<{
               }
               case "dat": {
                 const mod = await getMiniWras();
-                const { records } = await mod.stream.parse(
+                const parsed = await mod.stream.parse(
                   file.stream().getReader()
                 );
-                setMiniWrasData(records);
+                setMiniWrasData(parsed.records);
                 break;
               }
               case "gpx": {
                 const mod = await import(
-                  "../../../../../packages/cleanair-sensor-strava-gpx/mod.ts"
+                  "../../../../../packages/cleanair-sensor-strava-gpx/mod"
                 );
                 const data = await file.text();
                 const records = mod.ofGpxString(data);
@@ -125,7 +135,10 @@ export const MiniWrasDataSource: React.FC<{
         className="block m-auto mt-2"
         onClick={async () => {
           const mod = await getMiniWras();
-          const miniwrasRecords = mod.download.combine({
+          if (!stravaData || !miniWrasData) {
+            throw new Error("expected Strava & MiniWras data");
+          }
+          const miniwrasRecords = combine({
             pocketlabs: pocketData,
             strava: stravaData,
             miniwras: miniWrasData,

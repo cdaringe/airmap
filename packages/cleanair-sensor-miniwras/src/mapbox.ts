@@ -2,7 +2,7 @@ import {
   MapGetLevels,
   tupleAsMapboxRange,
 } from "../../cleanair-sensor-common/mod";
-import { MiniWRASEntry } from "./interfaces";
+import { Entry } from "./interfaces";
 
 const COLORS = [
   "#6fc400",
@@ -29,7 +29,7 @@ const mapBoxGetSub500nmField: ["get", string] = [
   SUB_500_NM_FIELD_NAME,
 ];
 
-export const getLevels: MapGetLevels<MiniWRASEntry> = ({
+export const getLevels: MapGetLevels<Entry> = ({
   isMinMaxDynamicRange,
   geojson,
 }) => {
@@ -59,7 +59,7 @@ export const getLevels: MapGetLevels<MiniWRASEntry> = ({
   };
 };
 
-export const getLevelsSub500nm: MapGetLevels<MiniWRASEntry> = ({
+export const getLevelsSub500nm: MapGetLevels<Entry> = ({
   isMinMaxDynamicRange,
   geojson,
 }) => {

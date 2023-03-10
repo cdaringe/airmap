@@ -2,7 +2,7 @@ import { DataSourceWidget } from "../../data-source/DataSourceWidget";
 import {
   isGoogleSheetsCompatibleUrl,
   toSheetsDataExportUrl,
-} from "../../../../../../packages/cleanair-google-sheets/mod.ts";
+} from "../../../../../../packages/cleanair-google-sheets/mod";
 import { useDataSource, DataSource } from "../../data-source/use-data-source";
 import { useRouter } from "next/router";
 import React from "react";
@@ -13,7 +13,7 @@ import {
   FLOW_ID,
   MINIWRAS_ID,
   AIRMAP_GPS_ID,
-} from "../../../../../../packages/cleanair-sensor-common/mod.ts";
+} from "../../../../../../packages/cleanair-sensor-common/mod";
 
 type DSKey = keyof DataSource;
 type DsUpdateFn = <K extends DSKey>(k: K, v: DataSource[K]) => void;
@@ -58,14 +58,17 @@ export default function Home() {
           onDatasourceSourceChange: (evt) =>
             update("datasource", evt.currentTarget.value as "googlesheetsurl"),
           onSensorTypeChange: (sensorType) =>
-            rawUpdate((ds) => ({
-              ...ds,
-              luggage: LUGGAGE_USING_SENSOR_IDS.includes(value.sensorType)
-                ? ds.luggage
-                : null,
-              urls: [],
-              sensorType,
-            })),
+            rawUpdate((ds: DataSource) => {
+              const next: DataSource = {
+                datasource: ds.datasource,
+                luggage: LUGGAGE_USING_SENSOR_IDS.includes(value.sensorType)
+                  ? ds.luggage
+                  : null,
+                urls: [],
+                sensorType,
+              };
+              return next;
+            }),
           onUrlsChange: (urls) => update("urls", urls),
           onKmlChange: (kml) => update("luggage", kml),
           onMiniWrasReady: (v) => update("luggage", v),

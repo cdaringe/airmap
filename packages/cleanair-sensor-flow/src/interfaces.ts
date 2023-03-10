@@ -6,7 +6,7 @@ export type MeasureEntry = {
   pm_2_5: number;
 };
 
-export type FlowEntry = {
+export type Entry = {
   latitude?: number;
   longitude?: number;
   skip?: boolean;

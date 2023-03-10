@@ -1,16 +1,16 @@
 import * as dateFns from "date-fns";
-import { Entry } from "../../cleanair-sensor-pocketlabs/src/interfaces";
+import { Entry as PocketEntry } from "../../cleanair-sensor-pocketlabs/src/interfaces";
+export * from "./streams/parse-measure-stream";
 
-export type MiniWRASEntry = {
+export type Entry = {
   date: Date;
-  skip?: boolean;
   pm_2_5: number;
   sub500nm: number;
+
   // non-native datas to the miniwras
-  pocketlabsEntry: Entry;
+  pocketlabsEntry?: PocketEntry;
   latitude: number;
   longitude: number;
-  humidity: number;
 };
 
 export type ModResources = {

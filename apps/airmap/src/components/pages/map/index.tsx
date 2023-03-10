@@ -62,13 +62,14 @@ export default function Map() {
   const {
     isLoading: isSensorDownladerLoading,
     error: sensorDownloaderError,
-    data: { download, mapbox } = { mapbox: {}, download: {} },
+    data: sensorResources,
   } = useSensorMappingResources(sensorType);
-  const { getLevels: defaultGetLevels, getLevelsByField } = mapbox;
+  const { getLevels: defaultGetLevels, getLevelsByField } =
+    sensorResources?.mapbox || {};
   const getLevels = fieldToMap
-    ? getLevelsByField[fieldToMap]!
+    ? getLevelsByField?.[fieldToMap]
     : defaultGetLevels;
-  const { downloadGeoJSON, dateField } = download;
+  const { downloadGeoJSON, dateField } = sensorResources?.download || {};
   const {
     isLoading: isDataLoading,
     error: dataDownloadError,

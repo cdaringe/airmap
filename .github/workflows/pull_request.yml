@@ -21,6 +21,7 @@ jobs:
         run: |
           pnpm install
           pnpm format --check
+          pnpm typecheck
           pnpm test
           pnpm build
           pnpm export

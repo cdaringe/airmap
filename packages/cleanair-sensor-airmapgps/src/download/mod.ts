@@ -71,19 +71,18 @@ export const createModule = (r: ModResources) => {
     return measures;
   };
 
-  const toGeoJSON = (datas: Entry[]): GeoJSON.FeatureCollection => ({
+  const toGeoJSON = (
+    datas: Entry[]
+  ): GeoJSON.FeatureCollection<GeoJSON.Point, Entry> => ({
     type: "FeatureCollection",
-    features: datas.map(
-      (properties) =>
-        ({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [properties.longitude, properties.latitude],
-          },
-          properties: { ...properties },
-        } as GeoJSON.Feature)
-    ),
+    features: datas.map((properties) => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [properties.longitude, properties.latitude],
+      },
+      properties: { ...properties },
+    })),
   });
 
   const downloadGeoJSON = (urls: string[]) => download(urls).then(toGeoJSON);

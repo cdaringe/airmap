@@ -1,8 +1,7 @@
-/// <reference types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/geojson/index.d.ts" />
 import { parse } from "./streams/parse-pocketlabs-stream";
 import { streamGoogleSheetsCsv } from "../../cleanair-google-sheets/mod";
 import { Entry } from "./interfaces";
-import { type GeoJSON } from "../../cleanair-sensor-common/mod";
+import type { GeoJSON } from "../../cleanair-sensor-common/mod";
 
 const applyEpaCorrection = (old: number, humidity: number) =>
   0.0534 * old - 0.0844 * humidity + 5.604;
@@ -12,7 +11,9 @@ export const download = async (urls: string[]) => {
   return stream.records;
 };
 
-export const toGeoJSON = (data: Entry[]): GeoJSON.FeatureCollection => ({
+export const toGeoJSON = (
+  data: Entry[]
+): GeoJSON.FeatureCollection<GeoJSON.Point, Entry> => ({
   type: "FeatureCollection",
   features: data.map((entry, i) => {
     const humidity = entry.humidity / 100;

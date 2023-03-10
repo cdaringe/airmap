@@ -2,7 +2,7 @@ import {
   MapGetLevels,
   tupleAsMapboxRange,
 } from "../../cleanair-sensor-common/mod";
-import { FlowEntry } from "./interfaces";
+import { Entry } from "./interfaces";
 
 const COLORS = ["#6fc400"];
 
@@ -18,7 +18,7 @@ const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
 
 const mapBoxGetPM2Field: ["get", string] = ["get" as const, PM2_FIELD_NAME];
 
-export const getLevels: MapGetLevels<FlowEntry> = ({
+export const getLevels: MapGetLevels<Entry> = ({
   isMinMaxDynamicRange,
   geojson,
 }) => {
