@@ -10,16 +10,18 @@ import {
   ResponsiveContainer,
   Label,
 } from "recharts";
+import { Entry } from "../../../../../packages/cleanair-sensor-miniwras/mod";
 
 /**
  * @see https://recharts.org/en-US/examples/SynchronizedLineChart
  */
 export const MiniWrasStats: React.FC<
   PropsWithChildren<{
-    geojson: GeoJSON.FeatureCollection;
+    geojson: GeoJSON.FeatureCollection<GeoJSON.Point, Entry>;
   }>
 > = ({ geojson }) => {
-  const isPocketDataAvailable = !!geojson.features[0]?.properties?.pocketlabs;
+  const isPocketDataAvailable =
+    !!geojson.features[0]?.properties.pocketlabsEntry;
   if (!isPocketDataAvailable) {
     return <p>Pocketlabs data is missing. Please upload a pocket labs file.</p>;
   }
@@ -62,7 +64,9 @@ export const MiniWrasStats: React.FC<
         <Line
           yAxisId="left"
           type="monotone"
-          dataKey={(p) => p.properties.pm_2_5}
+          dataKey={(p: GeoJSON.Feature<GeoJSON.Point, Entry>) =>
+            p.properties.pm_2_5
+          }
           name="PM2.5 (MW)"
           stroke="red"
           activeDot={{ r: 8 }}
@@ -70,7 +74,9 @@ export const MiniWrasStats: React.FC<
         <Line
           yAxisId="left"
           type="monotone"
-          dataKey={(p) => p.properties.pocketlabs.pm_2_5}
+          dataKey={(p: GeoJSON.Feature<GeoJSON.Point, Entry>) =>
+            p.properties.pocketlabsEntry!.pm_2_5
+          }
           name="PM2.5 (PL)"
           stroke="blue"
           activeDot={{ r: 8 }}
@@ -78,7 +84,9 @@ export const MiniWrasStats: React.FC<
         <Line
           yAxisId="right"
           type="monotone"
-          dataKey={(p) => p.properties.pocketlabs.humidity}
+          dataKey={(p: GeoJSON.Feature<GeoJSON.Point, Entry>) =>
+            p.properties.pocketlabsEntry!.humidity
+          }
           name="Humidity (PL)"
           stroke="lightslategray"
         />

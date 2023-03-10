@@ -200,13 +200,14 @@ export default function Map() {
           {getLevelsByField ? (
             <div className="map-overlay-control map-pollution-range-mode">
               <h4 className="font-bold">Field to map</h4>
-              {Object.keys(getLevelsByField).map((fieldName) => (
+              {Object.keys(getLevelsByField).map((fieldName, i) => (
                 <div key={fieldName}>
                   <input
                     type="radio"
                     key={fieldName}
                     name="field-to-map"
                     onClick={() => setMappingField(fieldName)}
+                    defaultChecked={i === 0}
                   />
                   <label htmlFor="field-to-map">{` ${fieldName}`}</label>
                   <br />

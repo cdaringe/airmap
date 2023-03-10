@@ -46,7 +46,13 @@ const entryKeyByColKey: Record<AllKeys, keyof Entry> = {
 };
 
 const parserByColKey: Record<AllKeys, (v: string) => number | Date> = {
-  Date: (v) => new Date(v),
+  Date: (v) => {
+    const d = new Date(v);
+    if (isNaN(d.getTime())) {
+      throw new Error(`invalid date ${v}`);
+    }
+    return d;
+  },
   Lat: parseFloat,
   Lng: parseFloat,
   "t (s)": (v) => parseInt(v),

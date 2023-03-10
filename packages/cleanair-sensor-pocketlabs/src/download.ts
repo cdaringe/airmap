@@ -15,7 +15,7 @@ export const toGeoJSON = (
   data: Entry[]
 ): GeoJSON.FeatureCollection<GeoJSON.Point, Entry> => ({
   type: "FeatureCollection",
-  features: data.map((entry, i) => {
+  features: data.map((entry) => {
     const humidity = entry.humidity / 100;
     const pm2 = entry.pm_2_5;
     const pm2Corrected = applyEpaCorrection(pm2, humidity);
