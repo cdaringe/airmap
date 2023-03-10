@@ -13,6 +13,17 @@
       "dependsOn": [],
       "outputs": [],
       "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts", "test/**/*.tsx"]
+    },
+    "typecheck": {
+      "dependsOn": [],
+      "outputs": [],
+      "inputs": [
+        "src/**/*.tsx",
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "test/**/*.tsx",
+        "*.ts"
+      ]
     }
     // "deploy": {
     //   // A package's `deploy` script depends on the `build`,

@@ -6,6 +6,7 @@
     "node": ">=16"
   },
   "scripts": {
+    "clean": "fd -t=d -u node_modules . -x rm -rf {}",
     "dev": "turbo run dev",
     "export": "turbo run export",
     "test": "turbo run test",
@@ -13,9 +14,11 @@
     "format": "prettier --write './*.{js,json,md}' './.github/**' '.vscode/**' 'packages/**/*.{md,json,js,ts,jsx,tsx}' 'apps/**/*.{md,json,js,ts,jsx,tsx}'"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.8",
     "ava": "4.1.0",
     "browser-env": "3.3.0",
     "esbuild": "0.17.7",
+    "geojson": "0.5.0",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "3.2.2",
     "ts-node": "^10.9.1",
