@@ -31,16 +31,19 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [mapAuthValue, mapAuthSetValue] = React.useState(initialMapAuth);
   const updateDataSource = React.useCallback<
     React.Dispatch<React.SetStateAction<ds.DataSource>>
-  >((ds) => {
-    if (typeof ds === "function") {
-      const next = ds(dsValue);
-      dsPersist(next);
-      dsSetValue(next);
-    } else {
-      dsPersist(ds);
-      dsSetValue(ds);
-    }
-  }, []);
+  >(
+    (ds) => {
+      if (typeof ds === "function") {
+        const next = ds(dsValue);
+        dsPersist(next);
+        dsSetValue(next);
+      } else {
+        dsPersist(ds);
+        dsSetValue(ds);
+      }
+    },
+    [dsValue]
+  );
   const updateMapAuth = React.useCallback((payload: mapAuth.MapAuth) => {
     mapAuthPersist(payload);
     mapAuthSetValue(payload);
