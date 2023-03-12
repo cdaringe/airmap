@@ -279,9 +279,8 @@ export default function Map() {
         </div>
       </Map>
       <BottomSheet
-        // blocking={false}
-        // open={isBottomSheetOpen}
-        open
+        blocking={false}
+        open={isBottomSheetOpen}
         onDismiss={() => setBottomSheetOpen(false)}
       >
         <div className="p-4">
