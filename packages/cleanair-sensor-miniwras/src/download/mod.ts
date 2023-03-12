@@ -9,7 +9,9 @@ import type { Entry as PocketlabsEntry } from "../../../cleanair-sensor-pocketla
 import type { Entry as StravaEntry } from "../../../cleanair-sensor-strava-gpx/mod";
 import { Entry } from "../interfaces";
 
-const toGeoJSON = (flowDatas: Entry[]): GeoJSON.FeatureCollection => ({
+export type GeoJSONMiniWras = GeoJSON.FeatureCollection<GeoJSON.Point, Entry>;
+
+const toGeoJSON = (flowDatas: Entry[]): GeoJSONMiniWras => ({
   type: "FeatureCollection",
   features: flowDatas.map((properties) => {
     const coordinates = [properties.longitude, properties.latitude];
@@ -19,8 +21,8 @@ const toGeoJSON = (flowDatas: Entry[]): GeoJSON.FeatureCollection => ({
         type: "Point",
         coordinates,
       },
-      properties: { ...properties },
-    } as GeoJSON.Feature;
+      properties,
+    };
   }),
 });
 
@@ -92,6 +94,8 @@ export const combine = ({
         longitude: stravaEntry.lon,
         ...stravaEntry,
         ...miniv,
+        pm05Calibrated: -1,
+        pm05To3Calibrated: -1,
         pocketlabsEntry: pocketEntry ? pocketEntry : undefined,
       });
     }

@@ -144,7 +144,7 @@ export const MiniWrasDataSource: React.FC<{
             miniwras: miniWrasData,
           });
           onInputRead(miniwrasRecords);
-          router.push("/map");
+          router.push("/device/miniwras/calibration");
         }}
       >
         Submit

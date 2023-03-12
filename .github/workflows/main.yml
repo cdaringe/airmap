@@ -28,7 +28,7 @@ jobs:
         run: |
           pnpm install
           pnpm -r format --check
-          pnpm turbo typecheck
+          pnpm typecheck
           pnpm -r test
           pnpm turbo build
       - name: Prepare site

@@ -24,7 +24,6 @@ type Props = {
   onDatasourceSourceChange: HTMLProps<HTMLSelectElement>["onChange"];
   onSubmit: () => void;
   onUrlsChange: (urls: string[]) => void;
-  onKmlChange: (kml: string) => void;
   onMiniWrasReady: (luggage: any) => void;
   onSensorTypeChange: (sensorType: number) => void;
   urls: string[];
@@ -38,7 +37,6 @@ export const DataSourceWidget: FC<Props> = ({
   isSubmitDisabled,
   luggage,
   onDatasourceSourceChange,
-  onKmlChange,
   onMiniWrasReady,
   onSubmit,
   onUrlsChange,

@@ -70,7 +70,6 @@ export default function Home() {
               return next;
             }),
           onUrlsChange: (urls) => update("urls", urls),
-          onKmlChange: (kml) => update("luggage", kml),
           onMiniWrasReady: (v) => update("luggage", v),
           urls,
           onSubmit: () => {

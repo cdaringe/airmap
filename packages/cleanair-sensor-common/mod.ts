@@ -1,12 +1,12 @@
 export * from "./mapbox";
 export type { GeoJSON } from "geojson";
 
-export type MapGetLevels<P = unknown> = ({
+export type MapGetLevels<P = any> = ({
   isMinMaxDynamicRange,
   geojson,
 }: {
   isMinMaxDynamicRange: boolean;
-  geojson: GeoJSON.FeatureCollection<GeoJSON.Geometry, P>;
+  geojson: GeoJSON.FeatureCollection<GeoJSON.Point, any>;
 }) => {
   circleCases: any[];
   colors: string[];

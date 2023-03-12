@@ -14,8 +14,13 @@ const COLORS = [
   "black",
 ];
 
-const PM2_FIELD_NAME = "pm_2_5" as const;
-const SUB_500_NM_FIELD_NAME = "sub500nm" as const;
+type EntryKeys = keyof Entry;
+
+const PM2_FIELD_NAME: EntryKeys = "pm_2_5" as const;
+const PM2_CALIBRATED_FIELD_NAME: EntryKeys = "pm05To3Calibrated" as const;
+const PM05_FIELD_NAME: EntryKeys = "pm05" as const;
+const PM05_CALIBRATED_FIELD_NAME: EntryKeys = "pm05Calibrated" as const;
+
 const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
   0, 0.25, 0.5, 1, 2.5, 5, 20,
 ].map((lower, i, arr) => {
@@ -23,73 +28,40 @@ const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
   return [lower, upper] as [number, number];
 });
 
-const mapBoxGetPM2Field: ["get", string] = ["get" as const, PM2_FIELD_NAME];
-const mapBoxGetSub500nmField: ["get", string] = [
-  "get" as const,
-  SUB_500_NM_FIELD_NAME,
-];
-
-export const getLevels: MapGetLevels<Entry> = ({
-  isMinMaxDynamicRange,
-  geojson,
-}) => {
-  let currentPm2 = 0;
-  let min = Infinity;
-  let max = -Infinity;
-  for (const feature of geojson.features) {
-    currentPm2 = feature.properties.pm_2_5;
-    if (currentPm2 > max) max = currentPm2;
-    if (currentPm2 < min) min = currentPm2;
-  }
-  const numColors = COLORS.length;
-  const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
-  const ranges = isMinMaxDynamicRange
-    ? [...new Array(numColors)].map((_, i) => {
-        const base = min + i * levelSpan;
-        return [base, base + levelSpan] as [number, number];
-      })
-    : FIXED_PM2_LEVEL_RANGES;
-  return {
-    circleCases: ranges
-      .map(tupleAsMapboxRange(mapBoxGetPM2Field))
-      .flatMap((condition, i) => [condition, COLORS[i]]),
-    colors: COLORS,
-    fieldName: PM2_FIELD_NAME,
-    ranges,
+export const makeGetLevels: (fieldName: keyof Entry) => MapGetLevels<Entry> =
+  (fieldName) =>
+  ({ isMinMaxDynamicRange, geojson }) => {
+    let current = 0;
+    let min = Infinity;
+    let max = -Infinity;
+    for (const feature of geojson.features) {
+      current = feature.properties[fieldName] as number;
+      if (current > max) max = current;
+      if (current < min) min = current;
+    }
+    const numColors = COLORS.length;
+    const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
+    const ranges = isMinMaxDynamicRange
+      ? [...new Array(numColors)].map((_, i) => {
+          const base = min + i * levelSpan;
+          return [base, base + levelSpan] as [number, number];
+        })
+      : FIXED_PM2_LEVEL_RANGES;
+    return {
+      circleCases: ranges
+        .map(tupleAsMapboxRange(["get" as const, fieldName]))
+        .flatMap((condition, i) => [condition, COLORS[i]]),
+      colors: COLORS,
+      fieldName,
+      ranges,
+    };
   };
-};
-
-export const getLevelsSub500nm: MapGetLevels<Entry> = ({
-  isMinMaxDynamicRange,
-  geojson,
-}) => {
-  let currentSub500 = 0;
-  let min = Infinity;
-  let max = -Infinity;
-  for (const feature of geojson.features) {
-    currentSub500 = feature.properties.sub500nm;
-    if (currentSub500 > max) max = currentSub500;
-    if (currentSub500 < min) min = currentSub500;
-  }
-  const numColors = COLORS.length;
-  const levelSpan = isMinMaxDynamicRange ? (max - min) / numColors : 0;
-  const ranges = isMinMaxDynamicRange
-    ? [...new Array(numColors)].map((_, i) => {
-        const base = min + i * levelSpan;
-        return [base, base + levelSpan] as [number, number];
-      })
-    : FIXED_PM2_LEVEL_RANGES;
-  return {
-    circleCases: ranges
-      .map(tupleAsMapboxRange(mapBoxGetSub500nmField))
-      .flatMap((condition, i) => [condition, COLORS[i]]),
-    colors: COLORS,
-    fieldName: SUB_500_NM_FIELD_NAME,
-    ranges,
-  };
-};
 
 export const getLevelsByField = {
-  [PM2_FIELD_NAME]: getLevels,
-  [SUB_500_NM_FIELD_NAME + " μg/m^3"]: getLevelsSub500nm,
+  ["PM0.5 μg/m^3"]: makeGetLevels("pm05"),
+  ["PM2.5 μg/m^3"]: makeGetLevels("pm_2_5"),
+  ["PM0.5 μg/m^3 (calibrated)"]: makeGetLevels("pm05Calibrated"),
+  ["PM0.5-3 μg/m^3 (calibrated)"]: makeGetLevels("pm05To3Calibrated"),
 };
+
+export const getLevels = getLevelsByField["PM0.5 μg/m^3"];
