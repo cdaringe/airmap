@@ -23,6 +23,7 @@
     "build": "tsc",
     "format": "prettier --write 'src/**' './*.{js,json,md}'",
     "dev": "node-dev -r dotenv/config src/bin.ts",
-    "start": "node -r dotenv/config dist/bin.js"
+    "start": "node -r dotenv/config dist/bin.js",
+    "typecheck": "tsc --noEmit"
   }
 }
