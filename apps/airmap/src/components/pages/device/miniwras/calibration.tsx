@@ -15,7 +15,7 @@ import { useDataSource } from "../../../data-source/use-data-source";
 
 function derivePM05Density(channels: DatEntry["channels"], rho: number) {
   return sum(
-    ...channels.map((channel) =>
+    ...channels.sub500nm.map((channel) =>
       toPartialμgPerM3(
         channel.value,
         channel.diameterMidpointNm,
@@ -43,17 +43,13 @@ const Calibration: React.FC = () => {
   const rhoCalibrated = React.useMemo(() => {
     const feature = features[calibrationSampleIndex].properties;
     const denominator = sum(
-      ...feature.channels.map((channel, i) => {
-        const value =
-          i < feature.pm05EndCol
-            ? toPartialμgPerM3SansRho(
-                channel.value,
-                channel.diameterMidpointNm,
-                channel.calibrationIndex
-              )
-            : 0;
-        return value;
-      })
+      ...feature.channels.sub500nm.map((channel) =>
+        toPartialμgPerM3SansRho(
+          channel.value,
+          channel.diameterMidpointNm,
+          channel.calibrationIndex
+        )
+      )
     );
     return referenceDensity / denominator;
   }, [referenceDensity, features, calibrationSampleIndex]);
