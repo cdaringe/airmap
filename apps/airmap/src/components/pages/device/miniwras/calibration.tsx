@@ -38,7 +38,7 @@ const Calibration: React.FC = () => {
   const [calibrationSampleIndex, setCalibrationSampleIndex] = React.useState(0);
   const features = luggage.features;
   const [referenceDensity, setReferenceDensity] = useState(
-    features[calibrationSampleIndex]?.properties.pm05 || 1
+    features[calibrationSampleIndex]?.properties.pm05 || 0
   );
   const rhoCalibrated = React.useMemo(() => {
     const feature = features[calibrationSampleIndex].properties;

@@ -54,14 +54,22 @@ type ParticleDebug = {
   numParticles: number;
   μg: number;
 };
+
+type Channel = {
+  value: number;
+  diameterMidpointNm: number;
+  calibrationIndex: number;
+};
+
 export type DatEntry = {
   date: Date;
   debug?: ParticleDebug[];
+
   channels: {
-    value: number;
-    diameterMidpointNm: number;
-    calibrationIndex: number;
-  }[];
+    sub500nm: Channel[];
+    sup500nm: Channel[];
+    all: Channel[];
+  };
   pm_2_5: number;
   pm05: number;
   pm05EndCol: number;
@@ -151,19 +159,24 @@ export const parse = async (
           let j = 0;
           const debug: DatEntry["debug"] = [];
           let calibrationIndex = 0;
-          const channels: DatEntry["channels"] = [];
+          const channels: DatEntry["channels"] = {
+            sub500nm: [],
+            sup500nm: [],
+            all: [],
+          };
           while (colIdx < pm05EndCol) {
             const numParticles = parseFloat(cells[colIdx]);
             const diameterMidpointNm =
               (state.particleDiametersAscending[j] +
                 state.particleDiametersAscending[j + 1]) /
               2;
-            channels.push({
+            const channel: Channel = {
               value: numParticles,
               diameterMidpointNm,
               calibrationIndex,
-            });
+            };
             if (colIdx < pm05EndCol) {
+              channels.sub500nm.push(channel);
               const calibrationDivisor = calibration[calibrationIndex];
               const μg = toPartialμgPerM3(
                 numParticles,
@@ -182,7 +195,10 @@ export const parse = async (
               ++j;
               ++colIdx;
               ++calibrationIndex;
+            } else {
+              channels.sup500nm.push(channel);
             }
+            channels.all.push(channel);
           }
           console.log({
             sampleNum: state.records.length,
