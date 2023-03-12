@@ -21,6 +21,7 @@ import { BottomSheet } from "react-spring-bottom-sheet";
 import "react-spring-bottom-sheet/dist/style.css";
 import { MiniWrasStats } from "../../charts/miniwras-pm2-humidity";
 import { ErrorBoundary } from "../../error-boundary";
+import { GeoJSONMiniWras } from "../../../../../../packages/cleanair-sensor-miniwras/mod";
 
 const isValidDate = (d: Date) => !d.toString().match(/Invalid/);
 
@@ -78,12 +79,16 @@ export default function Map() {
     // use `typeof download` to cache bust react-query when the download
     // function has not yet finished downloading
     queryKey: ["map", `sensor-${sensorType}`, ...urls, typeof downloadGeoJSON],
-    queryFn: () => {
-      if (sensorType === MINIWRAS_ID) {
+    queryFn: (): Promise<GeoJSON.FeatureCollection<GeoJSON.Point>> => {
+      const luggage = ds.value?.luggage;
+      if (sensorType === MINIWRAS_ID && luggage) {
         // we only support MINIWRAS from file uploading from the home screen
-        return ds.value.luggage;
+        return Promise.resolve(luggage);
       }
-      return downloadGeoJSON?.(urls);
+      if (downloadGeoJSON) {
+        return downloadGeoJSON(urls);
+      }
+      throw new Error(`no mechanism found to download map data`);
     },
     cacheTime: 1e9,
   });
@@ -118,7 +123,7 @@ export default function Map() {
           clearPopup();
         }
       };
-      const onCanvasClick = (evt: WindowEventMap["click"]) => clearPopup();
+      const onCanvasClick = (_evt: WindowEventMap["click"]) => clearPopup();
       const [canvas] = document.getElementsByTagName("canvas") || [];
       canvas?.addEventListener("click", onCanvasClick);
       window.addEventListener("keyup", onKeyup);
@@ -130,7 +135,8 @@ export default function Map() {
     [selectedFeature]
   );
   if (error) return <MapError error={error} datasource={ds} />;
-  if (isLoading) return <Loading />;
+  if (isLoading) return <Loading msg="Downloading data" />;
+  if (!geojson) return <Loading msg="Preparing geojson" />;
   const dataPoint = geojson?.features[0]?.properties as
     | Record<string, string>
     | undefined;
@@ -261,7 +267,11 @@ export default function Map() {
           </div>
           {sensorType === MINIWRAS_ID ? (
             <div className="map-overlay-control map-pollution-range-mode">
-              <Button onClick={() => setBottomSheetOpen(!isBottomSheetOpen)}>
+              <Button
+                onClick={() => {
+                  setBottomSheetOpen(!isBottomSheetOpen);
+                }}
+              >
                 Show charts
               </Button>
             </div>
@@ -269,13 +279,14 @@ export default function Map() {
         </div>
       </Map>
       <BottomSheet
-        blocking={false}
-        open={isBottomSheetOpen}
+        // blocking={false}
+        // open={isBottomSheetOpen}
+        open
         onDismiss={() => setBottomSheetOpen(false)}
       >
         <div className="p-4">
           <h3>PM2.5 & Humidity - MiniWRAS & PocketLabs</h3>
-          <MiniWrasStats geojson={geojson} />
+          <MiniWrasStats geojson={geojson as GeoJSONMiniWras} />
         </div>
       </BottomSheet>
     </ErrorBoundary>

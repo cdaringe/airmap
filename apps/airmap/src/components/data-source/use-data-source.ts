@@ -1,11 +1,12 @@
 import React from "react";
 import { NO_SENSOR_ID } from "../../../../../packages/cleanair-sensor-common/mod";
+import type { GeoJSONMiniWras } from "../../../../../packages/cleanair-sensor-miniwras/mod";
 
 export type DataSource = {
   datasource: "googlesheetsurl" | "csvurl";
   sensorType: number;
   urls: string[];
-  luggage?: any;
+  luggage?: GeoJSONMiniWras | null;
 };
 
 export type DataSourceContext = {
@@ -33,12 +34,18 @@ export const read = (): DataSource => {
     urls: [],
     sensorType: NO_SENSOR_ID,
     datasource: "googlesheetsurl",
-    luggage: null,
+    luggage: undefined,
   };
   try {
     const stored = window.localStorage.getItem("datasource");
     if (!stored) return defaultValue;
-    return JSON.parse(stored);
+    return JSON.parse(stored, (k, v) => {
+      // parse dates on re-hydration from storage
+      if (k.match(/date/i)) {
+        return new Date(v);
+      }
+      return v;
+    });
   } catch (err) {
     return defaultValue;
   }
