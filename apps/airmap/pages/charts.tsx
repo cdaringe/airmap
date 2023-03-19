@@ -118,7 +118,7 @@ function ChartPages() {
             setDate2(d2);
           }}
         />
-        <h1 className="text-xl block text-center">VOC, ppm</h1>
+        <h1 className="block text-xl text-center">VOC, ppm</h1>
         <br />
         <AreaChart
           width={width}

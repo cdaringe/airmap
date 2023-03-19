@@ -1,4 +1,5 @@
 import { Entry } from "../interfaces";
+import { normalizeDateString } from "./parse-utils";
 
 function invariant<TValue>(
   value: TValue,
@@ -46,7 +47,8 @@ const entryKeyByColKey: Record<AllKeys, keyof Entry> = {
 };
 
 const parserByColKey: Record<AllKeys, (v: string) => number | Date> = {
-  Date: (v) => {
+  Date: (rawValue) => {
+    const v = normalizeDateString(rawValue);
     const d = new Date(v);
     if (isNaN(d.getTime())) {
       throw new Error(`invalid date ${v}`);

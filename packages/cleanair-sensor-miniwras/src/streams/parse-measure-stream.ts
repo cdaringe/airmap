@@ -1,9 +1,13 @@
 import { invariant } from "../../../invariant/mod";
+import { usLocalDateTimetoDate } from "./parse-utils";
 
 const COL_NAME_DATA_START = "10.00 nm";
 const COL_NAME_DATA_END_SUB_500_NM = "449.48 nm";
 
-export const RHO_TRUE = 1800; /* kg / m3 */
+// 2745.80 nm
+const COL_NAME_DATA_END_SUB_3000_NM = "3238.77 nm";
+
+export const RHO_GRIMM = 1800; /* kg / m3 */
 
 const calibration = [
   6.842765, 7.1751666, 7.0114602, 6.9088991, 7.0263146, 6.9180838, 7.0393966,
@@ -15,6 +19,8 @@ const calibration = [
   /* div/0 */ 14, /* div/0 */ 14, /* div/0 */ 14, /* div/0 */ 14,
 ];
 
+export const sum = (...arr: number[]) =>
+  arr.reduce((total, it) => total + it, 0);
 const nmToM = (nm: number) => nm / 1e9;
 const countsPerCm3ToM3 = (countsCm: number) => countsCm * (100 * 100 * 100);
 
@@ -32,9 +38,6 @@ export const toPartialμgPerM3 = (
   nmToM(particleNmDiameter) ** 3 /* m^3 / 1 */ *
   rho /* kg / m^3 */ *
   (1e9 /* µg */ / /* kg */ 1); // /* µg / m^3 */
-
-export const sum = (...arr: number[]) =>
-  arr.reduce((total, it) => total + it, 0);
 
 export const toPartialμgPerM3SansRho = (
   particleCount: number,
@@ -64,11 +67,9 @@ type Channel = {
 export type DatEntry = {
   date: Date;
   debug?: ParticleDebug[];
-
   channels: {
     sub500nm: Channel[];
-    sup500nm: Channel[];
-    all: Channel[];
+    sub3000nm: Channel[];
   };
   pm_2_5: number;
   pm05: number;
@@ -81,23 +82,6 @@ type State = {
   headerIndiciesByName?: Record<string, number>;
   headerCells?: string[];
   records: DatEntry[];
-};
-
-const usLocalDateTimetoDate = (v: string) => {
-  return new Date(
-    v
-      .trim()
-      .split(" ")
-      .map((part, i) => {
-        if (i === 0) {
-          const [y, m, d] = part.split("/");
-          const pad = (v: string) => (v.length === 1 ? `0${v}` : v);
-          return `${y}-${pad(m)}-${pad(d)}`;
-        }
-        return `T${part}.000+01:00`;
-      })
-      .join("")
-  );
 };
 
 const float = (v: string) => parseFloat(v);
@@ -153,52 +137,59 @@ export const parse = async (
           invariant(date_raw, "date missing");
           invariant(Number.isFinite(pm_2_5), "column 'pm2.5 [ug/m3]' missing");
           let pm05 = 0;
+          let pm3 = 0;
           let colIdx = state.headerIndiciesByName[COL_NAME_DATA_START];
           const pm05EndCol =
             state.headerIndiciesByName[COL_NAME_DATA_END_SUB_500_NM];
-          let j = 0;
+          const pm3EndCol =
+            state.headerIndiciesByName[COL_NAME_DATA_END_SUB_3000_NM];
           const debug: DatEntry["debug"] = [];
+          /**
+           * counter 0-N, where N = the final miniwras channel
+           */
           let calibrationIndex = 0;
           const channels: DatEntry["channels"] = {
             sub500nm: [],
-            sup500nm: [],
-            all: [],
+            sub3000nm: [],
           };
-          while (colIdx < pm05EndCol) {
+
+          // aggregrate channels => metrics of interest
+          while (colIdx < pm3EndCol) {
             const numParticles = parseFloat(cells[colIdx]);
-            const diameterMidpointNm =
-              (state.particleDiametersAscending[j] +
-                state.particleDiametersAscending[j + 1]) /
-              2;
+            const leadingDiameter =
+              state.particleDiametersAscending[calibrationIndex];
+            const trailingDiameter =
+              state.particleDiametersAscending[calibrationIndex + 1];
+            const diameterMidpointNm = (leadingDiameter + trailingDiameter) / 2;
             const channel: Channel = {
               value: numParticles,
               diameterMidpointNm,
               calibrationIndex,
             };
+            const μg = toPartialμgPerM3(
+              numParticles,
+              diameterMidpointNm,
+              calibrationIndex,
+              RHO_GRIMM
+            );
             if (colIdx < pm05EndCol) {
               channels.sub500nm.push(channel);
-              const calibrationDivisor = calibration[calibrationIndex];
-              const μg = toPartialμgPerM3(
-                numParticles,
-                diameterMidpointNm,
-                calibrationIndex,
-                RHO_TRUE
-              );
-              debug.push({
-                calibrationDivisor,
-                diameterHeader: state.headerCells?.[colIdx] || "",
-                diameterMidpointNm,
-                numParticles,
-                μg,
-              });
+              // const calibrationDivisor = calibration[calibrationIndex];
+              // debug.push({
+              //   calibrationDivisor,
+              //   diameterHeader: state.headerCells?.[colIdx] || "",
+              //   diameterMidpointNm,
+              //   numParticles,
+              //   μg,
+              // });
               pm05 += μg;
-              ++j;
-              ++colIdx;
-              ++calibrationIndex;
-            } else {
-              channels.sup500nm.push(channel);
             }
-            channels.all.push(channel);
+            if (colIdx < pm3EndCol) {
+              channels.sub3000nm.push(channel);
+              pm3 += μg;
+            }
+            ++colIdx;
+            ++calibrationIndex;
           }
           console.log({
             sampleNum: state.records.length,

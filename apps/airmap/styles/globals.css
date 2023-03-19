@@ -88,12 +88,14 @@ a {
 }
 /* end  https://bl.ocks.org/samfader/43570c37c4e5aebb8bf1d88216a663fc */
 .map-overlay {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin-right: 10px;
   font-family: Arial, sans-serif;
+  margin-right: 10px;
   overflow: auto;
+  overflow-y: scroll;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .map-overlay-control {

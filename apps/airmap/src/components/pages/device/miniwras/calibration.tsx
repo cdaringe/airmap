@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import {
   DatEntry,
-  RHO_TRUE,
+  RHO_GRIMM,
   sum,
   toPartialμgPerM3,
   toPartialμgPerM3SansRho,
@@ -39,6 +39,39 @@ const Calibration: React.FC = () => {
   const features = luggage.features;
   const [referenceDensity, setReferenceDensity] = useState(
     features[calibrationSampleIndex]?.properties.pm05 || 0
+  );
+
+  /**
+   * Derive RHO_DERIVED (ρ)
+   *
+   * The following equation reductions can be used to solve for ρ:
+   *
+   * miniwras-reported-pm2.5 = GRIMM_SUMMATION
+   * pm25 = GRIMM_SUMMATION
+   * pm25 = Σ(ρ*CONSTANTS)
+   * pm25 = (ρ * x_0) + (ρ * x_1) + ... (ρ * n)
+   * pm25 = ρ * (x_0 + x_1 + ... + n)
+   * ρ = (x_0 + x_1 + ... + n) / pm25
+   */
+  const rhoDerived = React.useMemo(() => {
+    return features.map(function deriveRhoActualForSample(feature) {
+      const denominator = sum(
+        ...feature.properties.channels.sub3000nm.map((channel) =>
+          toPartialμgPerM3SansRho(
+            channel.value,
+            channel.diameterMidpointNm,
+            channel.calibrationIndex
+          )
+        )
+      );
+      return feature.properties.pm_2_5 / denominator;
+    });
+  }, [features]);
+
+  const rhoDerivedMean = React.useMemo(() => mean(rhoDerived), [rhoDerived]);
+  const rhoDerivedStdDev = React.useMemo(
+    () => stddev(rhoDerived),
+    [rhoDerived]
   );
   const rhoCalibrated = React.useMemo(() => {
     const feature = features[calibrationSampleIndex].properties;
@@ -99,11 +132,21 @@ const Calibration: React.FC = () => {
       </div>
       <table className="mt-2">
         <tr>
-          <td className="p-1">RHO_TRUE (PM0.5, kg/m3, Grimm)</td>
-          <td className="p-1">RHO_CALIBRATED (PM0.5, kg/m3)</td>
+          <th className="p-1">RHO_DERIVED (PM2.5) MEAN</th>
+          <th className="p-1">RHO_DERIVED (PM2.5) STD_DEV</th>
         </tr>
         <tr>
-          <td className="p-1">{RHO_TRUE.toFixed(2)}</td>
+          <td className="p-1">{rhoDerivedMean.toFixed(2)}</td>
+          <td className="p-1">{rhoDerivedStdDev.toFixed(2)}</td>
+        </tr>
+      </table>
+      <table className="mt-2">
+        <tr>
+          <th className="p-1">RHO_GRIMM (PM0.5, kg/m3, Grimm)</th>
+          <th className="p-1">RHO_PM05_CALIBRATED (PM0.5, kg/m3)</th>
+        </tr>
+        <tr>
+          <td className="p-1">{RHO_GRIMM.toFixed(2)}</td>
           <td className="p-1">{rhoCalibrated.toFixed(2)}</td>
         </tr>
         <tr></tr>
@@ -132,6 +175,7 @@ table#caltab, th, td {
       <table className="mt-2" id="caltab">
         <tr>
           <th className="p-1">Time</th>
+          <th className="p-1">RHO_DERIVED (PM2.5) µg/m3</th>
           <th className="p-1">Density µg/m3 PM0.5 (uncalibrated)</th>
           <th className="p-1">Density µg/m3 PM0.5 (calibrated)</th>
         </tr>
@@ -142,6 +186,7 @@ table#caltab, th, td {
               key={i}
             >
               <td className="p-1">{date.toLocaleTimeString()}</td>
+              <td className="p-1">{rhoDerived[i].toFixed()}</td>
               <td className="p-1">{pm05.toFixed(2)}</td>
               <td className="p-1">{pm05Calibrated.toFixed(2)}</td>
             </tr>
@@ -153,3 +198,13 @@ table#caltab, th, td {
 };
 
 export default Calibration;
+
+const mean = (values: number[]) => sum(...values) / values.length;
+
+function stddev(values: number[]) {
+  const n = values.length;
+  const m = mean(values);
+  return Math.sqrt(
+    values.map((x) => Math.pow(x - m, 2)).reduce((a, b) => a + b) / n
+  );
+}
