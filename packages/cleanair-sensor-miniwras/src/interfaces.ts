@@ -3,12 +3,16 @@ import { Entry as PocketEntry } from "../../cleanair-sensor-pocketlabs/src/inter
 import { DatEntry } from "./streams/parse-measure-stream";
 export * from "./streams/parse-measure-stream";
 
-export type Entry = {
+export type Entry = DatEntry & {
   date: Date;
   pm_2_5: number;
   pm05To3Calibrated: number;
-  pm05: number;
+  /**
+   * PM0.5 calibrated using the Durag formula, but adjusted to
+   * https://en.wikipedia.org/wiki/Aethalometer readings.
+   */
   pm05Calibrated: number;
+  pm05Derived: number;
   pm05EndCol: number;
   channels: DatEntry["channels"];
 

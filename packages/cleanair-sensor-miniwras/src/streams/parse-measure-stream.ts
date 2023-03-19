@@ -72,7 +72,7 @@ export type DatEntry = {
     sub3000nm: Channel[];
   };
   pm_2_5: number;
-  pm05: number;
+  pm05Naive: number;
   pm05EndCol: number;
 };
 
@@ -136,7 +136,7 @@ export const parse = async (
           const pm_2_5 = cells[state.headerIndiciesByName["pm2.5 [ug/m3]"]!];
           invariant(date_raw, "date missing");
           invariant(Number.isFinite(pm_2_5), "column 'pm2.5 [ug/m3]' missing");
-          let pm05 = 0;
+          let pm05Naive = 0;
           let pm3 = 0;
           let colIdx = state.headerIndiciesByName[COL_NAME_DATA_START];
           const pm05EndCol =
@@ -182,7 +182,7 @@ export const parse = async (
               //   numParticles,
               //   μg,
               // });
-              pm05 += μg;
+              pm05Naive += μg;
             }
             if (colIdx < pm3EndCol) {
               channels.sub3000nm.push(channel);
@@ -193,7 +193,7 @@ export const parse = async (
           }
           console.log({
             sampleNum: state.records.length,
-            pm05,
+            pm05: pm05Naive,
             debug,
           });
           state.records.push({
@@ -201,7 +201,7 @@ export const parse = async (
             date: fieldParsersByName.date(date_raw),
             debug,
             pm05EndCol,
-            pm05,
+            pm05Naive: pm05Naive,
             pm_2_5: fieldParsersByName.pm_2_5(pm_2_5),
           });
           if (done) {

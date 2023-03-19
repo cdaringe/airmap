@@ -38,7 +38,7 @@ const Calibration: React.FC = () => {
   const [calibrationSampleIndex, setCalibrationSampleIndex] = React.useState(0);
   const features = luggage.features;
   const [referenceDensity, setReferenceDensity] = useState(
-    features[calibrationSampleIndex]?.properties.pm05 || 0
+    features[calibrationSampleIndex]?.properties.pm05Naive || 0
   );
 
   /**
@@ -93,6 +93,11 @@ const Calibration: React.FC = () => {
     );
     properties.pm05To3Calibrated =
       properties.pm_2_5 - properties.pm05Calibrated;
+
+    properties.pm05Derived = derivePM05Density(
+      properties.channels,
+      rhoDerivedMean
+    );
   });
   return (
     <div className="p-4">
@@ -176,18 +181,18 @@ table#caltab, th, td {
         <tr>
           <th className="p-1">Time</th>
           <th className="p-1">RHO_DERIVED (PM2.5) µg/m3</th>
-          <th className="p-1">Density µg/m3 PM0.5 (uncalibrated)</th>
+          <th className="p-1">Density µg/m3 PM0.5 (naive)</th>
           <th className="p-1">Density µg/m3 PM0.5 (calibrated)</th>
         </tr>
         {luggage.features.map(
-          ({ properties: { date, pm05, pm05Calibrated } }, i) => (
+          ({ properties: { date, pm05Naive, pm05Calibrated } }, i) => (
             <tr
               className={i === calibrationSampleIndex ? "bg-lime-200" : ""}
               key={i}
             >
               <td className="p-1">{date.toLocaleTimeString()}</td>
               <td className="p-1">{rhoDerived[i].toFixed()}</td>
-              <td className="p-1">{pm05.toFixed(2)}</td>
+              <td className="p-1">{pm05Naive.toFixed(2)}</td>
               <td className="p-1">{pm05Calibrated.toFixed(2)}</td>
             </tr>
           )

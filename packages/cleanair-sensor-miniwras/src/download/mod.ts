@@ -95,6 +95,7 @@ export const combine = ({
         ...stravaEntry,
         ...miniv,
         pm05Calibrated: -1,
+        pm05Derived: -1,
         pm05To3Calibrated: -1,
         pocketlabsEntry: pocketEntry ? pocketEntry : undefined,
       });

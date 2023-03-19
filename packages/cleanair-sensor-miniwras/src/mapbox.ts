@@ -18,7 +18,7 @@ type EntryKeys = keyof Entry;
 
 const PM2_FIELD_NAME: EntryKeys = "pm_2_5" as const;
 const PM2_CALIBRATED_FIELD_NAME: EntryKeys = "pm05To3Calibrated" as const;
-const PM05_FIELD_NAME: EntryKeys = "pm05" as const;
+const PM05_FIELD_NAME: EntryKeys = "pm05Naive" as const;
 const PM05_CALIBRATED_FIELD_NAME: EntryKeys = "pm05Calibrated" as const;
 
 const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
@@ -58,10 +58,11 @@ export const makeGetLevels: (fieldName: keyof Entry) => MapGetLevels<Entry> =
   };
 
 export const getLevelsByField = {
-  ["PM0.5 μg/m^3"]: makeGetLevels("pm05"),
+  ["PM0.5 μg/m^3 (derived)"]: makeGetLevels("pm05Derived"),
+  ["PM0.5 μg/m^3 (naive)"]: makeGetLevels("pm05Naive"),
   ["PM2.5 μg/m^3"]: makeGetLevels("pm_2_5"),
   ["PM0.5 μg/m^3 (calibrated)"]: makeGetLevels("pm05Calibrated"),
   ["PM0.5-3 μg/m^3 (calibrated)"]: makeGetLevels("pm05To3Calibrated"),
 };
 
-export const getLevels = getLevelsByField["PM0.5 μg/m^3"];
+export const getLevels = getLevelsByField["PM0.5 μg/m^3 (derived)"];
