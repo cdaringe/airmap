@@ -67,4 +67,4 @@ export type Observation = {
   temperature_f: number;
 };
 
-export type SensorAccess = { key: string; sensorIndex: number };
+export type SensorAccess = { sensorIndex: number };

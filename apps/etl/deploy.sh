@@ -24,3 +24,5 @@ cd $BUILD_DIR;
 docker build -t $TAG .;
 rm -rf $BUILD_DIR;
 "
+
+echo "now run standard provisioning"

@@ -1,0 +1,20 @@
+# this is expected to be run on some remote server.
+# cmd: TOKEN=... docker-compose up --force-recreate -d
+version: "3"
+services:
+  jupyter:
+    image: jupyter/datascience-notebook
+    volumes:
+      - $PWD/work:/home/jovyan/work
+    ports:
+      - 11111:8888
+    environment:
+      NB_USER: airman
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 120s
+    # token stored in p.dub vault
+    command: start.sh jupyter lab --LabApp.token=$TOKEN
