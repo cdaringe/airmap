@@ -1,5 +1,5 @@
 import { Entry } from "../interfaces";
-import { normalizeDateString } from "./parse-utils";
+import { parsePocketDate } from "./parse-utils";
 
 function invariant<TValue>(
   value: TValue,
@@ -47,14 +47,7 @@ const entryKeyByColKey: Record<AllKeys, keyof Entry> = {
 };
 
 const parserByColKey: Record<AllKeys, (v: string) => number | Date> = {
-  Date: (rawValue) => {
-    const v = normalizeDateString(rawValue);
-    const d = new Date(v);
-    if (isNaN(d.getTime())) {
-      throw new Error(`invalid date ${v}`);
-    }
-    return d;
-  },
+  Date: (rawValue) => parsePocketDate(rawValue),
   Lat: parseFloat,
   Lng: parseFloat,
   "t (s)": (v) => parseInt(v),
