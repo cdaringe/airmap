@@ -84,7 +84,14 @@ type State = {
   records: DatEntry[];
 };
 
-const float = (v: string) => parseFloat(v);
+const float = (v: string) => {
+  const value = parseFloat(v);
+  if (Number.isNaN(value)) {
+    console.error(`Expected a number, got a NaN. MiniWras export problem?`);
+    return 0;
+  }
+  return value;
+};
 const fieldParsersByName = {
   date: usLocalDateTimetoDate,
   pm_2_5: float,

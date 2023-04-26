@@ -54,7 +54,7 @@ const Calibration: React.FC = () => {
    * ρ = (x_0 + x_1 + ... + n) / pm25
    */
   const rhoDerived = React.useMemo(() => {
-    return features.map(function deriveRhoActualForSample(feature) {
+    return features.map(function deriveRhoActualForSample(feature, _i) {
       const denominator = sum(
         ...feature.properties.channels.sub3000nm.map((channel) =>
           toPartialμgPerM3SansRho(
