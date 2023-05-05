@@ -30,7 +30,7 @@ function generateGpx(xs: { lat: number; lon: number; date: Date }[]) {
   const content = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="StravaGPX iPhone" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" xmlns="http://www.topografix.com/GPX/1/1">
   <metadata>
-    <time${xs[0]!.date.toISOString()}</time>
+    <time>${xs[0]!.date.toISOString()}</time>
   </metadata>
   <trk>
     <name>Walk</name>
