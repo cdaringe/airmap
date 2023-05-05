@@ -1,7 +1,7 @@
 import type { Task, Tasks } from "https://deno.land/x/rad/src/mod";
 
-const format: Task = `deno fmt packages`;
-const test: Task = `deno test --import-map import_map.json --unstable -A $(fd .test.ts packages)`;
+const format: Task = `npm run format`;
+const test: Task = `npm run test`;
 
 /**
  * Launch dev docker based services for PurpleAir ETL app

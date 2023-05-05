@@ -185,11 +185,13 @@ export const toGeoJSON = (function () {
           coords = [],
           times = [];
         if (elems.length === 0) elems = get(root, "gx:coord");
-        for (var i = 0; i < elems.length; i++)
+        for (var i = 0; i < elems.length; i++) {
           coords.push(gxCoord(nodeVal(elems[i])));
+        }
         var timeElems = get(root, "when");
-        for (var j = 0; j < timeElems.length; j++)
+        for (var j = 0; j < timeElems.length; j++) {
           times.push(nodeVal(timeElems[j]));
+        }
         return {
           coords: coords,
           times: times,
@@ -328,12 +330,14 @@ export const toGeoJSON = (function () {
             outline = nodeVal(get1(polyStyle, "outline"));
           if (pcolor) properties.fill = pcolor;
           if (!isNaN(popacity)) properties["fill-opacity"] = popacity;
-          if (fill)
+          if (fill) {
             properties["fill-opacity"] =
               fill === "1" ? properties["fill-opacity"] || 1 : 0;
-          if (outline)
+          }
+          if (outline) {
             properties["stroke-opacity"] =
               outline === "1" ? properties["stroke-opacity"] || 1 : 0;
+          }
         }
         if (extendedData) {
           var datas = get(extendedData, "Data"),

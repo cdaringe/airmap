@@ -39,6 +39,11 @@ export function Nav({ className, ...rest }: React.HTMLProps<HTMLDivElement>) {
                     GPS
                   </a>
                 </Link>
+                <Link {...{ legacyBehavior: true, href: "/convert" }}>
+                  <a className="px-3 py-2 text-sm font-medium text-gray-800 rounded-md dark:text-white hover:text-gray-800 dark:hover:text-white">
+                    Convert
+                  </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -64,6 +69,11 @@ export function Nav({ className, ...rest }: React.HTMLProps<HTMLDivElement>) {
           <Link {...{ legacyBehavior: true, href: "/gps" }}>
             <a className="block px-3 py-2 text-base font-medium text-gray-800 rounded-md dark:text-white">
               GPS
+            </a>
+          </Link>
+          <Link {...{ legacyBehavior: true, href: "/convert" }}>
+            <a className="block px-3 py-2 text-base font-medium text-gray-800 rounded-md dark:text-white">
+              Convert
             </a>
           </Link>
         </div>
