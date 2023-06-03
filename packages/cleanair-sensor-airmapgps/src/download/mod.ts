@@ -10,7 +10,7 @@ type State = {
   records: Entry[];
 };
 
-export const createModule = (r: ModResources) => {
+export const createModule = () => {
   const download = async (urls: string[]) => {
     const [url] = urls;
     invariant(url, "missing airmap gps url");

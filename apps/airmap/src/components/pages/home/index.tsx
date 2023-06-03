@@ -91,21 +91,6 @@ export default function Home() {
               rawUpdate({
                 luggage,
                 datasource: "csvurl",
-                sensorType: MINIWRAS_ID,
-                urls: [
-                  "https://docs.google.com/spreadsheets/d/1XqB95gipLDOOsCfYFMV1RXREYUp14POM0fnV1hNRekA/edit#gid=802667302",
-                  "https://docs.google.com/spreadsheets/d/1M7m01WPZJ6qG0hSgpEyRO977LOViQfanGpqy_GXSxY0/edit#gid=1094314331",
-                ].map((url) => toSheetsDataExportUrl(url)),
-              })
-            }
-          >
-            default miniwras
-          </Button>
-          <Button
-            onClick={() =>
-              rawUpdate({
-                luggage,
-                datasource: "csvurl",
                 sensorType: FLOW_ID,
                 urls: [
                   "https://docs.google.com/spreadsheets/d/1x59PQjrKqN3NSORDaTAs557v0mloOosNTnqKhfrE3VU/edit#gid=585713925",

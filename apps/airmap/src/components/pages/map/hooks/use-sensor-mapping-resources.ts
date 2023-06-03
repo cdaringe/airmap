@@ -15,8 +15,7 @@ export const getFlow = () =>
   import(
     "../../../../../../../packages/cleanair-sensor-flow/src/resources"
   ).then(async (m) => {
-    const { closestTo } = await import("date-fns");
-    return m.getResources({ closestTo });
+    return m.getResources();
   });
 
 export const getMiniWras = () =>
@@ -30,8 +29,7 @@ export const getAirmapGps = () =>
   import(
     "../../../../../../../packages/cleanair-sensor-airmapgps/src/resources"
   ).then(async (m) => {
-    const { closestTo } = await import("date-fns");
-    return m.getResources({ closestTo });
+    return m.getResources();
   });
 
 export const useSensorMappingResources = (sensorType: number) => {

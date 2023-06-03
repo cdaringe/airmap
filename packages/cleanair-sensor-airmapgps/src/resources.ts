@@ -3,7 +3,7 @@ import * as mapbox from "./mapbox";
 import { Entry, ModResources } from "./interfaces";
 import { MappingResourcesMod } from "../../cleanair-sensor-common/mod";
 
-export const getResources = (r: ModResources): MappingResourcesMod<Entry> => {
-  const download = createDownloadModule(r);
+export const getResources = (): MappingResourcesMod<Entry> => {
+  const download = createDownloadModule();
   return { download, mapbox };
 };
