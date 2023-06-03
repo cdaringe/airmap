@@ -29,6 +29,7 @@ const bundleModules: Task = {
     for (const modFilename of pkgsWithMod) {
       const dest = `build/${modFilename.replace(/ts$/, "js")}`;
       // const cmd = `deno bundle ${modFilename} ${dest}`;
+      logger.info(`bundling: ${modFilename}`);
       const cmd = `pnpm exec esbuild --format=esm --bundle ${modFilename} --outfile=${dest}`;
       await Deno.mkdir(path.dirname(dest), { recursive: true });
       logger.info(cmd);
