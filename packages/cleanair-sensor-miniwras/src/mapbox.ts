@@ -14,13 +14,6 @@ const COLORS = [
   "black",
 ];
 
-type EntryKeys = keyof Entry;
-
-const PM2_FIELD_NAME: EntryKeys = "pm_2_5" as const;
-const PM2_CALIBRATED_FIELD_NAME: EntryKeys = "pm05To3Calibrated" as const;
-const PM05_FIELD_NAME: EntryKeys = "pm05Naive" as const;
-const PM05_CALIBRATED_FIELD_NAME: EntryKeys = "pm05Calibrated" as const;
-
 const FIXED_PM2_LEVEL_RANGES: [number, number][] = [
   0, 0.25, 0.5, 1, 2.5, 5, 20,
 ].map((lower, i, arr) => {
@@ -62,6 +55,7 @@ export const getLevelsByField = {
   ["PM0.5 μg/m^3 (naive)"]: makeGetLevels("pm05Naive"),
   ["PM2.5 μg/m^3"]: makeGetLevels("pm_2_5"),
   ["PM0.5 μg/m^3 (calibrated)"]: makeGetLevels("pm05Calibrated"),
+  ["PM0.1-0.3 μg/m^3 (calibrated)"]: makeGetLevels("pm01To03Calibrated"),
   ["PM0.5-3 μg/m^3 (calibrated)"]: makeGetLevels("pm05To3Calibrated"),
 };
 

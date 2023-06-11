@@ -13,6 +13,21 @@ import Button from "../../../atoms/button";
 import Input from "../../../atoms/input";
 import { useDataSource } from "../../../data-source/use-data-source";
 
+function derivePM01to03Density(channels: DatEntry["channels"], rho: number) {
+  return sum(
+    ...channels.all
+      .filter((c) => c.diameterMidpointNm >= 100 && c.diameterMidpointNm <= 300)
+      .map((channel) =>
+        toPartialμgPerM3(
+          channel.value,
+          channel.diameterMidpointNm,
+          channel.calibrationIndex,
+          rho
+        )
+      )
+  );
+}
+
 function derivePM05Density(channels: DatEntry["channels"], rho: number) {
   return sum(
     ...channels.sub500nm.map((channel) =>
@@ -86,7 +101,13 @@ const Calibration: React.FC = () => {
     );
     return referenceDensity / denominator;
   }, [referenceDensity, features, calibrationSampleIndex]);
+
   features.forEach(({ properties }) => {
+    properties.pm01To03Calibrated = derivePM01to03Density(
+      properties.channels,
+      rhoCalibrated
+    );
+    debugger;
     properties.pm05Calibrated = derivePM05Density(
       properties.channels,
       rhoCalibrated

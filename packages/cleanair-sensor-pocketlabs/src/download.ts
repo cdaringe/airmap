@@ -1,7 +1,7 @@
-import { parse } from "./streams/parse-pocketlabs-stream";
 import { streamGoogleSheetsCsv } from "../../cleanair-google-sheets/mod";
-import { Entry } from "./interfaces";
 import type { GeoJSON } from "../../cleanair-sensor-common/mod";
+import { Entry } from "./interfaces";
+import { parse } from "./streams/parse-pocketlabs-stream";
 
 const applyEpaCorrection = (old: number, humidity: number) =>
   0.0534 * old - 0.0844 * humidity + 5.604;

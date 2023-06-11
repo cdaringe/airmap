@@ -1,6 +1,6 @@
+import clsx from "clsx";
 import Link from "next/link";
 import AirIcon from "./icon/svg/air";
-import clsx from "clsx";
 export function Nav({ className, ...rest }: React.HTMLProps<HTMLDivElement>) {
   return (
     <nav

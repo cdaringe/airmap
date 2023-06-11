@@ -1,5 +1,4 @@
-import { type GeoJSON } from "../../../cleanair-sensor-common/mod";
-
+import { closestTo } from "date-fns";
 /**
  * Download Flow sensor datas.
  * Flow sensor CSVs take both a measurements and positions CSV.
@@ -7,6 +6,9 @@ import { type GeoJSON } from "../../../cleanair-sensor-common/mod";
  */
 /// <reference types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/geojson/index.d.ts" />
 import { streamGoogleSheetsCsv } from "../../../cleanair-google-sheets/mod";
+import { type GeoJSON } from "../../../cleanair-sensor-common/mod";
+import { invariant } from "../../../invariant/mod";
+import { Entry } from "../interfaces";
 import {
   MeasureEntry,
   parse as parseMeasure,
@@ -15,10 +17,7 @@ import {
   parse as parsePositions,
   PositionsEntry,
 } from "../streams/parse-positions-stream";
-import { Entry, ModResources } from "../interfaces";
-import { invariant } from "../../../invariant/mod";
 import { take } from "./iter";
-import { closestTo } from "date-fns";
 
 export const combine = async ({
   measures,

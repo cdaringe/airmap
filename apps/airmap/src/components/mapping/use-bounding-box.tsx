@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { bbox } from "@turf/turf";
+import { useEffect } from "react";
 
 export const useInitialBoundingBox = (
   geojson: GeoJSON.GeoJSON | undefined,

@@ -4,9 +4,9 @@ import { ApiCallTracker } from "../../api-call-tracker";
 import { getConfig } from "../../config";
 import { isProd } from "../../env";
 import {
-  PurpleSensorResponse,
-  PurpleHistoryResponse,
   PurpleHistoryDataRecord,
+  PurpleHistoryResponse,
+  PurpleSensorResponse,
 } from "../../interfaces";
 
 const rateLimitGot = (() => {

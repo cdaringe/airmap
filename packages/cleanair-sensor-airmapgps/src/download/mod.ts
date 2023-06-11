@@ -1,8 +1,8 @@
-import { type GeoJSON } from "../../../cleanair-sensor-common/mod";
 /// <reference types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/geojson/index.d.ts" />
 import { streamGoogleSheetsCsv } from "../../../cleanair-google-sheets/mod";
-import { Entry, ModResources } from "../interfaces";
+import { type GeoJSON } from "../../../cleanair-sensor-common/mod";
 import { invariant } from "../../../invariant/mod";
+import { Entry } from "../interfaces";
 
 type State = {
   partial: string;

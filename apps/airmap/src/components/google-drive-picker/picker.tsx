@@ -1,8 +1,7 @@
-import { createPickerResources } from "./integration/picker";
-
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { PickerConfiguration } from "./integration/interfaces";
 import { useGoogleApis } from "./integration/load-google-apis";
+import { createPickerResources } from "./integration/picker";
 
 const defaultScopes = ["https://www.googleapis.com/auth/drive.readonly"];
 

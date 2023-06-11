@@ -1,5 +1,5 @@
 import { csv2geojson } from "csv2geojson";
-import { asCsv, normalizeMultiTableCsv } from "./normalize-multi-table-csv";
+import { asCsv } from "./normalize-multi-table-csv";
 
 const csvToGeoJson = <Properties = GeoJSON.GeoJsonProperties>(csv: string) =>
   new Promise<GeoJSON.FeatureCollection<GeoJSON.Geometry, Properties>>(

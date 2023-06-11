@@ -1,15 +1,15 @@
 import type { FC, HTMLProps } from "react";
-import { DataSourceNames, DataSourceSelector } from "./DataSourceSelector";
-import Input from "../atoms/input";
-import Button from "../atoms/button";
-import Select from "../atoms/select";
 import {
+  AIRMAP_GPS_ID,
   FLOW_ID,
   MINIWRAS_ID,
   NO_SENSOR_ID,
   POCKET_LABS_ID,
-  AIRMAP_GPS_ID,
 } from "../../../../../packages/cleanair-sensor-common/mod";
+import Button from "../atoms/button";
+import Input from "../atoms/input";
+import Select from "../atoms/select";
+import { DataSourceNames, DataSourceSelector } from "./DataSourceSelector";
 import { MiniWrasDataSource } from "./MiniWrasDataSource";
 
 export type DataSource = {

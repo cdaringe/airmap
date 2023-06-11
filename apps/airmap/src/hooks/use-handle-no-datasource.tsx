@@ -1,7 +1,7 @@
-import { useDataSource } from "../components/data-source/use-data-source";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { MINIWRAS_ID } from "../../../../packages/cleanair-sensor-common/mod";
+import { useDataSource } from "../components/data-source/use-data-source";
 
 const isMiniWrasOk = (sensorType: number, luggage: any) =>
   sensorType === MINIWRAS_ID && luggage;

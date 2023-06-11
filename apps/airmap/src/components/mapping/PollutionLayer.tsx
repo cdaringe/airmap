@@ -1,6 +1,6 @@
-import { GeoJSONLayer } from "react-mapbox-gl";
+import type { CircleLayout, CirclePaint, MapMouseEvent } from "mapbox-gl";
 import React from "react";
-import type { MapMouseEvent, CircleLayout, CirclePaint } from "mapbox-gl";
+import { GeoJSONLayer } from "react-mapbox-gl";
 
 type GeoPoint = GeoJSON.Feature<GeoJSON.Point>;
 

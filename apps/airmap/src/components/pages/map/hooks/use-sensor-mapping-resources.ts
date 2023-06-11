@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
 import {
-  POCKET_LABS_ID,
+  AIRMAP_GPS_ID,
   FLOW_ID,
   MINIWRAS_ID,
-  AIRMAP_GPS_ID,
+  POCKET_LABS_ID,
 } from "../../../../../../../packages/cleanair-sensor-common/mod";
 
 export const getPocket = () =>

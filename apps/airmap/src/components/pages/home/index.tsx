@@ -1,19 +1,19 @@
-import { DataSourceWidget } from "../../data-source/DataSourceWidget";
+import { useRouter } from "next/router";
+import React from "react";
 import {
   isGoogleSheetsCompatibleUrl,
   toSheetsDataExportUrl,
 } from "../../../../../../packages/cleanair-google-sheets/mod";
-import { useDataSource, DataSource } from "../../data-source/use-data-source";
-import { useRouter } from "next/router";
-import React from "react";
-import { useMapAuth } from "../../mapping/use-map-auth";
-import Button from "../../atoms/button";
 import {
-  POCKET_LABS_ID,
+  AIRMAP_GPS_ID,
   FLOW_ID,
   MINIWRAS_ID,
-  AIRMAP_GPS_ID,
+  POCKET_LABS_ID,
 } from "../../../../../../packages/cleanair-sensor-common/mod";
+import Button from "../../atoms/button";
+import { DataSourceWidget } from "../../data-source/DataSourceWidget";
+import { DataSource, useDataSource } from "../../data-source/use-data-source";
+import { useMapAuth } from "../../mapping/use-map-auth";
 
 type DSKey = keyof DataSource;
 type DsUpdateFn = <K extends DSKey>(k: K, v: DataSource[K]) => void;

@@ -3,11 +3,10 @@
  * Flow sensor CSVs take both a measurements and positions CSV.
  * They must be streamed and zipped together.
  */
-import { DatEntry } from "../interfaces";
 import { type GeoJSON } from "../../../cleanair-sensor-common/mod";
 import type { Entry as PocketlabsEntry } from "../../../cleanair-sensor-pocketlabs/src/interfaces";
 import type { Entry as StravaEntry } from "../../../cleanair-sensor-strava-gpx/mod";
-import { Entry } from "../interfaces";
+import { DatEntry, Entry } from "../interfaces";
 
 export type GeoJSONMiniWras = GeoJSON.FeatureCollection<GeoJSON.Point, Entry>;
 
@@ -97,6 +96,7 @@ export const combine = ({
         pm05Calibrated: -1,
         pm05Derived: -1,
         pm05To3Calibrated: -1,
+        pm01To03Calibrated: -1,
         pocketlabsEntry: pocketEntry ? pocketEntry : undefined,
       });
     }

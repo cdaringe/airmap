@@ -1,18 +1,13 @@
-import React, {
-  useState,
-  PureComponent,
-  useLayoutEffect,
-  ChangeEventHandler,
-} from "react";
-import { useAtmosTubeCsv, RowData } from "../src/hooks/useAtmotubeCsv";
+import React, { PureComponent, useLayoutEffect, useState } from "react";
 import {
-  AreaChart,
   Area,
+  AreaChart,
   CartesianGrid,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
 } from "recharts";
+import { useAtmosTubeCsv } from "../src/hooks/useAtmotubeCsv";
 import { getDMY } from "../src/util/date";
 
 const IS_PRODUCTION = process.env.NODE_ENV === "production";

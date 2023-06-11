@@ -1,7 +1,7 @@
-import { parse } from "./streams/parse-stream";
 import { streamGoogleSheetsCsv } from "../../cleanair-google-sheets/mod";
-import { Entry } from "./interfaces";
 import type { GeoJSON } from "../../cleanair-sensor-common/mod";
+import { Entry } from "./interfaces";
+import { parse } from "./streams/parse-stream";
 
 export const download = async (urls: string[]) => {
   const stream = await streamGoogleSheetsCsv(urls[0]!).then(parse);

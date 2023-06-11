@@ -1,5 +1,12 @@
-export * from "./mapbox";
 export type { GeoJSON } from "geojson";
+export * from "./mapbox";
+
+export type MapLevels = {
+  circleCases: any[];
+  colors: string[];
+  fieldName: string;
+  ranges: [number, number][];
+};
 
 export type MapGetLevels<P = any> = ({
   isMinMaxDynamicRange,
@@ -7,12 +14,7 @@ export type MapGetLevels<P = any> = ({
 }: {
   isMinMaxDynamicRange: boolean;
   geojson: GeoJSON.FeatureCollection<GeoJSON.Point, any>;
-}) => {
-  circleCases: any[];
-  colors: string[];
-  fieldName: string;
-  ranges: [number, number][];
-};
+}) => MapLevels;
 
 export type SensorDataHook<P = any> = (urls: string[]) => {
   downloadGeoJSON: () => Promise<

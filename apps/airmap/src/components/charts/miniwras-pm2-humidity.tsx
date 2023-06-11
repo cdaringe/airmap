@@ -1,14 +1,14 @@
 import React, { PropsWithChildren } from "react";
 import {
-  LineChart,
+  CartesianGrid,
+  Label,
+  Legend,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Label,
 } from "recharts";
 import { Entry } from "../../../../../packages/cleanair-sensor-miniwras/mod";
 

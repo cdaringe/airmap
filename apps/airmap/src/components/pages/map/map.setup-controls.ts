@@ -1,5 +1,5 @@
 import type { Map } from "mapbox-gl";
-import { RulerControl, ZoomControl, StylesControl } from "mapbox-gl-controls";
+import { RulerControl, StylesControl, ZoomControl } from "mapbox-gl-controls";
 
 export default async function setupControls(map: Map) {
   map.addControl(new StylesControl(), "bottom-right");

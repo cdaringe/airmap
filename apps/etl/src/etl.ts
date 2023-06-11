@@ -1,13 +1,12 @@
+import { addSeconds, differenceInHours } from "date-fns";
 import pino from "pino";
+import { ApiCallTracker } from "./api-call-tracker";
+import { isProd } from "./env";
 import { SensorAccess } from "./interfaces";
 import * as sink from "./purpleair/sink/queries";
 import * as source from "./purpleair/source/purpleapi";
 import { sensors } from "./sensors";
-import { addSeconds, differenceInHours } from "date-fns";
-import { ApiCallTracker } from "./api-call-tracker";
-import * as fs from "fs";
 import { sleep } from "./util";
-import { isProd } from "./env";
 
 const { IS_VSCODE_DEBUG } = process.env;
 

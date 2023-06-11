@@ -1,15 +1,15 @@
 import { useRouter } from "next/router";
 import React from "react";
 import { FileUploader } from "react-drag-drop-files";
-import { Entry as StravaEntry } from "../../../../../packages/cleanair-sensor-strava-gpx/mod";
+import { combine } from "../../../../../packages/cleanair-sensor-miniwras/mod";
 import type { DatEntry } from "../../../../../packages/cleanair-sensor-miniwras/src/interfaces";
 import type { Entry as PocketEntry } from "../../../../../packages/cleanair-sensor-pocketlabs/src/interfaces";
+import { Entry as StravaEntry } from "../../../../../packages/cleanair-sensor-strava-gpx/mod";
 import Button from "../atoms/button";
 import {
   getMiniWras,
   getPocket,
 } from "../pages/map/hooks/use-sensor-mapping-resources";
-import { combine } from "../../../../../packages/cleanair-sensor-miniwras/mod";
 
 const fileTypes = new Set(["dat", "csv", "gpx"] as const);
 

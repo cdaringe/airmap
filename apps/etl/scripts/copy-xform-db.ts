@@ -8,6 +8,7 @@
 const FN_TO_RUN = observationsToDisk;
 
 import * as pg from "pg";
+import QueryStream from "pg-query-stream";
 const pool = process.env.PGPASSWORD
   ? new pg.Pool()
   : (() => {
@@ -15,7 +16,6 @@ const pool = process.env.PGPASSWORD
         "add a secrets.ts file, and include it via `node -r ./secrets.ts` style"
       );
     })();
-import QueryStream from "pg-query-stream";
 const JSONStream = require("JSONStream");
 
 async function observationsToDisk() {

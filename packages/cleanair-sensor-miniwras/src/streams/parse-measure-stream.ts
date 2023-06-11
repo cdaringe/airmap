@@ -68,6 +68,7 @@ export type DatEntry = {
   date: Date;
   debug?: ParticleDebug[];
   channels: {
+    all: Channel[];
     sub500nm: Channel[];
     sub3000nm: Channel[];
   };
@@ -156,11 +157,12 @@ export const parse = async (
            */
           let calibrationIndex = 0;
           const channels: DatEntry["channels"] = {
+            all: [],
             sub500nm: [],
             sub3000nm: [],
           };
 
-          // aggregrate channels => metrics of interest
+          // aggregate channels => metrics of interest
           while (colIdx < pm3EndCol) {
             const numParticles = parseFloat(cells[colIdx]);
             const leadingDiameter =
@@ -173,6 +175,7 @@ export const parse = async (
               diameterMidpointNm,
               calibrationIndex,
             };
+            channels.all.push(channel);
             const μg = toPartialμgPerM3(
               numParticles,
               diameterMidpointNm,

@@ -1,8 +1,5 @@
-import {
-  getMiniWras,
-  getPocket,
-} from "../src/components/pages/map/hooks/use-sensor-mapping-resources";
 import { FileUploader } from "react-drag-drop-files";
+import { getPocket } from "../src/components/pages/map/hooks/use-sensor-mapping-resources";
 
 function Convert() {
   async function handleFilesChanged(file: File) {

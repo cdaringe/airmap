@@ -1,5 +1,4 @@
 import {
-  Observation,
   PurpleHistoryDataRecord,
   PurpleSensorResponse,
   SensorLocationOutdoor,
