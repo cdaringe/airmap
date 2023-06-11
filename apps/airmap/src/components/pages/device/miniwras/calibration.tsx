@@ -103,11 +103,10 @@ const Calibration: React.FC = () => {
   }, [referenceDensity, features, calibrationSampleIndex]);
 
   features.forEach(({ properties }) => {
-    properties.pm01To03Calibrated = derivePM01to03Density(
+    properties.pm01To03Derived = derivePM01to03Density(
       properties.channels,
-      rhoCalibrated
+      rhoDerivedMean
     );
-    debugger;
     properties.pm05Calibrated = derivePM05Density(
       properties.channels,
       rhoCalibrated

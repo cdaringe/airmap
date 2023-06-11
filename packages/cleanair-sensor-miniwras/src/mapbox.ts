@@ -55,7 +55,7 @@ export const getLevelsByField = {
   ["PM0.5 μg/m^3 (naive)"]: makeGetLevels("pm05Naive"),
   ["PM2.5 μg/m^3"]: makeGetLevels("pm_2_5"),
   ["PM0.5 μg/m^3 (calibrated)"]: makeGetLevels("pm05Calibrated"),
-  ["PM0.1-0.3 μg/m^3 (calibrated)"]: makeGetLevels("pm01To03Calibrated"),
+  ["PM0.01-0.03 μg/m^3 (derived)"]: makeGetLevels("pm01To03Derived"),
   ["PM0.5-3 μg/m^3 (calibrated)"]: makeGetLevels("pm05To3Calibrated"),
 };
 

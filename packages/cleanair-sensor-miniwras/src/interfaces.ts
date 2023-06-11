@@ -6,7 +6,7 @@ export * from "./streams/parse-measure-stream";
 export type Entry = DatEntry & {
   date: Date;
   pm_2_5: number;
-  pm01To03Calibrated: number;
+  pm01To03Derived: number;
   pm05To3Calibrated: number;
   /**
    * PM0.5 calibrated using the Durag formula, but adjusted to
