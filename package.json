@@ -25,7 +25,7 @@
     "ts-node": "^10.9.1",
     "turbo": "^1.6.2"
   },
-  "packageManager": "pnpm@7.13.3",
+  "packageManager": "pnpm@8.6.2",
   "ava": {
     "require": [
       "./test/_setup-browser-env.js"

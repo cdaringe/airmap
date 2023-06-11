@@ -16,7 +16,7 @@ jobs:
           node-version: 18.14.2
           registry-url: "https://registry.npmjs.org"
       - name: Install pnpm
-        run: npm install -g pnpm@7
+        run: npm install -g pnpm@8.6.2
       - name: Install and Test
         run: |
           pnpm install
