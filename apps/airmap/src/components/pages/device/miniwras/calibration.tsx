@@ -64,7 +64,7 @@ const Calibration: React.FC = () => {
    * miniwras-reported-pm2.5 = GRIMM_SUMMATION
    * pm25 = GRIMM_SUMMATION
    * pm25 = Σ(ρ*CONSTANTS)
-   * pm25 = (ρ * x_0) + (ρ * x_1) + ... (ρ * n)
+   * pm25 = (ρ * x_0) + (ρ * x_1) + ... (ρ * x_n)
    * pm25 = ρ * (x_0 + x_1 + ... + n)
    * ρ = (x_0 + x_1 + ... + n) / pm25
    */
