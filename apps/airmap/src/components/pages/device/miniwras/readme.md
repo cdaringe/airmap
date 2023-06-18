@@ -22,27 +22,28 @@ Convert TSV => object representation.
 ## Derive a virtual density value, ρ_derived
 
 ...representing the virtual density for all of the observed particulate.
-Such a value will likely be a flawed, especially given that our assumptions presume multi-material and multi-particle-type of diesel, our particle of greatest interest.
+Such a value will likely be a flawed, especially given that our assumptions presume multiple particle types and multiple manifestations of diesel--our particle of greatest interest.
 
-1. Given an miniwras-aggregated PM2.5 value, derive find the particulate density by solving for `ρ`
+1. Given an miniwras-aggregated PM2.5 value, derive the particulate density by solving for `ρ`
    - `pm2_5 = GRIMM_SUMMATION`
-   - `pm2_5 = Σ(ρ*dimension_observation_i)`
+   - `pm2_5 = Σ(ρ*channel_observation_i)`
    - `pm2_5 = (ρ * x_0) + (ρ * x_1) + ... (ρ * x_n)`
    - `pm2_5 = ρ * (x_0 + x_1 + ... + n)`
    - `ρ = (x_0 + x_1 + ... + n) / pm2_5`
 
-...where `x_i` is a unitless scalar, representing any channel's contribution to the overall pm2.5 density. `x_i` is:
+...where `i` maps to channel and `y` maps to sample. `x_i` is a scalar, representing a given channel's contribution to the overall pm2.5 density. For any given `y`, `x_i` is:
 
-1. `channel_i_raw_observation` (scalar / cm^3)
+1. `raw_observation_i` (scalar / cm^3)
 2. `|> / channel_calibration_factor_i` (see appendix)
-3. `|> * (cubic-cm-to-cubic-m)` (cm^3 / m^3")
+3. `|> * (cubic-cm-to-cubic-m)` (cm^3 / m^3)
 4. `|> * (pi/6)`
 5. `|> * channel_midpoint_diameter_m^3` (m^3 / 1)
 6. `|> * 1e9` (µg/kg)
 
-...these units don't cancel, so I'm unclear why we `* 1e9`.
+...these units don't cancel, so I'm unclear why we `* 1e9`. This formula was provided by Grimm & PCA.
+With no known correct inputs and outputs, current implentations
 
-`x_i` are summed for all <3000nm channels, `x_y`, and `ρ_derived = pm2_5_y / x_y` (µg / m^ 3).
+`x_i` are summed for all <3000nm channels (which are presumed to be included in the Grimm pm2.5 column, due to obscure European standard). `ρ_derived = pm2_5_y0 / sum(x_i_y0)` (µg / m^ 3).
 
 ## Appendix
 
