@@ -45,6 +45,12 @@ With no known correct inputs and outputs, current implentations
 
 `x_i` are summed for all <3000nm channels (which are presumed to be included in the Grimm pm2.5 column, due to obscure European standard). `ρ_derived = pm2_5_y0 / sum(x_i_y0)` (µg / m^ 3).
 
+## `PM0.5 μg/m^3 (derived)` calculation
+
+At PCA leadership request, a rough `PM0.5 μg/m^3` is generated.
+
+Using `ρ_derived` from above, `pm0_5 = (ρ_derived * x_0) + (ρ_derived * x_1) + ... (ρ_derived * x_n)`, where `n` is the highest possible diameter channel `<500nm`.
+
 ## Appendix
 
 ## channel_calibrations
