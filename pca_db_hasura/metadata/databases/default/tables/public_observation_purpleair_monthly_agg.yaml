@@ -1,0 +1,12 @@
+table:
+  name: observation_purpleair_monthly_agg
+  schema: public
+select_permissions:
+  - role: readonly
+    permission:
+      columns:
+        - avg_pm_2_5_atm
+        - sensor_id
+        - bucket
+        - timestamp
+      filter: {}

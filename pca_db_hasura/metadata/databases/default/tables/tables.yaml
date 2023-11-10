@@ -2,5 +2,7 @@
 - "!include public_observation_purpleair_api_meta.yaml"
 - "!include public_observation_purpleair_daily_agg.yaml"
 - "!include public_observation_purpleair_hourly_agg.yaml"
+- "!include public_observation_purpleair_monthly_agg.yaml"
+- "!include public_observation_purpleair_weekly_agg.yaml"
 - "!include public_sensor.yaml"
 - "!include public_sensor_type.yaml"
