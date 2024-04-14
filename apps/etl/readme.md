@@ -13,6 +13,7 @@ populate PCA analysis database.
 
 ## build/deploy
 
+- migrate the db before doing anything. see the migration instructions [here](../../pca_db_hasura/readme.md).
 - `bash deploy.sh`
   - the container must be run manually or by an orchestrator
     - script builds the docker image and transports it, does not start it
