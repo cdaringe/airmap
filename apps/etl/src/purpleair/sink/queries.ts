@@ -30,6 +30,7 @@ query GetSensor($sensor_owned_id: Int!) {
  */
 type Observation_purpleair_insert_input = {
   humidity?: number;
+  voc?: number;
   pm_1_atm?: number;
   pm_2_5_atm: number;
   pm_2_5_cf?: number;
@@ -155,6 +156,7 @@ export type LocalSensor = {
   sensor_owned_id: number;
   sensor_type_id: number;
 };
+
 export const getSensor = (sensorIndex: number) =>
   graphQL<{
     sensor: LocalSensor[];
@@ -231,6 +233,7 @@ export async function postRecords(
 ) {
   const records = purpleRecords.map((pr) => {
     const insertInput: Observation_purpleair_insert_input = {
+      voc: pr.voc,
       humidity: pr.humidity,
       pm_1_atm: pr["pm1.0_atm"],
       pm_2_5_atm: pr["pm2.5_atm"],

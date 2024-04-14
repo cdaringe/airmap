@@ -43,7 +43,7 @@ const getSensorObservationHistoryUrl = ({
     `${PURPLE_API_BASE_URL}/sensors/${sensorId}/history/json?`,
     `start_timestamp=${Math.ceil(start.getTime() / 1000)}`,
     `average=60`,
-    "fields=pm2.5_atm,pm1.0_atm,pm2.5_cf_1,humidity,temperature,pressure",
+    "fields=voc,pm2.5_atm,pm1.0_atm,pm2.5_cf_1,humidity,temperature,pressure",
   ].join("&");
   return url;
 };

@@ -12,8 +12,11 @@ const { IS_VSCODE_DEBUG } = process.env;
 
 const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
 
-const logger = pino({ level: "info" });
+const logger = pino({ level: process.env.LOG_LEVEL ?? "info" });
 
+/**
+ * Get sensor from sink (database), or add it if it doesn't exist from purpleair!
+ */
 async function getOrAddSinkSensor({
   sourceCallTracker,
   sensorIndex,
@@ -49,7 +52,7 @@ async function getOrCreateApiMeta(date: Date) {
   if (meta) {
     return meta;
   }
-  logger.info(`creating new daily meta`);
+  logger.debug(`creating new daily meta`);
   return sink.createDailyApiMeta(date);
 }
 
@@ -84,7 +87,7 @@ async function etl(opts: {
     name: sinkSensor.name,
   };
   if (!isFourteenDaySampleAvailable) {
-    logger.info({
+    logger.debug({
       sensor: prettySensor,
       processing: false,
       skip: true,
@@ -97,7 +100,7 @@ async function etl(opts: {
    * already hot, let it continue processing.
    */
   if (isColdStart && hoursSinceSync < 24) {
-    logger.info({
+    logger.debug({
       sensor: prettySensor,
       processing: false,
       skip: true,
@@ -145,10 +148,11 @@ const etlAll = async (sensors: SensorAccess[]) => {
   let count = 0;
   // const sensorsToEtl = sensors.slice(0, 1);
   const sensorsToEtl = sensors;
+  let dailyApiMeta = null;
   for (const sensor of sensorsToEtl) {
     // pre (etl)
-    const dailyApiMeta = await getOrCreateApiMeta(nowDate);
-    logger.info({ dailyApiMeta });
+    dailyApiMeta = await getOrCreateApiMeta(nowDate);
+    logger.debug({ dailyApiMeta });
     const sourceCallTracker = new ApiCallTracker(
       dailyApiMeta.count_api_calls,
       nowDate
@@ -159,8 +163,9 @@ const etlAll = async (sensors: SensorAccess[]) => {
 
     // post (etl)
     ++count;
-    logger.info(`${count} sensors transferred`);
+    logger.debug(`${count} sensors transferred`);
   }
+  logger.info({ dailyApiMeta, count });
 };
 
 // async function dumpSensorData(sensorIndex: number) {

@@ -5,6 +5,7 @@ select_permissions:
   - role: readonly
     permission:
       columns:
+        - avg_pm_1_atm
         - avg_pm_2_5_atm
         - sensor_id
         - bucket

@@ -60,6 +60,7 @@ export interface PurpleHistoryResponse extends PurpleBaseResponse {
 export type Observation = {
   created_at: string;
   humidity: number;
+  voc: number;
   pm_1_atm: number;
   pm_2_5_atm: number;
   pm_2_5_cf: number;

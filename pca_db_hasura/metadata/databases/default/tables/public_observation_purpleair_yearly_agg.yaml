@@ -1,5 +1,5 @@
 table:
-  name: observation_purpleair_monthly_agg
+  name: observation_purpleair_yearly_agg
   schema: public
 select_permissions:
   - role: readonly
