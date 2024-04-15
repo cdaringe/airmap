@@ -18,3 +18,4 @@ populate PCA analysis database.
   - the container must be run manually or by an orchestrator
     - script builds the docker image and transports it, does not start it
     - it must be configured via ENV
+- probably run the orchestrator to restart `:)`

@@ -159,11 +159,20 @@ const etlAll = async (sensors: SensorAccess[]) => {
     );
 
     // etl
-    await etl({ access: sensor, sourceCallTracker, nowDate });
-
-    // post (etl)
-    ++count;
-    logger.debug(`${count} sensors transferred`);
+    await etl({ access: sensor, sourceCallTracker, nowDate }).then(
+      () => {
+        logger.debug(`etl success for sensor: ${sensor.sensorIndex}`);
+        ++count;
+        logger.debug(`${count} sensors transferred`);
+      },
+      (err) => {
+        logger.error({
+          kind: "FAILED_ETL",
+          sensor,
+          err,
+        });
+      }
+    );
   }
   logger.info({ dailyApiMeta, count });
 };
