@@ -5,8 +5,12 @@ select_permissions:
   - role: readonly
     permission:
       columns:
+        - avg_humidity
         - avg_pm_1_atm
         - avg_pm_2_5_atm
+        - avg_pm_2_5_cf
+        - avg_temperature_f
+        - avg_voc
         - sensor_id
         - bucket
         - timestamp
