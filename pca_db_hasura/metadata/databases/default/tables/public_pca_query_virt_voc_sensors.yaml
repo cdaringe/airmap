@@ -1,3 +1,11 @@
 table:
   name: pca_query_virt_voc_sensors
   schema: public
+select_permissions:
+  - role: readonly
+    permission:
+      columns:
+        - sensor_id
+        - ts
+        - voc
+      filter: {}
