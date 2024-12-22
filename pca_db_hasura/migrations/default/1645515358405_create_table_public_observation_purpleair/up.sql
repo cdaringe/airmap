@@ -7,6 +7,7 @@ CREATE TABLE "public"."observation_purpleair" (
   "pm_1_atm" real,
   "humidity" real,
   "pressure" real,
+  "voc" real,
   "temperature_f" real,
   PRIMARY KEY ("id") ,
   FOREIGN KEY ("sensor_id") REFERENCES "public"."sensor"("id") ON UPDATE restrict ON DELETE cascade,

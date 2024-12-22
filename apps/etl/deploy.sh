@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -exo pipefail
 
+IMAGE=cdaringe/etl-purple
+IMAGE_TAR_FILENAME=.tmp_docker_etl-purple.tar
+REMOTE_IMAGE_TAR_FILENAME=/www/$IMAGE_TAR_FILENAME
+
 if [[ -z "${USER}" ]]; then
   echo "missing USER"
   exit 1
@@ -10,19 +14,15 @@ if [[ -z "${HOST}" ]]; then
   exit 1
 fi
 
-npm run build
-BUILD_DIR=/www/pca/tmp-etl-build
-TAG=cdaringe/etl-purple
-ssh $USER@$HOST mv $BUILD_DIR /tmp/"$(openssl rand -hex 12)" || true
-ssh $USER@$HOST mkdir -p $BUILD_DIR
-rsync -a \
-  --exclude 'node_modules' \
-  --exclude 'dist' \
-  . $USER@$HOST:$BUILD_DIR
+docker save -o $IMAGE_TAR_FILENAME $IMAGE
+rsync -avz $IMAGE_TAR_FILENAME $USER@$HOST:$REMOTE_IMAGE_TAR_FILENAME
+
 ssh $USER@$HOST "
-cd $BUILD_DIR;
-docker build -t $TAG .;
-rm -rf $BUILD_DIR;
+set -exo pipefail;
+docker load -i $REMOTE_IMAGE_TAR_FILENAME
+rm $REMOTE_IMAGE_TAR_FILENAME;
+docker images | grep $IMAGE;
 "
 
-echo "now run standard provisioning"
+echo "etl image (tag: $TAG) built on $HOST"
+echo "ok. now run standard provisioning"

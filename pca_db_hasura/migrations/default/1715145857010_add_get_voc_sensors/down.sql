@@ -1,9 +1,1 @@
--- Could not auto-generate a down migration.
--- Please write an appropriate down migration for the SQL below:
--- drop function get_voc_sensors;
--- CREATE OR REPLACE FUNCTION get_voc_sensors(ts timestamp with time zone)
--- RETURNS SETOF pca_query_virt_voc_sensors as $$
--- select sensor_id, max(timestamp) as ts, max(voc) as voc from observation_purpleair
--- where timestamp < ts
--- group by sensor_id
--- $$ LANGUAGE sql STABLE;
+drop function get_voc_sensors;

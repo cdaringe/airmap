@@ -1,6 +1,8 @@
-version: "3"
+# @warn ONLY EDIT this file from the airmap repository (not deployment systems)
 services:
   pca_db:
+    # The std pg14 image crashes with SSL options on boot only. issue filed with timescale
+    image: timescale/timescaledb-ha:pg14
     volumes:
       - $PWD/.docker/db:/var/lib/postgresql/data
   pca_gql:

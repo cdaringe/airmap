@@ -1,10 +1,14 @@
-# this file is sync'd into configuration files by the provision/deploy repo
+# @warn ONLY EDIT this file from the airmap repository (not deployment systems)
 version: "3"
 services:
   pca_db:
+    logging:
+      driver: local
     volumes:
       - /www/pca/db_data:/var/lib/postgresql/data
   pca_gql:
+    logging:
+      driver: local
     ports:
       - 8080
     volumes:
@@ -36,6 +40,8 @@ services:
 
   pca_etl:
     image: cdaringe/etl-purple
+    logging:
+      driver: local
     depends_on:
       - pca_gql
     restart: unless-stopped
@@ -43,6 +49,7 @@ services:
       - API_ENDPOINT=http://pca_gql:8080/v1/graphql
       - API_SECRET_HEADER_KEY=x-hasura-admin-secret
       - HASURA_GRAPHQL_ADMIN_SECRET=${PCA_GQL_ADMIN_SECRET}
+      - LOG_LEVEL=debug
       - PCA_DB_HOST=pca_db
       - PCA_DB_PASSWORD=${PCA_DB_PASSWORD}
       - PCA_DB_PORT=5544

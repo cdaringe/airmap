@@ -39,8 +39,7 @@
         // "node_modules/**"
       ],
       "env": {
-        "HASURA_GRAPHQL_ADMIN_SECRET": "airman",
-        "IS_VSCODE_DEBUG": "true"
+        "HASURA_GRAPHQL_ADMIN_SECRET": "airman"
       }
     }
   ]

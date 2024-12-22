@@ -13,10 +13,10 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v1.4.4
         with:
-          node-version: 18.14.2
+          node-version: 20.15.0
           registry-url: "https://registry.npmjs.org"
       - name: Install pnpm
-        run: npm install -g pnpm@8.6.2
+        run: npm install -g pnpm@9
       - name: Install and Test
         run: |
           pnpm install

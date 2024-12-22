@@ -11,7 +11,7 @@ visit [https://cdaringe.github.io/airmap](https://cdaringe.github.io/airmap)!
 ## contributing
 
 - install `fnm` or `nvm`
-- `npm install -g pnpm@8.6.2`
+- `npm install -g pnpm@latest`
 - `pnpm install`
 - `pnpm dev`
 

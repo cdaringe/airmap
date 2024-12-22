@@ -15,17 +15,19 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "@types/geojson": "^7946.0.8",
+    "@types/geojson": "^7946.0.15",
     "ava": "4.1.0",
     "browser-env": "3.3.0",
     "esbuild": "0.17.7",
     "geojson": "0.5.0",
-    "prettier": "^2.7.1",
+    "npm-run-all2": "6.2.0",
+    "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "3.2.2",
-    "ts-node": "^10.9.1",
-    "turbo": "^1.6.2"
+    "ts-node": "^10.9.2",
+    "turbo": "^1.13.4",
+    "typescript": "4.5.4"
   },
-  "packageManager": "pnpm@8.6.2",
+  "packageManager": "pnpm@9.4.0",
   "ava": {
     "require": [
       "./test/_setup-browser-env.js"

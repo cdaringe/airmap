@@ -6,13 +6,14 @@
     "dotenv": "^16.0.0",
     "got": "11",
     "p-all": "3",
-    "pino": "^7.8.0"
+    "pino": "^9.5.0"
   },
   "devDependencies": {
     "@types/node": "*",
     "@types/pg": "8.6.6",
     "JSONStream": "1.3.5",
     "node-dev": "7.4.3",
+    "npm-run-all2": "6.2.0",
     "pg": "8.9.0",
     "pg-query-stream": "4.3.0",
     "prettier": "^2.5.1",
@@ -20,10 +21,17 @@
     "typescript": "4.5.4"
   },
   "scripts": {
-    "build": "tsc",
-    "format": "prettier --write 'src/**' './*.{js,json,md}'",
+    "build": "run-s clean compile image",
+    "clean": "rm -rf dist",
+    "compile": "tsc",
+    "deploy:tohost": "bash ./deploy.sh",
+    "deploy": "run-s build deploy:tohost",
     "dev": "node-dev -r dotenv/config src/bin.ts",
-    "start": "node -r dotenv/config dist/bin.js",
+    "format": "prettier --write 'src/**' './*.{js,json,md}'",
+    "image": "docker buildx build --platform linux/amd64 -t cdaringe/etl-purple .",
+    "run:container": "docker run --rm cdaringe/etl-purple",
+    "run": "run-s image run:container",
+    "start": "node -r dotenv/config dist/src/bin.js",
     "typecheck": "tsc --noEmit"
   }
 }

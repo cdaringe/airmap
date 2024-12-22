@@ -1,4 +1,4 @@
-version: "3"
+# @warn ONLY EDIT this file from the airmap repository (not deployment systems)
 services:
   pca_db:
     image: timescale/timescaledb:latest-pg14
@@ -10,9 +10,9 @@ services:
       POSTGRES_USER: airman
       POSTGRES_PASSWORD: ${PCA_DB_PASSWORD}
       POSTGRES_DB: pca
-      TS_TUNE_MAX_BG_WORKERS: 8
+      TS_TUNE_MAX_BG_WORKERS: 16
   pca_gql:
-    image: hasura/graphql-engine:v2.15.2
+    image: hasura/graphql-engine:v2.45.1-ce
     depends_on:
       - pca_db
     restart: unless-stopped

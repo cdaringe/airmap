@@ -4,7 +4,9 @@ const format: Task = `npm run format`;
 const test: Task = `npm run test`;
 
 /**
- * Launch dev docker based services for PurpleAir ETL app
+ * Launch dev docker based services for PurpleAir ETL app.
+ * 1. GraphQL hasura
+ * 2. timescaledb/postgres
  */
 const services: Task = [
   "PCA_DB_PASSWORD=airman",
@@ -59,6 +61,10 @@ const deploy: Task = {
     );
   },
 };
+
+// @wip @todo do we wanna try observable's new static app building?
+// const airdash = `pnpm run --filter ./apps/airdash dev`;
+// ...{ dash: airdash, airdash, ad: airdash },
 
 export const tasks: Tasks = {
   ...{ bundleModules, b: bundleModules },

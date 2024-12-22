@@ -1,14 +1,12 @@
-import { addSeconds, differenceInHours } from "date-fns";
+import { addDays, addSeconds, differenceInHours } from "date-fns";
 import pino from "pino";
 import { ApiCallTracker } from "./api-call-tracker";
-import { isProd } from "./env";
+import { isDebug, isProd } from "./env";
 import { SensorAccess } from "./interfaces";
 import * as sink from "./purpleair/sink/queries";
 import * as source from "./purpleair/source/purpleapi";
 import { sensors } from "./sensors";
 import { sleep } from "./util";
-
-const { IS_VSCODE_DEBUG } = process.env;
 
 const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
 
@@ -62,12 +60,7 @@ async function etl(opts: {
   nowDate: Date;
   isColdStart?: boolean;
 }): Promise<void> {
-  const {
-    access,
-    sourceCallTracker,
-    nowDate,
-    isColdStart = !IS_VSCODE_DEBUG,
-  } = opts;
+  const { access, sourceCallTracker, nowDate, isColdStart = !isDebug } = opts;
   const { sensorIndex } = access;
   const sinkSensor = await getOrAddSinkSensor({
     sensorIndex,
@@ -91,12 +84,19 @@ async function etl(opts: {
       sensor: prettySensor,
       processing: false,
       skip: true,
-      reason: `14 days of data out of range`,
+      reason: `OUT_OF_RANGE_14_DAYS`,
+      timestamps: {
+        last_db_observation: sinkSensor.latest_observation_timestamp,
+        fourteen_days_ago: fourteenDaysAgo.toISOString(),
+      },
     });
     return;
   }
   /**
-   * cold starts are subject to skipping all processing. if the process is
+   * A cold start means that the process has just fired up, and generally
+   * that it's a first pass for this process loading data for this sensor.
+   * Cold starts are subject to skipping all processing if we've already
+   * tried syncing today. If the process is
    * already hot, let it continue processing.
    */
   if (isColdStart && hoursSinceSync < 24) {
@@ -110,22 +110,36 @@ async function etl(opts: {
   }
 
   // get observations
+  /// @warn -- we always search a liiiiiitttle into the future from where we last left off
+  const startDatetime = addSeconds(latestObservationTimestamp, 1);
+  const endDatetime = addDays(startDatetime, 14);
   const observations = await source.getSourceObservations({
     sensorId: sensorIndex,
-    start: addSeconds(latestObservationTimestamp, 1),
+    start: startDatetime,
     sourceCallTracker,
+    end: endDatetime,
   });
 
-  // it's not _actually_ an observation, but it is the correct watermark
-  const nextLatestObservationDate = new Date(observations.end_timestamp * 1000);
   await sink.updateSensorOnObservations({
     sensorId: sinkSensor.id,
     latest_sync_timestamp: nowDate,
-    latest_observation_timestamp: nextLatestObservationDate,
+    /**
+     * @warn it's not _actually_ an observation, but it is the correct watermark
+     */
+    latest_observation_timestamp: endDatetime,
   });
+
+  const sorted = observations.data.sort((a, b) => {
+    return +new Date(a.time_stamp) - +new Date(b.time_stamp);
+  });
+
+  const [firstraw, lastraw] = [sorted[0], sorted[sorted.length - 1]];
+  const firstTs = firstraw ? new Date(firstraw.time_stamp) : null;
+  const lastTs = lastraw ? new Date(lastraw.time_stamp) : null;
+
   const range = {
     start: new Date(observations.start_timestamp * 1000),
-    end: nextLatestObservationDate,
+    end: endDatetime,
   };
   logger.info({
     event: "etl",
@@ -133,6 +147,12 @@ async function etl(opts: {
     numObservations: observations.data.length,
     numSourceApiCalls: sourceCallTracker.count,
     range,
+    observationBounds: observations.data.length
+      ? {
+          first: firstTs,
+          last: lastTs,
+        }
+      : undefined,
   });
   if (observations.data.length) {
     await sink.postRecords(sinkSensor, observations.data);
@@ -146,8 +166,8 @@ async function etl(opts: {
 const etlAll = async (sensors: SensorAccess[]) => {
   const nowDate = new Date();
   let count = 0;
-  // const sensorsToEtl = sensors.slice(0, 1);
-  const sensorsToEtl = sensors;
+  // @warn debug strategy to operate over small set of sensors
+  const sensorsToEtl = isDebug ? sensors.slice(0, 1) : sensors;
   let dailyApiMeta = null;
   for (const sensor of sensorsToEtl) {
     // pre (etl)
@@ -196,4 +216,11 @@ function assertNoErrors<T extends { errors?: string[] }>(t: T) {
   }
 }
 
-export const run = () => etlAll(sensors);
+export const run = () =>
+  etlAll(sensors).then(
+    () => logger.info("done"),
+    (err) => {
+      logger.error(err);
+      process.exit(1);
+    }
+  );

@@ -47,3 +47,6 @@ apps/airmap/out/
 node_modules
 dist
 .docker
+
+.tmp_docker_etl-purple.tar
+*.tar

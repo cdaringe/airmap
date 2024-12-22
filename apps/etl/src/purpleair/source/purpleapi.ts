@@ -33,15 +33,18 @@ const jsonHeaders = (apiKey: string) => ({
 });
 
 const getSensorObservationHistoryUrl = ({
+  end,
   sensorId,
   start,
 }: {
+  end: Date;
   sensorId: number;
   start: Date;
 }) => {
   const url = [
     `${PURPLE_API_BASE_URL}/sensors/${sensorId}/history/json?`,
     `start_timestamp=${Math.ceil(start.getTime() / 1000)}`,
+    `end_timestamp=${Math.ceil(end.getTime() / 1000)}`,
     `average=60`,
     "fields=voc,pm2.5_atm,pm1.0_atm,pm2.5_cf_1,humidity,temperature,pressure",
   ].join("&");
@@ -50,15 +53,17 @@ const getSensorObservationHistoryUrl = ({
 
 export const getSourceObservations = async ({
   start,
+  end,
   sensorId,
   sourceCallTracker,
 }: {
   start: Date;
+  end: Date;
   sensorId: number;
   sourceCallTracker: ApiCallTracker;
 }) => {
   const readKey = getConfig().PURPLE_AIR_READ_KEY;
-  const url = getSensorObservationHistoryUrl({ start, sensorId });
+  const url = getSensorObservationHistoryUrl({ start, end, sensorId });
   await sourceCallTracker.incr();
   return rateLimitGot(url, {
     headers: jsonHeaders(readKey),

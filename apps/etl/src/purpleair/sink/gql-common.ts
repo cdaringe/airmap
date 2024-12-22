@@ -32,8 +32,4 @@ export const graphQL = <T = unknown>(
     .json<{
       data: T | null;
       errors: string[];
-    }>()
-    .catch((err) => {
-      console.error(err.response);
-      throw err;
-    });
+    }>();

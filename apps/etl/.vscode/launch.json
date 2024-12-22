@@ -8,8 +8,11 @@
       "type": "node",
       "request": "launch",
       "name": "bin, ts-node",
-      "runtimeArgs": ["-r", "ts-node/register", "-r", "dotenv/config"],
-      "args": ["${workspaceFolder}/src/bin.ts"]
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "args": ["${workspaceFolder}/src/bin.ts"],
+      "env": {
+        "LOG_LEVEL": "debug"
+      }
     },
     {
       "type": "node",

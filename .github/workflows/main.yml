@@ -19,10 +19,10 @@ jobs:
         with:
           persist-credentials: false
       - name: Install pnpm
-        run: npm install -g pnpm@8.6.2
+        run: npm install -g pnpm@9.4.0
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.14.2
+          node-version: 20.15.0
           cache: "pnpm"
       - name: Install and Test
         run: |
