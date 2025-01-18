@@ -110,8 +110,8 @@ importers:
         specifier: 13.5.0
         version: 13.5.0(@testing-library/dom@8.11.1)
       '@types/gapi':
-        specifier: 0.0.41
-        version: 0.0.41
+        specifier: 0.0.47
+        version: 0.0.47
       '@types/geojson':
         specifier: ^7946.0.8
         version: 7946.0.8
@@ -1999,8 +1999,8 @@ packages:
   '@types/d3-time@2.1.1':
     resolution: {integrity: sha512-9MVYlmIgmRR31C5b4FVSWtuMmBHh2mOWQYfl7XAYOa8dsnb7iEmUmRSWSFgXFtkjxO65d7hTUHQC+RhR/9IWFg==}
 
-  '@types/gapi@0.0.41':
-    resolution: {integrity: sha512-tmHO66z/f91JZCDqinj/nNvQEszsz/hBT4+MvCSKT5sDzl5Ld/oXZ8WaecCBjRLw2uWKUInUHM9MhEXWkOiNjw==}
+  '@types/gapi@0.0.47':
+    resolution: {integrity: sha512-/ZsLuq6BffMgbKMtZyDZ8vwQvTyKhKQ1G2K6VyWCgtHHhfSSXbk4+4JwImZiTjWNXfI2q1ZStAwFFHSkNoTkHA==}
 
   '@types/geojson@7946.0.15':
     resolution: {integrity: sha512-9oSxFzDCT2Rj6DfcHF8G++jxBKS7mBqXl5xrRW+Kbvjry6Uduya2iiwqHPhVXpasAVMBYKkEPGgKhd3+/HZ6xA==}
@@ -9536,7 +9536,7 @@ snapshots:
 
   '@types/d3-time@2.1.1': {}
 
-  '@types/gapi@0.0.41': {}
+  '@types/gapi@0.0.47': {}
 
   '@types/geojson@7946.0.15': {}
 
