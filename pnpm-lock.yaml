@@ -73,8 +73,8 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       papaparse:
-        specifier: ^5.3.1
-        version: 5.3.1
+        specifier: ^5.5.1
+        version: 5.5.1
       react:
         specifier: 17.0.2
         version: 17.0.2
@@ -128,8 +128,8 @@ importers:
         specifier: '*'
         version: 16.4.8
       '@types/papaparse':
-        specifier: ^5.3.2
-        version: 5.3.2
+        specifier: ^5.3.15
+        version: 5.3.15
       '@types/react':
         specifier: 17.0.38
         version: 17.0.38
@@ -2051,8 +2051,8 @@ packages:
   '@types/node@22.10.7':
     resolution: {integrity: sha512-V09KvXxFiutGp6B7XkpaDXlNadZxrzajcY50EuoLIpQ6WWYCSvf19lVIazzfIzQvhUN2HjX12spLojTnhuKlGg==}
 
-  '@types/papaparse@5.3.2':
-    resolution: {integrity: sha512-BNbCHJkTE4RwmAFkCxEalET4mDvGr/1ld7ZtQ4i/laWI/iiVt+GL07stdvufle4KfywyvloqqpIiJscXNCrKxA==}
+  '@types/papaparse@5.3.15':
+    resolution: {integrity: sha512-JHe6vF6x/8Z85nCX4yFdDslN11d+1pr12E526X8WAfhadOeaOTx5AuIkvDKIBopfvlzpzkdMx4YyvSKCM9oqtw==}
 
   '@types/parse-json@4.0.0':
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -4938,8 +4938,8 @@ packages:
   pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
 
-  papaparse@5.3.1:
-    resolution: {integrity: sha512-Dbt2yjLJrCwH2sRqKFFJaN5XgIASO9YOFeFP8rIBRG2Ain8mqk5r1M6DkfvqEVozVcz3r3HaUGw253hA1nLIcA==}
+  papaparse@5.5.1:
+    resolution: {integrity: sha512-EuEKUhyxrHVozD7g3/ztsJn6qaKse8RPfR6buNB2dMJvdtXNhcw8jccVi/LxNEY3HVrV6GO6Z4OoeCG9Iy9wpA==}
 
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -9584,9 +9584,9 @@ snapshots:
     dependencies:
       undici-types: 6.20.0
 
-  '@types/papaparse@5.3.2':
+  '@types/papaparse@5.3.15':
     dependencies:
-      '@types/node': 16.4.8
+      '@types/node': 22.10.7
 
   '@types/parse-json@4.0.0': {}
 
@@ -12002,7 +12002,7 @@ snapshots:
 
   jest-worker@27.0.0-next.5:
     dependencies:
-      '@types/node': 16.4.8
+      '@types/node': 22.10.7
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -13148,7 +13148,7 @@ snapshots:
 
   pako@1.0.11: {}
 
-  papaparse@5.3.1: {}
+  papaparse@5.5.1: {}
 
   parent-module@1.0.1:
     dependencies:
