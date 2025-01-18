@@ -3,5 +3,11 @@
   "deno.unstable": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
+  "yaml.schemas": {
+    "https://json.schemastore.org/dependabot-2.0.json": [
+      "/.github/dependabot.yml",
+      "**/dependabot.yml"
+    ]
+  }
 }
