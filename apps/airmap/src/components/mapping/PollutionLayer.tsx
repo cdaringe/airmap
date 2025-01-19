@@ -1,54 +1,70 @@
-import type { CircleLayout, CirclePaint, MapMouseEvent } from "mapbox-gl";
+import type {
+  CircleLayerSpecification,
+  GeoJSONFeature,
+  MapMouseEvent,
+} from "mapbox-gl";
 import React from "react";
-import { GeoJSONLayer } from "react-mapbox-gl";
+import { Layer, Source } from "react-map-gl";
 
 type GeoPoint = GeoJSON.Feature<GeoJSON.Point>;
 
 export type Props = {
+  id: string;
   circleCases?: any[];
-  geojson: GeoJSON.GeoJSON;
-  onSelectFeature: (feature: GeoPoint) => void;
+  geojson?: GeoJSON.GeoJSON;
 };
 
-const circleLayout: CircleLayout = { visibility: "visible" };
-const circlePaintPm2: (cases: any[]) => CirclePaint = (cases) => ({
+const circleLayout: CircleLayerSpecification["layout"] = {
+  visibility: "visible",
+};
+const circlePaintPm2: (cases: any[]) => CircleLayerSpecification["paint"] = (
+  cases
+) => ({
   "circle-color": ["case", ...cases, "black"],
   "circle-radius": 5,
 });
 
-export const PollutionLayer: React.FC<Props> = ({
-  geojson,
+export const usePollutionHandlers = ({
   onSelectFeature,
-  circleCases = [],
-}) => {
-  const circleOnClick = React.useCallback(
-    (evt: MapMouseEvent) => {
-      evt.preventDefault();
-      const [feature] = evt.target.queryRenderedFeatures(evt.point);
-      if (feature?.geometry.type === "Point") {
-        onSelectFeature(feature as GeoPoint);
-      } else {
-        console.error(`no feature found under pointer :thinking:`, feature);
-      }
-    },
+}: {
+  onSelectFeature: (feature: GeoPoint) => void;
+}) =>
+  React.useMemo(
+    () => ({
+      layerId: "pollution",
+      onClick(_evt: MapMouseEvent, feature: GeoJSONFeature) {
+        if (feature.geometry.type === "Point") {
+          onSelectFeature(feature as GeoPoint);
+        }
+      },
+      onMouseEnter(evt: MapMouseEvent) {
+        evt.target.getCanvas().style.cursor = "pointer";
+      },
+      onMouseLeave(evt: MapMouseEvent) {
+        evt.target.getCanvas().style.cursor = "";
+      },
+    }),
     [onSelectFeature]
   );
-  const circleOnMouseEnter = React.useCallback((evt: MapMouseEvent) => {
-    evt.target.getCanvas().style.cursor = "pointer";
-  }, []);
-  const circleOnMouseLeave = React.useCallback((evt: MapMouseEvent) => {
-    evt.target.getCanvas().style.cursor = "";
-  }, []);
+
+export const PollutionLayer: React.FC<Props> = ({
+  id,
+  geojson,
+  circleCases = [],
+}) => {
+  if (!geojson) {
+    return null;
+  }
   return (
-    <GeoJSONLayer
-      {...{
-        data: geojson,
-        circleLayout,
-        circlePaint: circlePaintPm2(circleCases),
-        circleOnClick,
-        circleOnMouseEnter,
-        circleOnMouseLeave,
-      }}
-    />
+    <Source id={id} type="geojson" data={geojson}>
+      <Layer
+        {...{
+          id: id,
+          type: "circle",
+          layout: circleLayout,
+          paint: circlePaintPm2(circleCases),
+        }}
+      />
+    </Source>
   );
 };

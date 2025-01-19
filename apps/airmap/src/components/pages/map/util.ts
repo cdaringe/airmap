@@ -1,3 +1,5 @@
+import { GeoJSONFeature, MapMouseEvent } from "mapbox-gl";
+
 export const isValidDate = (d: Date) => !d.toString().match(/Invalid/);
 
 export const accessToken =
@@ -14,3 +16,20 @@ export const normalizeMapboxUrl = (url: string, _resourceType: string) => {
 
 export const DEFAULT_START_DATE = new Date("2020-01-01");
 export const DEFAULT_END_DATE = new Date(`${new Date().getFullYear()}-12-31`);
+
+export const handleMatching = <
+  E extends MapMouseEvent,
+  MethodName extends string
+>(
+  evt: E,
+  methodName: MethodName,
+  ...handlerClasses: Record<
+    MethodName,
+    (_: E, feature: GeoJSONFeature) => any
+  >[]
+) =>
+  evt.features?.forEach((feature) =>
+    handlerClasses.forEach((handlerClass) => {
+      handlerClass[methodName as MethodName]?.(evt, feature);
+    })
+  );

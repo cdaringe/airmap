@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Popup } from "react-mapbox-gl";
+import { Popup } from "react-map-gl";
 
 export type Props = {
   feature: GeoJSON.Feature<GeoJSON.Point>;
@@ -12,11 +12,15 @@ const MeasurementPopup: React.FC<Props> = ({
   title,
   ...props
 }) => {
+  const [longitude, latitude] = feature.geometry.coordinates;
   return (
     <Popup
-      coordinates={feature.geometry.coordinates}
-      className={clsx("overflow-auto", className)}
-      {...props}
+      {...{
+        ...props,
+        className: clsx("overflow-auto", className),
+        latitude,
+        longitude,
+      }}
     >
       <>
         <h1 className="text-xl">{title}</h1>

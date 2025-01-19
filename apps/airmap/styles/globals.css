@@ -24,6 +24,13 @@ body {
   width: 100vw;
 }
 
+#layout.page-map {
+  grid-template-areas:
+    "nav nav nav"
+    "content content content"
+    "footer footer footer";
+}
+
 nav {
   grid-area: nav;
 }

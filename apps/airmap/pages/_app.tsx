@@ -1,4 +1,3 @@
-import "mapbox-gl-controls/lib/controls.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -61,7 +60,10 @@ function MyApp({ Component, pageProps }: AppProps) {
               />
               <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div id="layout">
+            <div
+              id="layout"
+              className={`page-${router.pathname.replace(/[^a-zA-Z0-9]/g, "")}`}
+            >
               <Nav />
               <Component {...pageProps} />
               {router.pathname === "/" ? (
@@ -91,6 +93,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         top: 0;
         border: 0;
         right: 0;
+        transform: translate(20px, -20px) scale(0.5);
       "
       aria-hidden="true"
     >

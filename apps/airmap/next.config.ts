@@ -1,13 +1,9 @@
-module.exports = {
+import { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   reactStrictMode: true,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH,
-  webpack: (
-    config,
-    { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
-  ) => {
-    return config;
-  },
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
@@ -22,3 +18,5 @@ module.exports = {
     externalDir: true,
   },
 };
+
+export default nextConfig;

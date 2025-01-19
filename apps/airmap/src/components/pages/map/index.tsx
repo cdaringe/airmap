@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import React, { useEffect, useMemo, useState } from "react";
-import ReactMapboxGl from "react-mapbox-gl";
-import { Props as MapProps } from "react-mapbox-gl/lib/map";
+import { LngLatBoundsLike, Map } from "react-map-gl";
 import { useQuery } from "react-query";
 import "react-spring-bottom-sheet/dist/style.css";
 import { MINIWRAS_ID } from "../../../../../../packages/cleanair-sensor-common/mod";
@@ -10,26 +9,30 @@ import { useHandleNoDatasource } from "../../../hooks/use-handle-no-datasource";
 import Loading from "../../atoms/loading";
 import { useDataSource } from "../../data-source/use-data-source";
 import { ErrorBoundary } from "../../error-boundary";
-import { PollutionLayer } from "../../mapping/PollutionLayer";
+import {
+  PollutionLayer,
+  usePollutionHandlers,
+} from "../../mapping/PollutionLayer";
 import { useInitialBoundingBox } from "../../mapping/use-bounding-box";
 import { useDateFilter } from "./hooks/use-date-filter";
 import { useSensorMappingResources } from "./hooks/use-sensor-mapping-resources";
+import { useSetupMap } from "./hooks/use-setup-map";
 import { MapBottomSheet } from "./map-bottom-sheet";
 import MapCssLink from "./map.csslink";
 import MapError from "./map.error";
 import NoDatapoint from "./map.nodatapoint";
-import setupControls from "./map.setup-controls";
+// import setupControls from "./map.setup-controls";
 import { Overlay } from "./overlay";
 import {
   accessToken,
   DEFAULT_END_DATE,
   DEFAULT_START_DATE,
-  normalizeMapboxUrl,
+  handleMatching,
 } from "./util";
 
 const MeasurementPopup = dynamic(() => import("../../MeasurementPopup"));
 
-export default function Map() {
+export default function MapView() {
   useHandleNoDatasource();
   const [fieldToMap, setMappingField] = useState("");
   const [isMinMaxDynamicRange, setIsMinMaxDynamicRange] = useState(true);
@@ -38,8 +41,8 @@ export default function Map() {
   const [isFilterBeforeEnd, setIsFilterBeforeEnd] = useState(false);
   const [endDate, setEndDate] = useState<Date>(DEFAULT_END_DATE);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-  const [fitBounds, setFitBounds] = React.useState<MapProps["fitBounds"]>();
-  const [center, setCenter] = React.useState<MapProps["center"]>([
+  const [fitBounds, setFitBounds] = React.useState<LngLatBoundsLike>();
+  const [center, setCenter] = React.useState<[lat: number, lon: number]>([
     -122.66155, 45.54846,
   ]);
   const ds = useDataSource();
@@ -74,7 +77,14 @@ export default function Map() {
       if (downloadGeoJSON) {
         return downloadGeoJSON(urls);
       }
-      throw new Error(`no mechanism found to download map data`);
+      /**
+       * On first render, downloadGeoJSON is undefined.
+       */
+      return Promise.resolve({
+        type: "FeatureCollection",
+        features: [],
+      });
+      // throw new Error(`no mechanism found to download map data`);
     },
     cacheTime: 1e9,
   });
@@ -93,15 +103,14 @@ export default function Map() {
     return getLevels({ isMinMaxDynamicRange, geojson });
   }, [getLevels, isMinMaxDynamicRange, geojson]);
   useInitialBoundingBox(geojson, setFitBounds);
-  const { current: Map } = React.useRef(
-    ReactMapboxGl({
-      accessToken,
-      transformRequest: normalizeMapboxUrl,
-    })
-  );
+
   const [selectedFeature, setFeature] =
     React.useState<GeoJSON.Feature<GeoJSON.Point> | null>(null);
   const clearPopup = () => setFeature(null);
+
+  const mapRef = React.useRef<any | null>(null);
+  useSetupMap({ mapRef, className: "w-full content" });
+
   useEffect(
     function tearDownPopup() {
       const onKeyup = (evt: WindowEventMap["keyup"]) => {
@@ -120,57 +129,71 @@ export default function Map() {
     },
     [selectedFeature]
   );
+
+  const onSelectFeature = React.useCallback(
+    (feature: GeoJSON.Feature<GeoJSON.Point>) => {
+      if (fitBounds) {
+        setFitBounds(undefined);
+      }
+      const coordinates = feature.geometry.coordinates as [number, number];
+      if (center && coordinates) {
+        setCenter(coordinates);
+      }
+      const featureCopy = { ...feature };
+      ["channels", "debug", "pocketlabsEntry", "pm05EndCol"].forEach(
+        (fieldName) => {
+          const properties = featureCopy.properties;
+          if (properties) {
+            delete properties[fieldName as any];
+          }
+        }
+      );
+      setFeature(feature);
+    },
+    [center, fitBounds, setFeature]
+  );
+
+  const pollutionHandlers = usePollutionHandlers({ onSelectFeature });
+
   if (error) return <MapError error={error} datasource={ds} />;
   if (isLoading) return <Loading msg="Downloading data" />;
   if (!geojson) return <Loading msg="Preparing geojson" />;
+
   const dataPoint = geojson?.features[0]?.properties as
     | Record<string, string>
     | undefined;
+
   return (
     <ErrorBoundary>
       <MapCssLink />
       <Map
-        onStyleLoad={setupControls}
-        className="w-full content"
-        fitBounds={fitBounds}
-        center={center}
-        style="mapbox://styles/pdxcleanair/ckpx7yno443sa17p6iy65qn95"
-        containerStyle={{
-          height: "100%",
-          width: "100vw",
+        style={{ width: "100vw", height: "100%" }}
+        onClick={(evt) => handleMatching(evt, "onClick", pollutionHandlers)}
+        onMouseEnter={(evt) =>
+          handleMatching(evt, "onMouseEnter", pollutionHandlers)
+        }
+        onMouseLeave={(evt) =>
+          handleMatching(evt, "onMouseLeave", pollutionHandlers)
+        }
+        interactiveLayerIds={[pollutionHandlers.layerId]}
+        initialViewState={{
+          longitude: center[0],
+          latitude: center[1],
+          zoom: 12,
         }}
+        mapboxAccessToken={accessToken}
+        mapStyle="mapbox://styles/pdxcleanair/ckpx7yno443sa17p6iy65qn95"
+        ref={mapRef}
       >
         <>
+          <PollutionLayer
+            id={pollutionHandlers.layerId}
+            {...{
+              geojson,
+              circleCases: pollutionLevels?.circleCases,
+            }}
+          />
           {dataPoint ? undefined : <NoDatapoint />}
-          {geojson && (
-            <PollutionLayer
-              {...{
-                geojson,
-                circleCases: pollutionLevels?.circleCases,
-                onSelectFeature: (feature) => {
-                  if (fitBounds) {
-                    setFitBounds(undefined);
-                  }
-                  if (center) {
-                    setCenter(feature.geometry.coordinates as [number, number]);
-                  }
-                  const featureCopy = { ...feature };
-                  [
-                    "channels",
-                    "debug",
-                    "pocketlabsEntry",
-                    "pm05EndCol",
-                  ].forEach((fieldName) => {
-                    const properties = featureCopy.properties;
-                    if (properties) {
-                      delete properties[fieldName as any];
-                    }
-                  });
-                  setFeature(feature);
-                },
-              }}
-            />
-          )}
           {selectedFeature ? (
             <MeasurementPopup
               title="Measurements"

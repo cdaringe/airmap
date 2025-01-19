@@ -16,7 +16,9 @@ export const useDateFilter = <T extends { features?: any[] } | undefined>({
   unfilteredGeojson: T;
 }): T =>
   React.useMemo(() => {
-    if (!isFilterAfterStart && !isFilterBeforeEnd) return unfilteredGeojson;
+    if (!isFilterAfterStart && !isFilterBeforeEnd) {
+      return unfilteredGeojson;
+    }
     if (!dateField) {
       throw new Error(`sensor type missing dateField column name`);
     }
