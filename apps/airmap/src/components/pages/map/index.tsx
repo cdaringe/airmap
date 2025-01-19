@@ -199,7 +199,6 @@ export default function MapView() {
               title="Measurements"
               className="overflow-auto h-96"
               feature={selectedFeature}
-              onClick={(evt) => evt.preventDefault()}
             />
           ) : null}
           {pollutionLevels ? (
