@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
      */
     externalDir: true,
   },
+  output: "export",
 };
 
 export default nextConfig;

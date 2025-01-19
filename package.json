@@ -8,7 +8,6 @@
   "scripts": {
     "clean": "fd -t=d -u node_modules . -x rm -rf {}",
     "dev": "turbo run dev",
-    "export": "turbo run export",
     "test": "turbo run test",
     "build": "turbo run build",
     "format": "prettier --write './*.{js,json,md}' './.github/**' '.vscode/**' 'packages/**/*.{md,json,js,ts,jsx,tsx}' 'apps/**/*.{md,json,js,ts,jsx,tsx}'",

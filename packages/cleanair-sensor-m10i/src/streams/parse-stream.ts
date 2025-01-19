@@ -23,7 +23,7 @@ const HEADER_NAMES = [
 
 const HEADER_NAME_SET = new Set(HEADER_NAMES);
 
-type AllKeys = typeof HEADER_NAMES[number];
+type AllKeys = (typeof HEADER_NAMES)[number];
 
 const entryKeyByColKey: Record<AllKeys, keyof Entry> = {
   Time: "date",
