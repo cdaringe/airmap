@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Entry } from "../../../../../packages/cleanair-sensor-miniwras/mod";
+import { Entry } from "../../../../../packages/cleanair-sensor-aeroqual-s500/src/interfaces";
 
 const dateFormatter = (date: Date) => {
   return format(new Date(date), "dd MMM H:m");
@@ -20,19 +20,14 @@ const dateFormatter = (date: Date) => {
 /**
  * @see https://recharts.org/en-US/examples/SynchronizedLineChart
  */
-export const MiniWrasStats: React.FC<
+export const TVOC: React.FC<
   PropsWithChildren<{
     geojson: GeoJSON.FeatureCollection<GeoJSON.Point, Entry>;
   }>
 > = ({ geojson }) => {
-  const isPocketDataAvailable =
-    !!geojson.features[0]?.properties.pocketlabsEntry;
-  if (!isPocketDataAvailable) {
-    return <p>Pocketlabs data is missing. Please upload a pocket labs file.</p>;
-  }
   return (
     <>
-      <h3>PM2.5 & Humidity - MiniWRAS</h3>
+      <h3>TVOC Aeroqual S500</h3>
       <ResponsiveContainer aspect={3} width="100%">
         <LineChart
           data={geojson.features}
@@ -57,16 +52,8 @@ export const MiniWrasStats: React.FC<
           <YAxis yAxisId="left">
             <Label
               angle={-90}
-              value="ug/m3"
+              value="ppm"
               position="insideLeft"
-              style={{ textAnchor: "middle" }}
-            />
-          </YAxis>
-          <YAxis yAxisId="right" orientation="right">
-            <Label
-              angle={90}
-              value="Relative Humidity %"
-              position="insideRight"
               style={{ textAnchor: "middle" }}
             />
           </YAxis>
@@ -81,30 +68,11 @@ export const MiniWrasStats: React.FC<
             yAxisId="left"
             type="monotone"
             dataKey={(p: GeoJSON.Feature<GeoJSON.Point, Entry>) =>
-              p.properties.pm_2_5
+              p.properties.tvoc
             }
-            name="PM2.5 (MW)"
+            name="tvoc"
             stroke="red"
             activeDot={{ r: 8 }}
-          />
-          <Line
-            yAxisId="left"
-            type="monotone"
-            dataKey={(p: GeoJSON.Feature<GeoJSON.Point, Entry>) =>
-              p.properties.pocketlabsEntry?.pm_2_5 ?? 0
-            }
-            name="PM2.5 (PL)"
-            stroke="blue"
-            activeDot={{ r: 8 }}
-          />
-          <Line
-            yAxisId="right"
-            type="monotone"
-            dataKey={(p: GeoJSON.Feature<GeoJSON.Point, Entry>) =>
-              p.properties.pocketlabsEntry?.humidity ?? 0
-            }
-            name="Humidity (PL)"
-            stroke="lightslategray"
           />
         </LineChart>
       </ResponsiveContainer>

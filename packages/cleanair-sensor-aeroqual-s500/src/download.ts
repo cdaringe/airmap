@@ -4,8 +4,10 @@ import type { Entry as StravaEntry } from "../../cleanair-sensor-strava-gpx/mod"
 import { AeroqualS500OnlyEntry, Entry } from "./interfaces";
 import { parse } from "./streams/parse-stream";
 
-const applyEpaCorrection = (old: number, humidity: number) =>
-  0.0534 * old - 0.0844 * humidity + 5.604;
+export type GeoJSONAeroqualS500 = GeoJSON.FeatureCollection<
+  GeoJSON.Point,
+  Entry
+>;
 
 export const download = async (urls: string[]) => {
   const [aeroqualS500] = await Promise.all([

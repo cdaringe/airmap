@@ -133,7 +133,7 @@ export const Overlay: React.FC<Props> = ({
           }}
         />
       </div>
-      {sensorType === MINIWRAS_ID ? (
+      {sensorType === MINIWRAS_ID || sensorType === AEROQUAL_S500_ID ? (
         <div className="map-overlay-control map-pollution-range-mode">
           <Button
             onClick={() => {

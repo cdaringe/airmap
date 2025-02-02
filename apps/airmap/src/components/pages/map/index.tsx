@@ -19,7 +19,6 @@ import { useInitialBoundingBox } from "../../mapping/use-bounding-box";
 import { useDateFilter } from "./hooks/use-date-filter";
 import { useSensorMappingResources } from "./hooks/use-sensor-mapping-resources";
 import { useSetupMap } from "./hooks/use-setup-map";
-import { MapBottomSheet } from "./map-bottom-sheet";
 import MapCssLink from "./map.csslink";
 import MapError from "./map.error";
 import NoDatapoint from "./map.nodatapoint";
@@ -32,7 +31,14 @@ import {
   handleMatching,
 } from "./util";
 
-const MeasurementPopup = dynamic(() => import("../../MeasurementPopup"));
+const MapBottomSheetDyn = dynamic(
+  () => import("./map-bottom-sheet").then((it) => it.MapBottomSheet),
+  { ssr: false }
+);
+
+const MeasurementPopup = dynamic(() => import("../../MeasurementPopup"), {
+  ssr: false,
+});
 
 export default function MapView() {
   useHandleNoDatasource();
@@ -240,11 +246,14 @@ export default function MapView() {
           ) : null}
         </>
       </Map>
-      <MapBottomSheet
-        isOpen={isBottomSheetOpen}
-        onDismiss={setIsBottomSheetOpen}
-        geojson={processedGeoJSON as GeoJSONMiniWras}
-      />
+      {isBottomSheetOpen ? (
+        <MapBottomSheetDyn
+          isOpen={isBottomSheetOpen}
+          onDismiss={setIsBottomSheetOpen}
+          geojson={processedGeoJSON as GeoJSONMiniWras}
+          sensorId={sensorType}
+        />
+      ) : null}
     </ErrorBoundary>
   );
 }
