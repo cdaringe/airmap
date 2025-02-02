@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { combine } from "../../../../../packages/cleanair-sensor-aeroqual-s500/mod";
-import type { Entry as DatEntry } from "../../../../../packages/cleanair-sensor-aeroqual-s500/src/interfaces";
+import type { AeroqualS500OnlyEntry } from "../../../../../packages/cleanair-sensor-aeroqual-s500/src/interfaces";
 import { Entry as StravaEntry } from "../../../../../packages/cleanair-sensor-strava-gpx/mod";
 import Button from "../atoms/button";
 
@@ -24,7 +24,7 @@ export const AeroqualS500DataSource: React.FC<{
   const [err, setErr] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [aeroqualS500Data, setAeroqualS500Data] = React.useState<
-    undefined | DatEntry[]
+    undefined | AeroqualS500OnlyEntry[]
   >(undefined);
   const [stravaData, setStravaData] = React.useState<undefined | StravaEntry[]>(
     undefined
