@@ -21,7 +21,7 @@ const AeroqualS500StatsDyn = dynamic(
 export type Props = {
   isOpen: boolean;
   onDismiss: (v: boolean) => void;
-  geojson: GeoJSONAeroqualS500;
+  geojson: GeoJSON.FeatureCollection<any>;
   sensorId: number;
 };
 export const MapBottomSheet: React.FC<Props> = ({

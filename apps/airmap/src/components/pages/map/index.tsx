@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { LngLatBoundsLike, Map } from "react-map-gl";
 import { useQuery } from "react-query";
 import "react-spring-bottom-sheet/dist/style.css";
-import { GeoJSONMiniWras } from "../../../../../../packages/cleanair-sensor-miniwras/mod";
 import {
   isLuggageBackedDatasource,
   useHandleNoDatasource,
@@ -250,7 +249,7 @@ export default function MapView() {
         <MapBottomSheetDyn
           isOpen={isBottomSheetOpen}
           onDismiss={setIsBottomSheetOpen}
-          geojson={processedGeoJSON as GeoJSONMiniWras}
+          geojson={processedGeoJSON}
           sensorId={sensorType}
         />
       ) : null}
