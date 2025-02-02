@@ -1,7 +1,9 @@
 import { useQuery } from "react-query";
 import {
+  AEROQUAL_S500_ID,
   AIRMAP_GPS_ID,
   FLOW_ID,
+  MappingResourcesMod,
   MINIWRAS_ID,
   POCKET_LABS_ID,
 } from "../../../../../../../packages/cleanair-sensor-common/mod";
@@ -32,10 +34,18 @@ export const getAirmapGps = () =>
     return m.getResources();
   });
 
+export const getAeroqualS5000 = () =>
+  import(
+    "../../../../../../../packages/cleanair-sensor-aeroqual-s500/src/resources"
+  ).then(async (m) => {
+    const resources = m.getResources();
+    return resources;
+  });
+
 export const useSensorMappingResources = (sensorType: number) => {
   return useQuery({
     queryKey: `get-mapping-${sensorType}`,
-    queryFn: async () => {
+    queryFn: async (): Promise<MappingResourcesMod<any>> => {
       const mod = await (sensorType === POCKET_LABS_ID
         ? getPocket()
         : sensorType === FLOW_ID
@@ -44,6 +54,8 @@ export const useSensorMappingResources = (sensorType: number) => {
         ? getMiniWras()
         : sensorType === AIRMAP_GPS_ID
         ? getAirmapGps()
+        : sensorType === AEROQUAL_S500_ID
+        ? getAeroqualS5000()
         : (() => {
             throw new Error(`unsupported sensor type ${sensorType}`);
           })());

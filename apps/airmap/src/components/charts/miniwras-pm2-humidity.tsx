@@ -75,7 +75,7 @@ export const MiniWrasStats: React.FC<
           yAxisId="left"
           type="monotone"
           dataKey={(p: GeoJSON.Feature<GeoJSON.Point, Entry>) =>
-            p.properties.pocketlabsEntry!.pm_2_5
+            p.properties.pocketlabsEntry?.pm_2_5 ?? 0
           }
           name="PM2.5 (PL)"
           stroke="blue"
@@ -85,7 +85,7 @@ export const MiniWrasStats: React.FC<
           yAxisId="right"
           type="monotone"
           dataKey={(p: GeoJSON.Feature<GeoJSON.Point, Entry>) =>
-            p.properties.pocketlabsEntry!.humidity
+            p.properties.pocketlabsEntry?.humidity ?? 0
           }
           name="Humidity (PL)"
           stroke="lightslategray"

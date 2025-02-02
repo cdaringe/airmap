@@ -12,6 +12,9 @@ export const MapBottomSheet: React.FC<Props> = ({
   onDismiss,
   geojson,
 }) => {
+  /**
+   * @warn Using weird version: https://github.com/stipsan/react-spring-bottom-sheet/issues/293
+   */
   return (
     <BottomSheet
       blocking={false}

@@ -1,8 +1,10 @@
 import { format } from "date-fns";
 import {
+  AEROQUAL_S500_ID,
   MapLevels,
   MappingMod,
   MINIWRAS_ID,
+  sensorNameById,
 } from "../../../../../../packages/cleanair-sensor-common/mod";
 import Button from "../../atoms/button";
 import { isValidDate } from "./util";
@@ -19,6 +21,7 @@ export type Props = {
   setIsFilteringAfterStart: Setter<boolean>;
   setIsFilterBeforeEnd: Setter<boolean>;
   setIsBottomSheetOpen: Setter<boolean>;
+  setCountForceRerender: (fn: (i: number) => number) => void;
   levels: MapLevels;
   isMinMaxDynamicRange: boolean;
   isFilterBeforeEnd: boolean;
@@ -44,9 +47,12 @@ export const Overlay: React.FC<Props> = ({
   isFilterAfterStart,
   getLevelsByField,
   endDate,
+  setCountForceRerender,
 }) => {
+  const sensorName = sensorNameById[sensorType] ?? "Unknown Sensor";
   return (
     <div id="pollution-map-overlay" className="map-overlay">
+      <div className="map-overlay-control map-legend">Sensor: {sensorName}</div>
       <div className="map-overlay-control map-legend">
         <div style={{ fontWeight: "bold" }}>{levels?.fieldName}</div>
         {levels?.ranges.map((range, i) => {
@@ -136,6 +142,25 @@ export const Overlay: React.FC<Props> = ({
           >
             Show charts
           </Button>
+        </div>
+      ) : null}
+
+      {sensorType === AEROQUAL_S500_ID ? (
+        <div className="map-overlay-control map-pollution-range-mode">
+          <label htmlFor="isoscalar">Isobutylene scalar</label>:
+          <input
+            id="isoscalar"
+            className="ml-1"
+            type="input"
+            defaultValue={1.0}
+            onChange={(evt) => {
+              const num = Number(evt.currentTarget.value);
+              if (Number.isFinite(num)) {
+                window.__AEROQUAL_S500_SCALAR__ = num;
+                setCountForceRerender((i) => i + 1);
+              }
+            }}
+          />
         </div>
       ) : null}
     </div>

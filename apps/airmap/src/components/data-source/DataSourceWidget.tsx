@@ -1,5 +1,6 @@
 import type { FC, HTMLProps } from "react";
 import {
+  AEROQUAL_S500_ID,
   AIRMAP_GPS_ID,
   FLOW_ID,
   MINIWRAS_ID,
@@ -9,6 +10,7 @@ import {
 import Button from "../atoms/button";
 import Input from "../atoms/input";
 import Select from "../atoms/select";
+import { AeroqualS500DataSource } from "./AeroqualS500";
 import { DataSourceNames, DataSourceSelector } from "./DataSourceSelector";
 import { MiniWrasDataSource } from "./MiniWrasDataSource";
 
@@ -24,12 +26,14 @@ type Props = {
   onDatasourceSourceChange: HTMLProps<HTMLSelectElement>["onChange"];
   onSubmit: () => void;
   onUrlsChange: (urls: string[]) => void;
-  onMiniWrasReady: (luggage: any) => void;
+  onMiniWrasOrAeroqualReady: (luggage: any) => void;
   onSensorTypeChange: (sensorType: number) => void;
   urls: string[];
   sensorType: number;
   luggage?: unknown;
 };
+
+const NO_URL_SENSOR_IDS = new Set([MINIWRAS_ID, AEROQUAL_S500_ID]);
 
 export const DataSourceWidget: FC<Props> = ({
   datasource,
@@ -37,14 +41,14 @@ export const DataSourceWidget: FC<Props> = ({
   isSubmitDisabled,
   luggage,
   onDatasourceSourceChange,
-  onMiniWrasReady,
+  onMiniWrasOrAeroqualReady,
   onSubmit,
   onUrlsChange,
   onSensorTypeChange,
   sensorType,
   urls,
 }) => {
-  const isUsingUrlInput = sensorType !== MINIWRAS_ID;
+  const isUsingUrlInput = !NO_URL_SENSOR_IDS.has(sensorType);
   return (
     <>
       <p className="text-center text-gray-600 gray-200">
@@ -73,6 +77,7 @@ export const DataSourceWidget: FC<Props> = ({
         <option value={POCKET_LABS_ID}>PocketLabs</option>
         <option value={MINIWRAS_ID}>MiniWRAS</option>
         <option value={AIRMAP_GPS_ID}>airmap™ GPS</option>
+        <option value={AEROQUAL_S500_ID}>Aeroqual S500</option>
       </Select>
       {isUsingUrlInput ? (
         <>
@@ -122,7 +127,7 @@ export const DataSourceWidget: FC<Props> = ({
         <div className="mt-1">
           <MiniWrasDataSource
             onInputRead={(v) => {
-              onMiniWrasReady(v);
+              onMiniWrasOrAeroqualReady(v);
             }}
           />
           {/* <label
@@ -149,7 +154,16 @@ export const DataSourceWidget: FC<Props> = ({
           {luggage ? "> Uploaded" : null} */}
         </div>
       ) : null}
-      {sensorType === MINIWRAS_ID ? null : (
+      {sensorType === AEROQUAL_S500_ID ? (
+        <div className="mt-1">
+          <AeroqualS500DataSource
+            onInputRead={(v) => {
+              onMiniWrasOrAeroqualReady(v);
+            }}
+          />
+        </div>
+      ) : null}
+      {isUsingUrlInput ? (
         <Button
           disabled={isSubmitDisabled}
           className="block m-auto mt-2"
@@ -157,7 +171,7 @@ export const DataSourceWidget: FC<Props> = ({
         >
           Submit
         </Button>
-      )}
+      ) : null}
     </>
   );
 };

@@ -1,10 +1,16 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { MINIWRAS_ID } from "../../../../packages/cleanair-sensor-common/mod";
+import {
+  AEROQUAL_S500_ID,
+  MINIWRAS_ID,
+} from "../../../../packages/cleanair-sensor-common/mod";
 import { useDataSource } from "../components/data-source/use-data-source";
 
-const isMiniWrasOk = (sensorType: number, luggage: any) =>
-  sensorType === MINIWRAS_ID && luggage;
+export const isLuggageBackedDatasource = (
+  sensorType: number,
+  luggage: any
+): luggage is any =>
+  (sensorType === MINIWRAS_ID || sensorType === AEROQUAL_S500_ID) && luggage;
 
 export const useHandleNoDatasource = () => {
   const {
@@ -12,7 +18,7 @@ export const useHandleNoDatasource = () => {
   } = useDataSource();
   const router = useRouter();
   useEffect(() => {
-    if (isMiniWrasOk(sensorType, luggage)) {
+    if (isLuggageBackedDatasource(sensorType, luggage)) {
       return;
     }
     if (!urls.length || urls.some((url) => !url)) {

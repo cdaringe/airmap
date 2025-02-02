@@ -70,7 +70,7 @@ export default function Home() {
               return next;
             }),
           onUrlsChange: (urls) => update("urls", urls),
-          onMiniWrasReady: (v) => update("luggage", v),
+          onMiniWrasOrAeroqualReady: (v) => update("luggage", v),
           urls,
           onSubmit: () => {
             if (isSubmitDisabled) {

@@ -3,9 +3,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { LngLatBoundsLike, Map } from "react-map-gl";
 import { useQuery } from "react-query";
 import "react-spring-bottom-sheet/dist/style.css";
-import { MINIWRAS_ID } from "../../../../../../packages/cleanair-sensor-common/mod";
 import { GeoJSONMiniWras } from "../../../../../../packages/cleanair-sensor-miniwras/mod";
-import { useHandleNoDatasource } from "../../../hooks/use-handle-no-datasource";
+import {
+  isLuggageBackedDatasource,
+  useHandleNoDatasource,
+} from "../../../hooks/use-handle-no-datasource";
 import Loading from "../../atoms/loading";
 import { useDataSource } from "../../data-source/use-data-source";
 import { ErrorBoundary } from "../../error-boundary";
@@ -45,6 +47,7 @@ export default function MapView() {
   const [center, setCenter] = React.useState<[lat: number, lon: number]>([
     -122.66155, 45.54846,
   ]);
+  const [i, setForceRenderCounter] = React.useState(0);
   const ds = useDataSource();
   const {
     value: { urls, sensorType },
@@ -54,8 +57,11 @@ export default function MapView() {
     error: sensorDownloaderError,
     data: sensorResources,
   } = useSensorMappingResources(sensorType);
-  const { getLevels: defaultGetLevels, getLevelsByField } =
-    sensorResources?.mapbox || {};
+  const {
+    mapbox: { getLevels: defaultGetLevels, getLevelsByField } = {},
+    processGeoJSONMemoKey,
+    processGeoJSON,
+  } = sensorResources || {};
   const getLevels = fieldToMap
     ? getLevelsByField?.[fieldToMap]
     : defaultGetLevels;
@@ -70,7 +76,7 @@ export default function MapView() {
     queryKey: ["map", `sensor-${sensorType}`, ...urls, typeof downloadGeoJSON],
     queryFn: (): Promise<GeoJSON.FeatureCollection<GeoJSON.Point>> => {
       const luggage = ds.value?.luggage;
-      if (sensorType === MINIWRAS_ID && luggage) {
+      if (luggage && isLuggageBackedDatasource(sensorType, luggage)) {
         // we only support MINIWRAS from file uploading from the home screen
         return Promise.resolve(luggage);
       }
@@ -155,11 +161,19 @@ export default function MapView() {
 
   const pollutionHandlers = usePollutionHandlers({ onSelectFeature });
 
+  const processedGeoJSON = React.useMemo(() => {
+    if (geojson && processGeoJSON) {
+      return processGeoJSON(geojson);
+    }
+    return geojson;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geojson, processGeoJSONMemoKey?.(), i]);
+
   if (error) return <MapError error={error} datasource={ds} />;
   if (isLoading) return <Loading msg="Downloading data" />;
-  if (!geojson) return <Loading msg="Preparing geojson" />;
+  if (!processedGeoJSON) return <Loading msg="Preparing geojson" />;
 
-  const dataPoint = geojson?.features[0]?.properties as
+  const dataPoint = processedGeoJSON?.features[0]?.properties as
     | Record<string, string>
     | undefined;
 
@@ -189,7 +203,7 @@ export default function MapView() {
           <PollutionLayer
             id={pollutionHandlers.layerId}
             {...{
-              geojson,
+              geojson: processedGeoJSON,
               circleCases: pollutionLevels?.circleCases,
             }}
           />
@@ -211,6 +225,7 @@ export default function MapView() {
                 setMappingField,
                 setIsMinMaxDynamicRange,
                 setIsFilteringAfterStart,
+                setCountForceRerender: setForceRenderCounter,
                 setIsFilterBeforeEnd,
                 setIsBottomSheetOpen,
                 levels: pollutionLevels,
@@ -228,7 +243,7 @@ export default function MapView() {
       <MapBottomSheet
         isOpen={isBottomSheetOpen}
         onDismiss={setIsBottomSheetOpen}
-        geojson={geojson as GeoJSONMiniWras}
+        geojson={processedGeoJSON as GeoJSONMiniWras}
       />
     </ErrorBoundary>
   );
