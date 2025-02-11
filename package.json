@@ -18,7 +18,7 @@
     "@types/geojson": "^7946.0.15",
     "ava": "4.1.0",
     "browser-env": "3.3.0",
-    "esbuild": "0.17.7",
+    "esbuild": "0.25.0",
     "geojson": "0.5.0",
     "npm-run-all2": "6.2.0",
     "prettier": "^2.8.8",
