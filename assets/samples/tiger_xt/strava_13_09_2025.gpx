@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="StravaGPX iPhone" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" xmlns="http://www.topografix.com/GPX/1/1">
+ <metadata>
+  <time>1980-01-01T00:00:00Z</time>
+ </metadata>
+ <trk>
+  <name>Night Walk</name>
+  <type>10</type>
+  <trkseg>
+   <trkpt lat="45.5467480" lon="-122.6478610">
+    <ele>48.3</ele>
+    <time>1980-01-01T00:00:39Z</time>
+   </trkpt>
+   <trkpt lat="45.5466650" lon="-122.6478760">
+    <ele>48.3</ele>
+    <time>1980-01-01T00:00:40Z</time>
+   </trkpt>
+   <trkpt lat="45.5466640" lon="-122.6478870">
+    <ele>48.3</ele>
+    <time>1980-01-01T00:00:41Z</time>
+   </trkpt>
+   <trkpt lat="45.5466640" lon="-122.6478980">
+    <ele>48.3</ele>
+    <time>1980-01-01T00:00:42Z</time>
+   </trkpt>
+   <trkpt lat="45.5466630" lon="-122.6479090">
+    <ele>48.3</ele>
+    <time>1980-01-01T00:00:43Z</time>
+   </trkpt>
+   <trkpt lat="45.5466630" lon="-122.6479200">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:44Z</time>
+   </trkpt>
+   <trkpt lat="45.5466630" lon="-122.6479300">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:45Z</time>
+   </trkpt>
+   <trkpt lat="45.5466770" lon="-122.6479370">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:46Z</time>
+   </trkpt>
+   <trkpt lat="45.5466800" lon="-122.6479450">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:47Z</time>
+   </trkpt>
+   <trkpt lat="45.5466770" lon="-122.6479710">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:48Z</time>
+   </trkpt>
+   <trkpt lat="45.5466770" lon="-122.6479770">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:49Z</time>
+   </trkpt>
+   <trkpt lat="45.5466810" lon="-122.6479940">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:50Z</time>
+   </trkpt>
+   <trkpt lat="45.5466810" lon="-122.6480090">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:51Z</time>
+   </trkpt>
+   <trkpt lat="45.5466790" lon="-122.6480160">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:52Z</time>
+   </trkpt>
+   <trkpt lat="45.5466820" lon="-122.6480300">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:53Z</time>
+   </trkpt>
+   <trkpt lat="45.5466830" lon="-122.6480530">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:54Z</time>
+   </trkpt>
+   <trkpt lat="45.5466830" lon="-122.6480640">
+    <ele>48.4</ele>
+    <time>1980-01-01T00:00:55Z</time>
+   </trkpt>
+   <trkpt lat="45.5466860" lon="-122.6480820">
+    <ele>48.5</ele>
+    <time>1980-01-01T00:00:56Z</time>
+   </trkpt>
+   <trkpt lat="45.5466860" lon="-122.6481030">
+    <ele>48.5</ele>
+    <time>1980-01-01T00:00:57Z</time>
+   </trkpt>
+   <trkpt lat="45.5466820" lon="-122.6481260">
+    <ele>48.5</ele>
+    <time>1980-01-01T00:00:58Z</time>
+   </trkpt>
+   <trkpt lat="45.5466850" lon="-122.6481430">
+    <ele>48.5</ele>
+    <time>1980-01-01T00:00:59Z</time>
+   </trkpt>
+   <trkpt lat="45.5466850" lon="-122.6481590">
+    <ele>48.5</ele>
+    <time>1980-01-01T00:01:00Z</time>
+   </trkpt>
+   <trkpt lat="45.5466770" lon="-122.6481680">
+    <ele>48.5</ele>
+    <time>1980-01-01T00:01:01Z</time>
+   </trkpt>
+   <trkpt lat="45.5466740" lon="-122.6481830">
+    <ele>48.5</ele>
+    <time>1980-01-01T00:01:02Z</time>
+   </trkpt>
+   <trkpt lat="45.5466850" lon="-122.6482010">
+    <ele>48.5</ele>
+    <time>1980-01-01T00:01:03Z</time>
+   </trkpt>
+   <trkpt lat="45.5466870" lon="-122.6482260">
+    <ele>48.5</ele>
+    <time>1980-01-01T00:01:04Z</time>
+   </trkpt>
+   <trkpt lat="45.5466920" lon="-122.6482520">
+    <ele>48.6</ele>
+    <time>1980-01-01T00:01:05Z</time>
+   </trkpt>
+   <trkpt lat="45.5466950" lon="-122.6482640">
+    <ele>48.6</ele>
+    <time>1980-01-01T00:01:06Z</time>
+   </trkpt>
+   <trkpt lat="45.5466990" lon="-122.6482760">
+    <ele>48.6</ele>
+    <time>1980-01-01T00:01:07Z</time>
+   </trkpt>
+   <trkpt lat="45.5467120" lon="-122.6482970">
+    <ele>48.6</ele>
+    <time>1980-01-01T00:01:08Z</time>
+   </trkpt>
+   <trkpt lat="45.5467170" lon="-122.6483140">
+    <ele>48.6</ele>
+    <time>1980-01-01T00:01:09Z</time>
+   </trkpt>
+   <trkpt lat="45.5467150" lon="-122.6483300">
+    <ele>48.6</ele>
+    <time>1980-01-01T00:01:10Z</time>
+   </trkpt>
+   <trkpt lat="45.5467140" lon="-122.6483530">
+    <ele>48.6</ele>
+    <time>1980-01-01T00:01:11Z</time>
+   </trkpt>
+   <trkpt lat="45.5467160" lon="-122.6483740">
+    <ele>48.6</ele>
+    <time>1980-01-01T00:01:12Z</time>
+   </trkpt>
+   <trkpt lat="45.5467140" lon="-122.6483920">
+    <ele>48.7</ele>
+    <time>1980-01-01T00:01:13Z</time>
+   </trkpt>
+   <trkpt lat="45.5467180" lon="-122.6484200">
+    <ele>48.7</ele>
+    <time>1980-01-01T00:01:14Z</time>
+   </trkpt>
+   <trkpt lat="45.5467190" lon="-122.6484330">
+    <ele>48.7</ele>
+    <time>1980-01-01T00:01:15Z</time>
+   </trkpt>
+   <trkpt lat="45.5467200" lon="-122.6484470">
+    <ele>48.7</ele>
+    <time>1980-01-01T00:01:16Z</time>
+   </trkpt>
+   <trkpt lat="45.5467160" lon="-122.6484670">
+    <ele>48.7</ele>
+    <time>1980-01-01T00:01:17Z</time>
+   </trkpt>
+   <trkpt lat="45.5467180" lon="-122.6484850">
+    <ele>48.7</ele>
+    <time>1980-01-01T00:01:18Z</time>
+   </trkpt>
+   <trkpt lat="45.5467230" lon="-122.6484970">
+    <ele>48.7</ele>
+    <time>1980-01-01T00:01:19Z</time>
+   </trkpt>
+   <trkpt lat="45.5467260" lon="-122.6485140">
+    <ele>48.8</ele>
+    <time>1980-01-01T00:01:20Z</time>
+   </trkpt>
+   <trkpt lat="45.5467270" lon="-122.6485270">
+    <ele>48.8</ele>
+    <time>1980-01-01T00:01:21Z</time>
+   </trkpt>
+   <trkpt lat="45.5467230" lon="-122.6485570">
+    <ele>48.8</ele>
+    <time>1980-01-01T00:01:22Z</time>
+   </trkpt>
+   <trkpt lat="45.5467210" lon="-122.6485680">
+    <ele>48.8</ele>
+    <time>1980-01-01T00:01:23Z</time>
+   </trkpt>
+   <trkpt lat="45.5467200" lon="-122.6485790">
+    <ele>48.8</ele>
+    <time>1980-01-01T00:01:24Z</time>
+   </trkpt>
+   <trkpt lat="45.5467210" lon="-122.6485980">
+    <ele>48.8</ele>
+    <time>1980-01-01T00:01:25Z</time>
+   </trkpt>
+   <trkpt lat="45.5467180" lon="-122.6486180">
+    <ele>48.8</ele>
+    <time>1980-01-01T00:01:26Z</time>
+   </trkpt>
+   <trkpt lat="45.5467170" lon="-122.6486440">
+    <ele>48.9</ele>
+    <time>1980-01-01T00:01:27Z</time>
+   </trkpt>
+   <trkpt lat="45.5467150" lon="-122.6486570">
+    <ele>48.9</ele>
+    <time>1980-01-01T00:01:28Z</time>
+   </trkpt>
+   <trkpt lat="45.5467140" lon="-122.6486700">
+    <ele>48.9</ele>
+    <time>1980-01-01T00:01:29Z</time>
+   </trkpt>
+   <trkpt lat="45.5467140" lon="-122.6486980">
+    <ele>48.9</ele>
+    <time>1980-01-01T00:01:30Z</time>
+   </trkpt>
+   <trkpt lat="45.5467140" lon="-122.6487110">
+    <ele>48.9</ele>
+    <time>1980-01-01T00:01:31Z</time>
+   </trkpt>
+   <trkpt lat="45.5467130" lon="-122.6487230">
+    <ele>48.9</ele>
+    <time>1980-01-01T00:01:32Z</time>
+   </trkpt>
+   <trkpt lat="45.5467150" lon="-122.6487520">
+    <ele>48.9</ele>
+    <time>1980-01-01T00:01:33Z</time>
+   </trkpt>
+   <trkpt lat="45.5467170" lon="-122.6487640">
+    <ele>49.0</ele>
+    <time>1980-01-01T00:01:34Z</time>
+   </trkpt>
+   <trkpt lat="45.5467200" lon="-122.6487760">
+    <ele>49.0</ele>
+    <time>1980-01-01T00:01:35Z</time>
+   </trkpt>
+   <trkpt lat="45.5467230" lon="-122.6487970">
+    <ele>49.0</ele>
+    <time>1980-01-01T00:01:36Z</time>
+   </trkpt>
+   <trkpt lat="45.5467260" lon="-122.6488140">
+    <ele>49.0</ele>
+    <time>1980-01-01T00:01:37Z</time>
+   </trkpt>
+   <trkpt lat="45.5467310" lon="-122.6488460">
+    <ele>49.0</ele>
+    <time>1980-01-01T00:01:38Z</time>
+   </trkpt>
+   <trkpt lat="45.5467300" lon="-122.6488580">
+    <ele>49.0</ele>
+    <time>1980-01-01T00:01:39Z</time>
+   </trkpt>
+   <trkpt lat="45.5467300" lon="-122.6488690">
+    <ele>49.0</ele>
+    <time>1980-01-01T00:01:40Z</time>
+   </trkpt>
+   <trkpt lat="45.5467270" lon="-122.6488890">
+    <ele>49.0</ele>
+    <time>1980-01-01T00:01:41Z</time>
+   </trkpt>
+   <trkpt lat="45.5467240" lon="-122.6489150">
+    <ele>49.1</ele>
+    <time>1980-01-01T00:01:42Z</time>
+   </trkpt>
+   <trkpt lat="45.5467260" lon="-122.6489360">
+    <ele>49.1</ele>
+    <time>1980-01-01T00:01:43Z</time>
+   </trkpt>
+   <trkpt lat="45.5467290" lon="-122.6489610">
+    <ele>49.1</ele>
+    <time>1980-01-01T00:01:44Z</time>
+   </trkpt>
+   <trkpt lat="45.5467330" lon="-122.6489940">
+    <ele>49.1</ele>
+    <time>1980-01-01T00:01:45Z</time>
+   </trkpt>
+   <trkpt lat="45.5467330" lon="-122.6490040">
+    <ele>49.1</ele>
+    <time>1980-01-01T00:01:46Z</time>
+   </trkpt>
+   <trkpt lat="45.5467340" lon="-122.6490140">
+    <ele>49.1</ele>
+    <time>1980-01-01T00:01:47Z</time>
+   </trkpt>
+   <trkpt lat="45.5467370" lon="-122.6490450">
+    <ele>49.2</ele>
+    <time>1980-01-01T00:01:48Z</time>
+   </trkpt>
+   <trkpt lat="45.5467410" lon="-122.6490570">
+    <ele>49.2</ele>
+    <time>1980-01-01T00:01:49Z</time>
+   </trkpt>
+   <trkpt lat="45.5467440" lon="-122.6490680">
+    <ele>49.2</ele>
+    <time>1980-01-01T00:01:50Z</time>
+   </trkpt>
+   <trkpt lat="45.5467430" lon="-122.6490880">
+    <ele>49.2</ele>
+    <time>1980-01-01T00:01:51Z</time>
+   </trkpt>
+   <trkpt lat="45.5467380" lon="-122.6491110">
+    <ele>49.2</ele>
+    <time>1980-01-01T00:01:52Z</time>
+   </trkpt>
+   <trkpt lat="45.5467400" lon="-122.6491380">
+    <ele>49.2</ele>
+    <time>1980-01-01T00:01:53Z</time>
+   </trkpt>
+   <trkpt lat="45.5467380" lon="-122.6491510">
+    <ele>49.2</ele>
+    <time>1980-01-01T00:01:54Z</time>
+   </trkpt>
+   <trkpt lat="45.5467370" lon="-122.6491640">
+    <ele>49.2</ele>
+    <time>1980-01-01T00:01:55Z</time>
+   </trkpt>
+   <trkpt lat="45.5467390" lon="-122.6491870">
+    <ele>49.3</ele>
+    <time>1980-01-01T00:01:56Z</time>
+   </trkpt>
+   <trkpt lat="45.5467420" lon="-122.6492080">
+    <ele>49.3</ele>
+    <time>1980-01-01T00:01:57Z</time>
+   </trkpt>
+   <trkpt lat="45.5467430" lon="-122.6492350">
+    <ele>49.3</ele>
+    <time>1980-01-01T00:01:58Z</time>
+   </trkpt>
+   <trkpt lat="45.5467400" lon="-122.6492520">
+    <ele>49.3</ele>
+    <time>1980-01-01T00:01:59Z</time>
+   </trkpt>
+   <trkpt lat="45.5467360" lon="-122.6492800">
+    <ele>49.3</ele>
+    <time>1980-01-01T00:02:00Z</time>
+   </trkpt>
+   <trkpt lat="45.5467340" lon="-122.6492930">
+    <ele>49.3</ele>
+    <time>1980-01-01T00:02:01Z</time>
+   </trkpt>
+   <trkpt lat="45.5467330" lon="-122.6493070">
+    <ele>49.4</ele>
+    <time>1980-01-01T00:02:02Z</time>
+   </trkpt>
+   <trkpt lat="45.5467360" lon="-122.6493370">
+    <ele>49.4</ele>
+    <time>1980-01-01T00:02:03Z</time>
+   </trkpt>
+   <trkpt lat="45.5467360" lon="-122.6493520">
+    <ele>49.4</ele>
+    <time>1980-01-01T00:02:04Z</time>
+   </trkpt>
+   <trkpt lat="45.5467350" lon="-122.6493670">
+    <ele>49.4</ele>
+    <time>1980-01-01T00:02:05Z</time>
+   </trkpt>
+   <trkpt lat="45.5467360" lon="-122.6493940">
+    <ele>49.4</ele>
+    <time>1980-01-01T00:02:06Z</time>
+   </trkpt>
+   <trkpt lat="45.5467370" lon="-122.6494120">
+    <ele>49.4</ele>
+    <time>1980-01-01T00:02:07Z</time>
+   </trkpt>
+   <trkpt lat="45.5467390" lon="-122.6494350">
+    <ele>49.5</ele>
+    <time>1980-01-01T00:02:08Z</time>
+   </trkpt>
+   <trkpt lat="45.5467380" lon="-122.6494580">
+    <ele>49.5</ele>
+    <time>1980-01-01T00:02:09Z</time>
+   </trkpt>
+   <trkpt lat="45.5467390" lon="-122.6494800">
+    <ele>49.5</ele>
+    <time>1980-01-01T00:02:10Z</time>
+   </trkpt>
+   <trkpt lat="45.5467410" lon="-122.6495000">
+    <ele>49.5</ele>
+    <time>1980-01-01T00:02:11Z</time>
+   </trkpt>
+   <trkpt lat="45.5467390" lon="-122.6495270">
+    <ele>49.5</ele>
+    <time>1980-01-01T00:02:12Z</time>
+   </trkpt>
+   <trkpt lat="45.5467420" lon="-122.6495480">
+    <ele>49.6</ele>
+    <time>1980-01-01T00:02:13Z</time>
+   </trkpt>
+   <trkpt lat="45.5467420" lon="-122.6495690">
+    <ele>49.6</ele>
+    <time>1980-01-01T00:02:14Z</time>
+   </trkpt>
+   <trkpt lat="45.5467420" lon="-122.6495870">
+    <ele>49.6</ele>
+    <time>1980-01-01T00:02:15Z</time>
+   </trkpt>
+   <trkpt lat="45.5467450" lon="-122.6496160">
+    <ele>49.6</ele>
+    <time>1980-01-01T00:02:16Z</time>
+   </trkpt>
+   <trkpt lat="45.5467430" lon="-122.6496270">
+    <ele>49.6</ele>
+    <time>1980-01-01T00:02:17Z</time>
+   </trkpt>
+   <trkpt lat="45.5467420" lon="-122.6496390">
+    <ele>49.6</ele>
+    <time>1980-01-01T00:02:18Z</time>
+   </trkpt>
+   <trkpt lat="45.5467390" lon="-122.6496710">
+    <ele>49.7</ele>
+    <time>1980-01-01T00:02:19Z</time>
+   </trkpt>
+   <trkpt lat="45.5467390" lon="-122.6496830">
+    <ele>49.7</ele>
+    <time>1980-01-01T00:02:20Z</time>
+   </trkpt>
+   <trkpt lat="45.5467390" lon="-122.6496960">
+    <ele>49.7</ele>
+    <time>1980-01-01T00:02:21Z</time>
+   </trkpt>
+   <trkpt lat="45.5467410" lon="-122.6497140">
+    <ele>49.7</ele>
+    <time>1980-01-01T00:02:22Z</time>
+   </trkpt>
+   <trkpt lat="45.5467370" lon="-122.6497340">
+    <ele>49.7</ele>
+    <time>1980-01-01T00:02:23Z</time>
+   </trkpt>
+   <trkpt lat="45.5467350" lon="-122.6497640">
+    <ele>49.8</ele>
+    <time>1980-01-01T00:02:24Z</time>
+   </trkpt>
+   <trkpt lat="45.5467350" lon="-122.6497750">
+    <ele>49.8</ele>
+    <time>1980-01-01T00:02:25Z</time>
+   </trkpt>
+   <trkpt lat="45.5467360" lon="-122.6497860">
+    <ele>49.8</ele>
+    <time>1980-01-01T00:02:26Z</time>
+   </trkpt>
+   <trkpt lat="45.5467340" lon="-122.6498050">
+    <ele>49.8</ele>
+    <time>1980-01-01T00:02:27Z</time>
+   </trkpt>
+   <trkpt lat="45.5467340" lon="-122.6498260">
+    <ele>49.8</ele>
+    <time>1980-01-01T00:02:28Z</time>
+   </trkpt>
+   <trkpt lat="45.5467360" lon="-122.6498420">
+    <ele>49.8</ele>
+    <time>1980-01-01T00:02:29Z</time>
+   </trkpt>
+   <trkpt lat="45.5467360" lon="-122.6498560">
+    <ele>49.8</ele>
+    <time>1980-01-01T00:02:30Z</time>
+   </trkpt>
+   <trkpt lat="45.5467360" lon="-122.6498700">
+    <ele>49.9</ele>
+    <time>1980-01-01T00:02:31Z</time>
+   </trkpt>
+   <trkpt lat="45.5467300" lon="-122.6498880">
+    <ele>49.9</ele>
+    <time>1980-01-01T00:02:32Z</time>
+   </trkpt>
+   <trkpt lat="45.5467290" lon="-122.6499030">
+    <ele>49.9</ele>
+    <time>1980-01-01T00:02:33Z</time>
+   </trkpt>
+  </trkseg>
+ </trk>
+</gpx>

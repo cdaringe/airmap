@@ -6,6 +6,7 @@ import {
   MINIWRAS_ID,
   NO_SENSOR_ID,
   POCKET_LABS_ID,
+  TIGER_XT_ID,
 } from "../../../../../packages/cleanair-sensor-common/mod";
 import Button from "../atoms/button";
 import Input from "../atoms/input";
@@ -13,6 +14,7 @@ import Select from "../atoms/select";
 import { AeroqualS500DataSource } from "./AeroqualS500";
 import { DataSourceNames, DataSourceSelector } from "./DataSourceSelector";
 import { MiniWrasDataSource } from "./MiniWrasDataSource";
+import { TigerXtDataSource } from "./TigerXtDataSource";
 
 export type DataSource = {
   url: string;
@@ -33,7 +35,7 @@ type Props = {
   luggage?: unknown;
 };
 
-const NO_URL_SENSOR_IDS = new Set([MINIWRAS_ID, AEROQUAL_S500_ID]);
+const NO_URL_SENSOR_IDS = new Set([MINIWRAS_ID, AEROQUAL_S500_ID, TIGER_XT_ID]);
 
 export const DataSourceWidget: FC<Props> = ({
   datasource,
@@ -78,6 +80,7 @@ export const DataSourceWidget: FC<Props> = ({
         <option value={MINIWRAS_ID}>MiniWRAS</option>
         <option value={AIRMAP_GPS_ID}>airmap™ GPS</option>
         <option value={AEROQUAL_S500_ID}>Aeroqual S500</option>
+        <option value={TIGER_XT_ID}>Tiger XT</option>
       </Select>
       {isUsingUrlInput ? (
         <>
@@ -157,6 +160,15 @@ export const DataSourceWidget: FC<Props> = ({
       {sensorType === AEROQUAL_S500_ID ? (
         <div className="mt-1">
           <AeroqualS500DataSource
+            onInputRead={(v) => {
+              onMiniWrasOrAeroqualReady(v);
+            }}
+          />
+        </div>
+      ) : null}
+      {sensorType === TIGER_XT_ID ? (
+        <div className="mt-1">
+          <TigerXtDataSource
             onInputRead={(v) => {
               onMiniWrasOrAeroqualReady(v);
             }}

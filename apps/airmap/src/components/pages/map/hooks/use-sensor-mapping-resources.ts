@@ -6,6 +6,7 @@ import {
   MappingResourcesMod,
   MINIWRAS_ID,
   POCKET_LABS_ID,
+  TIGER_XT_ID,
 } from "../../../../../../../packages/cleanair-sensor-common/mod";
 
 export const getPocket = () =>
@@ -42,6 +43,13 @@ export const getAeroqualS5000 = () =>
     return resources;
   });
 
+export const getTigerXt = () =>
+  import(
+    "../../../../../../../packages/cleanair-sensor-tiger-xt/src/resources"
+  ).then(async (m) => {
+    return m.getResources();
+  });
+
 export const useSensorMappingResources = (sensorType: number) => {
   return useQuery({
     queryKey: `get-mapping-${sensorType}`,
@@ -56,6 +64,8 @@ export const useSensorMappingResources = (sensorType: number) => {
         ? getAirmapGps()
         : sensorType === AEROQUAL_S500_ID
         ? getAeroqualS5000()
+        : sensorType === TIGER_XT_ID
+        ? getTigerXt()
         : (() => {
             throw new Error(`unsupported sensor type ${sensorType}`);
           })());

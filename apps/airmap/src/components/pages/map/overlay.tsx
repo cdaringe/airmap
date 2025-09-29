@@ -5,6 +5,7 @@ import {
   MappingMod,
   MINIWRAS_ID,
   sensorNameById,
+  TIGER_XT_ID,
 } from "../../../../../../packages/cleanair-sensor-common/mod";
 import Button from "../../atoms/button";
 import { isValidDate } from "./util";
@@ -133,7 +134,7 @@ export const Overlay: React.FC<Props> = ({
           }}
         />
       </div>
-      {sensorType === MINIWRAS_ID || sensorType === AEROQUAL_S500_ID ? (
+      {sensorType === MINIWRAS_ID || sensorType === AEROQUAL_S500_ID || sensorType === TIGER_XT_ID ? (
         <div className="map-overlay-control map-pollution-range-mode">
           <Button
             onClick={() => {

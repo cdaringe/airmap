@@ -4,8 +4,10 @@ import { GeoJSONAeroqualS500 } from "../../../../../../packages/cleanair-sensor-
 import {
   AEROQUAL_S500_ID,
   MINIWRAS_ID,
+  TIGER_XT_ID,
 } from "../../../../../../packages/cleanair-sensor-common/mod";
 import { GeoJSONMiniWras } from "../../../../../../packages/cleanair-sensor-miniwras/mod";
+import { GeoJSONTigerXt } from "../../../../../../packages/cleanair-sensor-tiger-xt/mod";
 
 const MiniWrasStatsDyn = dynamic(
   () =>
@@ -15,6 +17,11 @@ const MiniWrasStatsDyn = dynamic(
 
 const AeroqualS500StatsDyn = dynamic(
   () => import("../../charts/aeroquals500-tvoc").then((it) => it.TVOC),
+  { ssr: false }
+);
+
+const TigerXtStatsDyn = dynamic(
+  () => import("../../charts/tiger-xt-isobutylene").then((it) => it.TigerXtIsobutylene),
   { ssr: false }
 );
 
@@ -44,6 +51,8 @@ export const MapBottomSheet: React.FC<Props> = ({
           <MiniWrasStatsDyn geojson={geojson as GeoJSONMiniWras} />
         ) : sensorId === AEROQUAL_S500_ID ? (
           <AeroqualS500StatsDyn geojson={geojson as GeoJSONAeroqualS500} />
+        ) : sensorId === TIGER_XT_ID ? (
+          <TigerXtStatsDyn geojson={geojson as GeoJSONTigerXt} />
         ) : (
           <div>Unknown sensor</div>
         )}

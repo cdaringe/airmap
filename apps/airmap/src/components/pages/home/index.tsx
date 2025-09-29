@@ -9,6 +9,7 @@ import {
   FLOW_ID,
   MINIWRAS_ID,
   POCKET_LABS_ID,
+  TIGER_XT_ID,
 } from "../../../../../../packages/cleanair-sensor-common/mod";
 import Button from "../../atoms/button";
 import { DataSourceWidget } from "../../data-source/DataSourceWidget";
@@ -41,7 +42,8 @@ export default function Home() {
     !isValidDataUrl ||
     !accessToken ||
     sensorType === NO_SENSOR_ID ||
-    (sensorType === MINIWRAS_ID && !luggage);
+    (sensorType === MINIWRAS_ID && !luggage) ||
+    (sensorType === TIGER_XT_ID && !luggage);
   return (
     <form
       className="max-w-screen-md content home w-96"

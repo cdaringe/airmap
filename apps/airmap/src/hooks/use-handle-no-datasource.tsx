@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import {
   AEROQUAL_S500_ID,
   MINIWRAS_ID,
+  TIGER_XT_ID,
 } from "../../../../packages/cleanair-sensor-common/mod";
 import { useDataSource } from "../components/data-source/use-data-source";
 
@@ -10,7 +11,7 @@ export const isLuggageBackedDatasource = (
   sensorType: number,
   luggage: any
 ): luggage is any =>
-  (sensorType === MINIWRAS_ID || sensorType === AEROQUAL_S500_ID) && luggage;
+  (sensorType === MINIWRAS_ID || sensorType === AEROQUAL_S500_ID || sensorType === TIGER_XT_ID) && luggage;
 
 export const useHandleNoDatasource = () => {
   const {

@@ -31,6 +31,7 @@ export const POCKET_LABS_ID = 2;
 export const MINIWRAS_ID = 3;
 export const AIRMAP_GPS_ID = 4;
 export const AEROQUAL_S500_ID = 5;
+export const TIGER_XT_ID = 6;
 
 export const sensorNameById: { [id: number]: string } = {
   [NO_SENSOR_ID]: "No Sensor",
@@ -39,6 +40,7 @@ export const sensorNameById: { [id: number]: string } = {
   [MINIWRAS_ID]: "MiniWRAS",
   [AIRMAP_GPS_ID]: "AirMap GPS",
   [AEROQUAL_S500_ID]: "Aeroqual S500",
+  [TIGER_XT_ID]: "Tiger XT",
 };
 
 export type MappingMod<P, GL extends MapGetLevels<P> = MapGetLevels<P>> = {
