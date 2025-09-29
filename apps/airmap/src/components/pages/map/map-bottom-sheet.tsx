@@ -21,7 +21,10 @@ const AeroqualS500StatsDyn = dynamic(
 );
 
 const TigerXtStatsDyn = dynamic(
-  () => import("../../charts/tiger-xt-isobutylene").then((it) => it.TigerXtIsobutylene),
+  () =>
+    import("../../charts/tiger-xt-isobutylene").then(
+      (it) => it.TigerXtIsobutylene
+    ),
   { ssr: false }
 );
 

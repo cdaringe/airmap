@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import React from "react";
 import { FileUploader } from "react-drag-drop-files";
+import { Entry as StravaEntry } from "../../../../../packages/cleanair-sensor-strava-gpx/mod";
 import { combine } from "../../../../../packages/cleanair-sensor-tiger-xt/mod";
 import type { TigerXtOnlyEntry } from "../../../../../packages/cleanair-sensor-tiger-xt/src/interfaces";
-import { Entry as StravaEntry } from "../../../../../packages/cleanair-sensor-strava-gpx/mod";
 import Button from "../atoms/button";
 import { getTigerXt } from "../pages/map/hooks/use-sensor-mapping-resources";
 
@@ -43,9 +43,7 @@ export const TigerXtDataSource: React.FC<{
         setIsLoading(true);
         await Promise.all(
           Array.from(filelist).map(async (file) => {
-            const ext = file.name.match(/\.(.*)$/)?.[1] as
-              | "csv"
-              | "gpx";
+            const ext = file.name.match(/\.(.*)$/)?.[1] as "csv" | "gpx";
             if (!fileTypes.has(ext)) {
               throw new Error(
                 `invalid filename. must end with ${[...fileTypes].join(", ")}`

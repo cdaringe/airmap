@@ -11,7 +11,10 @@ export const isLuggageBackedDatasource = (
   sensorType: number,
   luggage: any
 ): luggage is any =>
-  (sensorType === MINIWRAS_ID || sensorType === AEROQUAL_S500_ID || sensorType === TIGER_XT_ID) && luggage;
+  (sensorType === MINIWRAS_ID ||
+    sensorType === AEROQUAL_S500_ID ||
+    sensorType === TIGER_XT_ID) &&
+  luggage;
 
 export const useHandleNoDatasource = () => {
   const {

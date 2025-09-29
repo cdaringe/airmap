@@ -1,13 +1,10 @@
 import { streamGoogleSheetsCsv } from "../../cleanair-google-sheets/mod";
 import type { GeoJSON } from "../../cleanair-sensor-common/mod";
 import type { Entry as StravaEntry } from "../../cleanair-sensor-strava-gpx/mod";
-import { TigerXtOnlyEntry, Entry } from "./interfaces";
+import { Entry, TigerXtOnlyEntry } from "./interfaces";
 import { parse } from "./streams/parse-stream";
 
-export type GeoJSONTigerXt = GeoJSON.FeatureCollection<
-  GeoJSON.Point,
-  Entry
->;
+export type GeoJSONTigerXt = GeoJSON.FeatureCollection<GeoJSON.Point, Entry>;
 
 export const download = async (urls: string[]) => {
   const [tigerXt] = await Promise.all([
@@ -49,7 +46,7 @@ export const combine = ({
 }): GeoJSON => {
   const results: Entry[] = [];
 
-  debugger // eslint-disable-line
+  debugger; // eslint-disable-line
   function getStravaEntry(targetDate: Date) {
     while (true) {
       const stravaEntry = strava[0];

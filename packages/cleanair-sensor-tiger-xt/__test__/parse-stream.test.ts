@@ -2,7 +2,9 @@ import test from "ava";
 import { parse } from "../src/streams/parse-stream";
 
 // Helper to create a ReadableStream from string data
-function createStreamFromString(data: string): ReadableStreamDefaultReader<Uint8Array> {
+function createStreamFromString(
+  data: string
+): ReadableStreamDefaultReader<Uint8Array> {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     start(controller) {
