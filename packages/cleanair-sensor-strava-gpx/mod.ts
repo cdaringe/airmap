@@ -33,5 +33,5 @@ export const ofGpxString = (input: string) => {
       }
     })
   );
-  return result;
+  return result.sort((a, b) => a.date.valueOf() - b.date.valueOf());
 };
