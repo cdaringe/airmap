@@ -25,7 +25,7 @@ export const parse = async (
     const cells = line.split(",");
     if (cells.length >= 3) {
       const [rawDateString, rawTimeString, rawIsobutylene] = cells;
-      const dateTimeString = `${rawDateString} ${rawTimeString} UTC`;
+      const dateTimeString = `${rawDateString} ${rawTimeString}`;
       const date = new Date(dateTimeString);
       const isobutylene = Number(rawIsobutylene);
 

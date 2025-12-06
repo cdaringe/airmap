@@ -46,7 +46,6 @@ export const combine = ({
 }): GeoJSON => {
   const results: Entry[] = [];
 
-  debugger; // eslint-disable-line
   function getStravaEntry(targetDate: Date) {
     while (true) {
       const stravaEntry = strava[0];

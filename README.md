@@ -13,7 +13,7 @@ visit [https://cdaringe.github.io/airmap](https://cdaringe.github.io/airmap)!
 - install `fnm` or `nvm`
 - `npm install -g pnpm@latest`
 - `pnpm install`
-- `pnpm dev`
+- `pnpm dev:airmap` | `pnpm dev:etl`
 
 Do great work.
 
