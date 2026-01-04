@@ -38,12 +38,14 @@ export const downloadGeoJSON = (_urls: string[]) => {
  * Combine all observations, assuming they are already in time ascending order
  */
 export const combine = ({
-  tigerXt: src,
-  strava,
+  tigerXt: tigerXtInput,
+  strava: stravaInput,
 }: {
   tigerXt: TigerXtOnlyEntry[];
   strava: StravaEntry[];
 }): GeoJSON => {
+  const src = [...tigerXtInput];
+  const strava = [...stravaInput]
   const results: Entry[] = [];
 
   function getStravaEntry(targetDate: Date) {
