@@ -1,40 +1,47 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react'
-import { X, Database, FileText, Calendar, Clock, TrendingUp } from 'lucide-react'
+import {
+  Calendar,
+  Clock,
+  Database,
+  FileText,
+  TrendingUp,
+  X,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 interface DataColumn {
-  key: string
-  label: string
-  type: 'date' | 'metric' | 'data'
-  formatValue?: (value: any, dateOffsetMinutes?: number) => string
+  key: string;
+  label: string;
+  type: "date" | "metric" | "data";
+  formatValue?: (value: any, dateOffsetMinutes?: number) => string;
 }
 
 interface DataStats {
-  count: number
-  minDate?: Date
-  maxDate?: Date
-  duration?: number
+  count: number;
+  minDate?: Date;
+  maxDate?: Date;
+  duration?: number;
   metrics?: Array<{
-    key: string
-    label: string
-    min: number
-    max: number
-    avg: number
-    unit?: string
-  }>
+    key: string;
+    label: string;
+    min: number;
+    max: number;
+    avg: number;
+    unit?: string;
+  }>;
 }
 
 interface DataExplorerFlyoutProps {
-  isOpen: boolean
-  onClose: () => void
-  data: any[] | null
-  title: string
-  columns: DataColumn[]
-  getStats: (data: any[], dateOffset: number) => DataStats
-  onApplyOffset?: (offsetMinutes: number) => void
+  isOpen: boolean;
+  onClose: () => void;
+  data: any[] | null;
+  title: string;
+  columns: DataColumn[];
+  getStats: (data: any[], dateOffset: number) => DataStats;
+  onApplyOffset?: (offsetMinutes: number) => void;
 }
 
-const ITEM_HEIGHT = 40
-const OVERSCAN = 5
+const ITEM_HEIGHT = 40;
+const OVERSCAN = 5;
 
 export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
   isOpen,
@@ -45,101 +52,107 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
   getStats,
   onApplyOffset,
 }) => {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
-  const [dateOffset, setDateOffset] = useState(0) // in minutes
-  const [isAdjustingDate, setIsAdjustingDate] = useState(false)
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null)
-  const [scrollTop, setScrollTop] = useState(0)
-  const [containerHeight, setContainerHeight] = useState(500)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [dateOffset, setDateOffset] = useState(0); // in minutes
+  const [isAdjustingDate, setIsAdjustingDate] = useState(false);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [containerHeight, setContainerHeight] = useState(500);
 
   useEffect(() => {
     if (!isOpen) {
-      setSelectedIndex(null)
-      setDateOffset(0)
-      setIsAdjustingDate(false)
+      setSelectedIndex(null);
+      setDateOffset(0);
+      setIsAdjustingDate(false);
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
+      if (e.key === "Escape" && isOpen) {
+        onClose();
       }
-    }
-    window.addEventListener('keydown', handleEsc)
-    return () => window.removeEventListener('keydown', handleEsc)
-  }, [isOpen, onClose])
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isOpen, onClose]);
 
   const stats = useMemo(() => {
-    if (!data) return { count: 0 }
-    return getStats(data, dateOffset)
-  }, [data, dateOffset, getStats])
+    if (!data) return { count: 0 };
+    return getStats(data, dateOffset);
+  }, [data, dateOffset, getStats]);
 
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop(e.currentTarget.scrollTop)
-  }, [])
+    setScrollTop(e.currentTarget.scrollTop);
+  }, []);
 
   useEffect(() => {
     const updateContainerHeight = () => {
       if (scrollContainerRef.current) {
-        setContainerHeight(scrollContainerRef.current.clientHeight)
+        setContainerHeight(scrollContainerRef.current.clientHeight);
       }
-    }
-    updateContainerHeight()
-    window.addEventListener('resize', updateContainerHeight)
-    return () => window.removeEventListener('resize', updateContainerHeight)
-  }, [])
+    };
+    updateContainerHeight();
+    window.addEventListener("resize", updateContainerHeight);
+    return () => window.removeEventListener("resize", updateContainerHeight);
+  }, []);
 
   const visibleRange = useMemo(() => {
-    const dataLength = data?.length || 0
-    const start = Math.floor(scrollTop / ITEM_HEIGHT)
-    const end = Math.ceil((scrollTop + containerHeight) / ITEM_HEIGHT)
+    const dataLength = data?.length || 0;
+    const start = Math.floor(scrollTop / ITEM_HEIGHT);
+    const end = Math.ceil((scrollTop + containerHeight) / ITEM_HEIGHT);
     return {
       start: Math.max(0, start - OVERSCAN),
       end: Math.min(dataLength, end + OVERSCAN),
-    }
-  }, [scrollTop, containerHeight, data?.length])
+    };
+  }, [scrollTop, containerHeight, data?.length]);
 
   const visibleItems = useMemo(() => {
-    if (!data) return []
-    return data.slice(visibleRange.start, visibleRange.end)
-  }, [data, visibleRange])
+    if (!data) return [];
+    return data.slice(visibleRange.start, visibleRange.end);
+  }, [data, visibleRange]);
 
   const formatValue = (value: any, column: DataColumn): string => {
-    if (value === null || value === undefined) return '-'
+    if (value === null || value === undefined) return "-";
 
     // Use column's custom formatter if provided
     if (column.formatValue) {
-      return column.formatValue(value, column.type === 'date' ? dateOffset : undefined)
+      return column.formatValue(
+        value,
+        column.type === "date" ? dateOffset : undefined
+      );
     }
 
     // Default formatting
-    if (typeof value === 'number') {
-      if (Math.abs(value) < 0.01 && value !== 0) return value.toExponential(2)
-      return value.toLocaleString(undefined, { maximumFractionDigits: 4 })
+    if (typeof value === "number") {
+      if (Math.abs(value) < 0.01 && value !== 0) return value.toExponential(2);
+      return value.toLocaleString(undefined, { maximumFractionDigits: 4 });
     }
     if (value instanceof Date) {
-      return value.toLocaleString()
+      return value.toLocaleString();
     }
-    return String(value)
-  }
+    return String(value);
+  };
 
   const formatDuration = (ms: number): string => {
-    const hours = Math.floor(ms / (1000 * 60 * 60))
-    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
+    const hours = Math.floor(ms / (1000 * 60 * 60));
+    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
 
     if (hours > 24) {
-      const days = Math.floor(hours / 24)
-      return `${days} day${days > 1 ? 's' : ''}, ${hours % 24} hr`
+      const days = Math.floor(hours / 24);
+      return `${days} day${days > 1 ? "s" : ""}, ${hours % 24} hr`;
     }
-    return hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`
-  }
+    return hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-end">
-      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={onClose}
+      />
 
       <div className="relative bg-white w-full max-w-4xl h-full shadow-2xl flex flex-col animate-in slide-in-from-right">
         <div className="px-6 py-4 border-b border-gray-200">
@@ -160,15 +173,17 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-600">
-                {stats.count > 0 ? `${stats.count.toLocaleString()} records` : 'No data'}
+                {stats.count > 0
+                  ? `${stats.count.toLocaleString()} records`
+                  : "No data"}
               </div>
 
               <button
                 onClick={() => setIsAdjustingDate(!isAdjustingDate)}
                 className={`px-3 py-2 border rounded-lg transition-colors flex items-center gap-1 ${
                   isAdjustingDate
-                    ? 'bg-blue-50 border-blue-300 text-blue-700'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? "bg-blue-50 border-blue-300 text-blue-700"
+                    : "border-gray-300 hover:bg-gray-50"
                 }`}
                 title="Adjust date offset"
               >
@@ -179,7 +194,9 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
 
             {isAdjustingDate && (
               <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
-                <label className="text-sm font-medium text-gray-700">Date Offset:</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Date Offset:
+                </label>
                 <input
                   type="number"
                   value={dateOffset}
@@ -192,9 +209,9 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
                   {onApplyOffset && dateOffset !== 0 && (
                     <button
                       onClick={() => {
-                        onApplyOffset(dateOffset)
-                        setDateOffset(0)
-                        setIsAdjustingDate(false)
+                        onApplyOffset(dateOffset);
+                        setDateOffset(0);
+                        setIsAdjustingDate(false);
                       }}
                       className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
                     >
@@ -218,7 +235,9 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
                     <Database className="w-3 h-3" />
                     Records
                   </div>
-                  <div className="font-semibold">{stats.count.toLocaleString()}</div>
+                  <div className="font-semibold">
+                    {stats.count.toLocaleString()}
+                  </div>
                 </div>
 
                 {stats.minDate && (
@@ -227,12 +246,15 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
                       <Calendar className="w-3 h-3" />
                       Start Date
                     </div>
-                    <div className="text-sm font-semibold" title={stats.minDate.toLocaleString()}>
-                      {stats.minDate.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                    <div
+                      className="text-sm font-semibold"
+                      title={stats.minDate.toLocaleString()}
+                    >
+                      {stats.minDate.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </div>
                   </div>
@@ -244,12 +266,15 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
                       <Calendar className="w-3 h-3" />
                       End Date
                     </div>
-                    <div className="text-sm font-semibold" title={stats.maxDate.toLocaleString()}>
-                      {stats.maxDate.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                    <div
+                      className="text-sm font-semibold"
+                      title={stats.maxDate.toLocaleString()}
+                    >
+                      {stats.maxDate.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </div>
                   </div>
@@ -261,7 +286,9 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
                       <Clock className="w-3 h-3" />
                       Duration
                     </div>
-                    <div className="font-semibold">{formatDuration(stats.duration)}</div>
+                    <div className="font-semibold">
+                      {formatDuration(stats.duration)}
+                    </div>
                   </div>
                 )}
 
@@ -272,9 +299,27 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
                       {metric.label} Statistics
                     </div>
                     <div className="flex gap-4 text-sm">
-                      <span>Min: <strong>{metric.min.toFixed(2)}{metric.unit ? ` ${metric.unit}` : ''}</strong></span>
-                      <span>Max: <strong>{metric.max.toFixed(2)}{metric.unit ? ` ${metric.unit}` : ''}</strong></span>
-                      <span>Avg: <strong>{metric.avg.toFixed(2)}{metric.unit ? ` ${metric.unit}` : ''}</strong></span>
+                      <span>
+                        Min:{" "}
+                        <strong>
+                          {metric.min.toFixed(2)}
+                          {metric.unit ? ` ${metric.unit}` : ""}
+                        </strong>
+                      </span>
+                      <span>
+                        Max:{" "}
+                        <strong>
+                          {metric.max.toFixed(2)}
+                          {metric.unit ? ` ${metric.unit}` : ""}
+                        </strong>
+                      </span>
+                      <span>
+                        Avg:{" "}
+                        <strong>
+                          {metric.avg.toFixed(2)}
+                          {metric.unit ? ` ${metric.unit}` : ""}
+                        </strong>
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -294,20 +339,27 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
               <div className="overflow-x-auto h-full">
                 <div className="min-w-max h-full flex flex-col">
                   <div className="sticky top-0 bg-gray-50 border-b border-gray-200 z-10 flex">
-                    <div className="w-16 px-3 py-2 text-xs font-medium text-gray-500 uppercase">#</div>
+                    <div className="w-16 px-3 py-2 text-xs font-medium text-gray-500 uppercase">
+                      #
+                    </div>
                     {columns.map((col) => (
                       <div
                         key={col.key}
                         className={`flex-1 px-3 py-2 text-xs font-medium uppercase ${
-                          col.type === 'date'
-                            ? 'text-green-600'
-                            : col.type === 'metric'
-                            ? 'text-blue-600'
-                            : 'text-gray-500'
+                          col.type === "date"
+                            ? "text-green-600"
+                            : col.type === "metric"
+                            ? "text-blue-600"
+                            : "text-gray-500"
                         }`}
                       >
-                        {col.type === 'date' && dateOffset !== 0 && (
-                          <span className="text-xs text-green-600 mr-1" title={`Offset: ${dateOffset > 0 ? '+' : ''}${dateOffset} min`}>
+                        {col.type === "date" && dateOffset !== 0 && (
+                          <span
+                            className="text-xs text-green-600 mr-1"
+                            title={`Offset: ${
+                              dateOffset > 0 ? "+" : ""
+                            }${dateOffset} min`}
+                          >
                             ⏰
                           </span>
                         )}
@@ -321,18 +373,23 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
                     className="flex-1 overflow-y-auto"
                     onScroll={handleScroll}
                   >
-                    <div style={{ height: (data?.length || 0) * ITEM_HEIGHT, position: 'relative' }}>
+                    <div
+                      style={{
+                        height: (data?.length || 0) * ITEM_HEIGHT,
+                        position: "relative",
+                      }}
+                    >
                       {visibleItems.map((item: any, i) => {
-                        const globalIndex = visibleRange.start + i
-                        const isSelected = selectedIndex === globalIndex
+                        const globalIndex = visibleRange.start + i;
+                        const isSelected = selectedIndex === globalIndex;
 
                         return (
                           <div
                             key={globalIndex}
                             className={`flex absolute w-full cursor-pointer transition-colors ${
                               isSelected
-                                ? 'bg-blue-50 hover:bg-blue-100'
-                                : 'hover:bg-gray-50 even:bg-gray-50/50'
+                                ? "bg-blue-50 hover:bg-blue-100"
+                                : "hover:bg-gray-50 even:bg-gray-50/50"
                             }`}
                             style={{
                               height: ITEM_HEIGHT,
@@ -344,21 +401,23 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
                               {globalIndex + 1}
                             </div>
                             {columns.map((col) => {
-                              const value = formatValue(item[col.key], col)
+                              const value = formatValue(item[col.key], col);
                               return (
                                 <div
                                   key={col.key}
                                   className={`flex-1 px-3 py-2 text-sm truncate flex items-center ${
-                                    col.type === 'metric' ? 'font-semibold text-blue-600' : 'text-gray-900'
+                                    col.type === "metric"
+                                      ? "font-semibold text-blue-600"
+                                      : "text-gray-900"
                                   }`}
                                   title={value}
                                 >
                                   {value}
                                 </div>
-                              )
+                              );
                             })}
                           </div>
-                        )
+                        );
                       })}
                     </div>
                   </div>
@@ -369,5 +428,5 @@ export const DataExplorerFlyout: React.FC<DataExplorerFlyoutProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

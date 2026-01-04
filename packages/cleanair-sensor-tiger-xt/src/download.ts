@@ -45,7 +45,7 @@ export const combine = ({
   strava: StravaEntry[];
 }): GeoJSON => {
   const src = [...tigerXtInput];
-  const strava = [...stravaInput]
+  const strava = [...stravaInput];
   const results: Entry[] = [];
 
   function getStravaEntry(targetDate: Date) {
