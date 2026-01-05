@@ -5,7 +5,7 @@
     "date-fns": "2.28.0",
     "dotenv": "^16.0.0",
     "got": "11",
-    "p-all": "3",
+    "p-all": "5",
     "pino": "^9.5.0"
   },
   "devDependencies": {
